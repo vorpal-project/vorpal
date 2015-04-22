@@ -1,14 +1,29 @@
 
 cmake_minimum_required (VERSION 2.8)
-project (dga C CXX)
 
-#set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set (PROJECT_NAME dga)
+project (${PROJECT_NAME} C CXX)
+
 find_package (OpenAL REQUIRED)
+
+set (PROJECT_SRC src/dga.cxx)
+set (PROJECT_HEADERS src/dga.h)
 
 include_directories (${OPENAL_INCLUDE_DIR})
 include_directories (src)
 
-add_library (dga SHARED src/dga.cxx)
-target_link_libraries (dga LINK_PUBLIC ${OPENAL_LIBRARY})
-set_target_properties (dga PROPERTIES COMPILE_FLAGS -std=c++11)
+add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
+
+target_link_libraries (${PROJECT_NAME} LINK_PUBLIC ${OPENAL_LIBRARY})
+
+set_target_properties (
+  ${PROJECT_NAME} PROPERTIES
+  COMPILE_FLAGS "-std=c++11"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+)
+
+# Is there a better way to do this?
+install (TARGETS ${PROJECT_NAME} DESTINATION lib CONFIGURATIONS Debug Release)
+install (FILES ${PROJECT_HEADERS} DESTINATION include CONFIGURATIONS Debug Release)
 
