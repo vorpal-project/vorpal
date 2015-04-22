@@ -23,7 +23,15 @@ set_target_properties (
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
+set (PROJECT_EXPORT "lib${PROJECT_NAME}")
 # Is there a better way to do this?
-install (TARGETS ${PROJECT_NAME} DESTINATION lib CONFIGURATIONS Debug Release)
-install (FILES ${PROJECT_HEADERS} DESTINATION include CONFIGURATIONS Debug Release)
+install (TARGETS ${PROJECT_NAME}
+         EXPORT ${PROJECT_EXPORT}
+         DESTINATION lib
+         CONFIGURATIONS Debug Release)
+install (FILES ${PROJECT_HEADERS}
+         DESTINATION include
+         CONFIGURATIONS Debug Release)
+install (EXPORT ${PROJECT_EXPORT}
+         DESTINATION cmake)
 
