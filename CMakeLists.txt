@@ -6,12 +6,20 @@ project (${PROJECT_NAME} C CXX)
 
 find_package (OpenAL REQUIRED)
 
-set (PROJECT_SRC src/oda.cxx)
-set (PROJECT_HEADERS src/oda.h)
+set (PROJECT_SRC
+  ${CMAKE_SOURCE_DIR}/src/oda/oda.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/system.cxx
+)
+
+set (PROJECT_HEADERS
+  ${CMAKE_SOURCE_DIR}/src/oda/oda.h
+  ${CMAKE_SOURCE_DIR}/src/oda/system.h
+)
 
 include_directories (${OPENAL_INCLUDE_DIR})
-include_directories (src)
+include_directories (${CMAKE_SOURCE_DIR}/src)
 
+message (STATUS ${PROJECT_SRC})
 add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
 
 target_link_libraries (${PROJECT_NAME} LINK_PUBLIC ${OPENAL_LIBRARY})
@@ -31,7 +39,7 @@ install (TARGETS ${PROJECT_NAME}
          CONFIGURATIONS Debug Release
          INCLUDES DESTINATION include)
 install (FILES ${PROJECT_HEADERS}
-         DESTINATION include
+         DESTINATION include/oda
          CONFIGURATIONS Debug Release)
 install (EXPORT ${PROJECT_EXPORT}
          DESTINATION cmake)
