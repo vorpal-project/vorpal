@@ -28,7 +28,8 @@ set (PROJECT_EXPORT "lib${PROJECT_NAME}")
 install (TARGETS ${PROJECT_NAME}
          EXPORT ${PROJECT_EXPORT}
          DESTINATION lib
-         CONFIGURATIONS Debug Release)
+         CONFIGURATIONS Debug Release
+         INCLUDES DESTINATION include)
 install (FILES ${PROJECT_HEADERS}
          DESTINATION include
          CONFIGURATIONS Debug Release)
