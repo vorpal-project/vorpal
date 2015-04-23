@@ -6,8 +6,8 @@ project (${PROJECT_NAME} C CXX)
 
 find_package (OpenAL REQUIRED)
 
-set (PROJECT_SRC src/dga.cxx)
-set (PROJECT_HEADERS src/dga.h)
+set (PROJECT_SRC src/oda.cxx)
+set (PROJECT_HEADERS src/oda.h)
 
 include_directories (${OPENAL_INCLUDE_DIR})
 include_directories (src)
