@@ -2,6 +2,8 @@
 #ifndef LIBODA_ODA_SYSTEM_H_
 #define LIBODA_ODA_SYSTEM_H_
 
+#include <oda/status.h>
+
 namespace oda {
 
 /// First Open Dynamic Audio main system class.
@@ -10,8 +12,8 @@ class System {
   System();
   ~System() {}
 
-  int start();
-  int finish();
+  Status start();
+  void finish();
 };
  
 } // namespace oda

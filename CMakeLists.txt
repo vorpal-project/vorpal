@@ -14,6 +14,7 @@ set (PROJECT_SRC
 set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/oda.h
   ${CMAKE_SOURCE_DIR}/src/oda/system.h
+  ${CMAKE_SOURCE_DIR}/src/oda/status.h
 )
 
 include_directories (${OPENAL_INCLUDE_DIR})
