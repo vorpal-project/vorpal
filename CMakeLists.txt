@@ -26,12 +26,17 @@ set (PROJECT_HEADERS
 # Where to look for when using #include <...>
 include_directories (${OPENAL_INCLUDE_DIR})
 include_directories (${CMAKE_SOURCE_DIR}/src)
+include_directories (${CMAKE_BINARY_DIR}/externals/include)
+link_directories (${CMAKE_BINARY_DIR}/externals/lib)
+
+# Load submodules
+#add_subdirectory (externals)
 
 # Define our build target as a shared lib
 add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
 
 # Link with OpenAL
-target_link_libraries (${PROJECT_NAME} LINK_PUBLIC ${OPENAL_LIBRARY})
+target_link_libraries (${PROJECT_NAME} LINK_PUBLIC ${OPENAL_LIBRARY} pd)
 
 # Set a few properties:
 #  - Use C++11
@@ -41,6 +46,19 @@ set_target_properties (
   COMPILE_FLAGS "-std=c++11"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+)
+
+# Build libpd as a dependency of liboda
+add_custom_command (
+  TARGET ${PROJECT_NAME}
+  PRE_BUILD
+  #OUTPUT ${LIBPD_INSTALLED_HEADERS} ${LIBPD_INSTALLED_LIB}
+  COMMAND git submodule update --init
+  COMMAND make libpd
+  COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/externals/lib
+  COMMAND make install prefix=${CMAKE_BINARY_DIR}/externals
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/externals/libpd
+  COMMENT "Building libpd"
 )
 
 # Define a exporting name
