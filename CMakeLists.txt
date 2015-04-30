@@ -27,16 +27,16 @@ set (PROJECT_HEADERS
 include_directories (${OPENAL_INCLUDE_DIR})
 include_directories (${CMAKE_SOURCE_DIR}/src)
 include_directories (${CMAKE_BINARY_DIR}/externals/include)
-link_directories (${CMAKE_BINARY_DIR}/externals/lib)
-
-# Load submodules
-#add_subdirectory (externals)
 
 # Define our build target as a shared lib
 add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
 
 # Link with OpenAL
-target_link_libraries (${PROJECT_NAME} LINK_PUBLIC ${OPENAL_LIBRARY} pd)
+target_link_libraries (
+  ${PROJECT_NAME} LINK_PUBLIC
+  ${OPENAL_LIBRARY}
+  ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
+)
 
 # Set a few properties:
 #  - Use C++11
@@ -70,9 +70,19 @@ install (TARGETS ${PROJECT_NAME}
          DESTINATION lib
          CONFIGURATIONS Debug Release
          INCLUDES DESTINATION include)
+# Install ODA's headers
 install (FILES ${PROJECT_HEADERS}
          DESTINATION include/oda
          CONFIGURATIONS Debug Release)
+# Install libpd's headers
+install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
+         DESTINATION include/oda
+         CONFIGURATIONS Debug Release)
+# Install libpd
+install (FILES ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
+         DESTINATION lib
+         CONFIGURATIONS Debug Release)
+# Export cmake target
 install (EXPORT ${PROJECT_EXPORT}
          DESTINATION cmake)
 
