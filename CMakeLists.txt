@@ -49,10 +49,8 @@ set_target_properties (
 )
 
 # Build libpd as a dependency of liboda
-add_custom_command (
-  TARGET ${PROJECT_NAME}
-  PRE_BUILD
-  #OUTPUT ${LIBPD_INSTALLED_HEADERS} ${LIBPD_INSTALLED_LIB}
+add_custom_target (
+  libpd
   COMMAND git submodule update --init
   COMMAND make libpd
   COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/externals/lib
@@ -60,6 +58,7 @@ add_custom_command (
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/externals/libpd
   COMMENT "Building libpd"
 )
+add_dependencies (${PROJECT_NAME} libpd)
 
 # Define a exporting name
 set (PROJECT_EXPORT "lib${PROJECT_NAME}")
