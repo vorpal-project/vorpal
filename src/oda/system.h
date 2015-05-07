@@ -21,8 +21,8 @@ namespace oda {
  * // use the system
  * sys.finish();
  * ~~~
- * @see start()
- * @see finish()
+ * @see oda::System::start()
+ * @see oda::System::finish()
  */
 class System {
  public:
@@ -30,9 +30,17 @@ class System {
   ~System() {}
 
   /// Starts the main ODA system
+  /**
+   * @return A Status object that tells how the initialization went.
+   * @see oda::Status
+   * @see oda::System::finish()
+   */
   Status start();
 
   /// Finishes the main ODA system
+  /**
+   * @see oda::System::start()
+   */
   void finish();
 };
  
