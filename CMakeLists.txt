@@ -75,7 +75,7 @@ install (FILES ${PROJECT_HEADERS}
          CONFIGURATIONS Debug Release)
 # Install libpd's headers
 install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
-         DESTINATION include/oda
+         DESTINATION include
          CONFIGURATIONS Debug Release)
 # Install libpd
 install (FILES ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
