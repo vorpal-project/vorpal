@@ -9,6 +9,10 @@ namespace oda {
 
 void dummy ();
 
+void playSineWave (int seconds, float frequency);
+
+void playScale ();
+
 } // namespace oda
 
 #endif // LIBODA_ODA_H_
