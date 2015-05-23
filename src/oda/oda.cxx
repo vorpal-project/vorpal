@@ -28,7 +28,9 @@ void playSineWave (int seconds, float frequency) {
   uint16_t *samples;
   samples = new uint16_t[buf_size];
   for (int i=0; i<buf_size; i++) {
-    samples[i] = 32760 * sin( (2.f*float(M_PI)*frequency)/sample_rate * i ); // 32760 because we're creating a MONO16 sound, and 16 bits integers goes from -32768 to 32767
+    // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
+    // from -32768 to 32767
+    samples[i] = 32760 * sin( (2.f*float(M_PI)*frequency)/sample_rate * i );
   }
 
   // Fills the buffer with data 
@@ -80,7 +82,9 @@ void playScale () {
   samples7  = new uint16_t[buf_size];
   samples8  = new uint16_t[buf_size];
   for (int i=0; i<buf_size; i++) {
-    samples1[i] = 32760 * sin( (2.f*float(M_PI)*440.0000)/sample_rate * i ); // 32760 because we're creating a MONO16 sound, and 16 bits integers goes from -32768 to 32767
+    // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
+    // from -32768 to 32767
+    samples1[i] = 32760 * sin( (2.f*float(M_PI)*440.0000)/sample_rate * i );
     samples2[i] = 32760 * sin( (2.f*float(M_PI)*493.8833)/sample_rate * i );
     samples3[i] = 32760 * sin( (2.f*float(M_PI)*523.2510)/sample_rate * i );
     samples4[i] = 32760 * sin( (2.f*float(M_PI)*587.3295)/sample_rate * i );
