@@ -51,6 +51,7 @@ void playSineWave (int seconds, float frequency) {
 
   alDeleteBuffers(1, &Buffer);
   alDeleteSources(1, &Source);
+  delete[] samples;
 
 }
 
@@ -113,6 +114,14 @@ void playScale () {
 
   alDeleteBuffers(8, Buffers);
   alDeleteSources(1, &Source);
+  delete[] samples1;
+  delete[] samples2;
+  delete[] samples3;
+  delete[] samples4;
+  delete[] samples5;
+  delete[] samples6;
+  delete[] samples7;
+  delete[] samples8;
 }
 
 } // namespace oda
