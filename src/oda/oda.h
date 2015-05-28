@@ -4,14 +4,11 @@
 
 #include <oda/status.h>
 #include <oda/system.h>
+#include <oda/player.h>
 
 namespace oda {
 
 void dummy ();
-
-void playSineWave (int seconds, float frequency);
-
-void playScale ();
 
 } // namespace oda
 

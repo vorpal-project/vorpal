@@ -14,6 +14,7 @@ find_package (OpenAL REQUIRED)
 set (PROJECT_SRC
   ${CMAKE_SOURCE_DIR}/src/oda/oda.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/system.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/player.cxx
 )
 
 # Define source code headers
@@ -21,6 +22,7 @@ set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/oda.h
   ${CMAKE_SOURCE_DIR}/src/oda/system.h
   ${CMAKE_SOURCE_DIR}/src/oda/status.h
+  ${CMAKE_SOURCE_DIR}/src/oda/player.h
 )
 
 # Where to look for when using #include <...>
