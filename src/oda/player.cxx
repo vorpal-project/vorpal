@@ -17,22 +17,65 @@ namespace oda {
       // from -32768 to 32767
       samples[i] = 32760 * sin( (2.f*float(M_PI)*frequency)/sample_rate * i );
     }
-
     return samples;
   }
 
-
+  // Constructor
   Player::Player() {
     // Setting up Buffers and Sources
     alGenBuffers(NUM_BUFFERS, Buffers);
     alGenSources(NUM_SOURCES, Sources);
+
+    // Default options
+    bytesPerSample = sizeof(uint16_t);
+    sample_rate = 44000;
+    format = AL_FORMAT_MONO16;
   }
 
+  // Destructor
   Player::~Player() {
     alDeleteBuffers(NUM_BUFFERS, Buffers);
     alDeleteSources(NUM_SOURCES, Sources);
   }
 
+  // Sample Size setter
+  void Player::setBytesPerSample(size_t size) {
+    bytesPerSample = size;
+  }
+
+  // Sample rate setter
+  void Player::setSampleRate(unsigned int rate) {
+    sample_rate = rate;
+  }
+
+  // Format Setters
+  void Player::setFormatToMono8() {
+    format = AL_FORMAT_MONO8;
+  }
+
+  void Player::setFormatToMono16() {
+    format = AL_FORMAT_MONO16;
+  }
+
+  void Player::setFormatToStereo8() {
+    format = AL_FORMAT_STEREO8;
+  }
+
+  void Player::setFormatToStereo16() {
+    format = AL_FORMAT_STEREO16;
+  }
+
+  // Set Source parameters
+  void Player::setSourcePosition(int source, float X, float Y, float Z) {
+    alSource3i(Sources[source], AL_POSITION, X, Y, Z);
+  }
+
+  // Fill Buffers
+  void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples, ALsizei bufferSize) {
+    alBufferData(buffer, format, dataSamples, bufferSize, sample_rate);
+  }
+
+  // Play Source
   void Player::playSource(int sourceNumber) {
     alSourcePlay(Sources[sourceNumber]);
   }
@@ -41,29 +84,23 @@ namespace oda {
     alSourcePlayv(NUM_SOURCES, Sources);
   }
 
-  void Player::fillBuffer(ALuint buffer, ALenum format, ALvoid *dataSamples, ALsizei bufferSize, ALsizei sampleRate) {
-    alBufferData(buffer, format, dataSamples, bufferSize, sampleRate);
-  }
-
-  void Player::setSourcePosition(int source, float X, float Y, float Z) {
-    alSource3i(Sources[source], AL_POSITION, X, Y, Z);
-  }
-
-  void Player::playSoundOnSource(int seconds, uint16_t *data) {
-    fillBuffer(Buffers[0], AL_FORMAT_MONO16, data, sizeof(*data) * 44000 * seconds, 44000);
+  void Player::playSoundOnSource(int seconds, ALvoid *data) {
+    fillBuffer(Buffers[0], data, bytesPerSample * sample_rate * seconds);
     alSourcei(Sources[0], AL_BUFFER, Buffers[0]);
     playSource(0);
     waitFor(seconds);
   }
 
-  void Player::playSoundOnSource(ALuint source, ALuint buffer, ALenum format, ALvoid *data, ALsizei bufferSize, ALsizei sampleRate, int seconds) {
-    fillBuffer(buffer, format, data, bufferSize, sampleRate);
+  void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid *data) {
+    fillBuffer(buffer, data, bytesPerSample * sample_rate * seconds);
     alSourcei(source, AL_BUFFER, buffer);
     playSource(source);
     waitFor(seconds);
   }
 
+  // Generic Player functions
   void Player::playSineWave (int seconds, float frequency) {
+    setBytesPerSample(sizeof(uint16_t));
     playSoundOnSource(seconds, generateSineWave(seconds, frequency));
   }
 
