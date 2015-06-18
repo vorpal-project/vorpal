@@ -12,6 +12,8 @@ namespace oda {
 ALCdevice   *device = nullptr;
 ALCcontext  *context = nullptr;
 
+// MACRO MAGIC: http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
+
 System::System() {}
 
 Status System::start() {
