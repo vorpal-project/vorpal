@@ -13,14 +13,14 @@ find_package (OpenAL REQUIRED)
 # Define source code files
 set (PROJECT_SRC
   ${CMAKE_SOURCE_DIR}/src/oda/oda.cxx
-  ${CMAKE_SOURCE_DIR}/src/oda/system.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/engine.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/player.cxx
 )
 
 # Define source code headers
 set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/oda.h
-  ${CMAKE_SOURCE_DIR}/src/oda/system.h
+  ${CMAKE_SOURCE_DIR}/src/oda/engine.h
   ${CMAKE_SOURCE_DIR}/src/oda/status.h
   ${CMAKE_SOURCE_DIR}/src/oda/player.h
 )

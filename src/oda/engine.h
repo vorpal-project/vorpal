@@ -1,12 +1,12 @@
 
-#ifndef LIBODA_ODA_SYSTEM_H_
-#define LIBODA_ODA_SYSTEM_H_
+#ifndef LIBODA_ODA_ENGINE_H_
+#define LIBODA_ODA_ENGINE_H_
 
 #include <oda/status.h>
 
 namespace oda {
 
-/// Open Dynamic Audio system management class.
+/// Open Dynamic Audio engine class.
 /** 
  * All instances of this class handle the same shared resources. Thus, there
  * is no need to dynamically allocate objects for it.
@@ -15,36 +15,36 @@ namespace oda {
  * to release it. Example:
  *
  * ~~~.cxx
- * oda::System sys;
- * oda::Status status = sys.start();
+ * oda::Engine engine;
+ * oda::Status status = engine.start();
  * // check return value
  * // use the system
- * sys.finish();
+ * engine.finish();
  * ~~~
- * @see oda::System::start()
- * @see oda::System::finish()
+ * @see oda::Engine::start()
+ * @see oda::Engine::finish()
  */
-class System {
+class Engine {
  public:
-  System();
-  ~System() {}
+  Engine();
+  ~Engine() {}
 
   /// Starts the main ODA system
   /**
    * @return A Status object that tells how the initialization went.
    * @see oda::Status
-   * @see oda::System::finish()
+   * @see oda::Engine::finish()
    */
   Status start();
 
   /// Finishes the main ODA system
   /**
-   * @see oda::System::start()
+   * @see oda::Engine::start()
    */
   void finish();
 };
  
 } // namespace oda
 
-#endif // LIBODA_ODA_SYSTEM_H_
+#endif // LIBODA_ODA_ENGINE_H_
 
