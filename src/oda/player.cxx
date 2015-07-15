@@ -22,7 +22,7 @@ namespace oda {
 
   // Constructor
   // Default options
-  Player::Player() : bytesPerSample(sizeof(uint16_t), sample_rate(44000),
+  Player::Player() : bytesPerSample(sizeof(uint16_t)), sample_rate(44000),
                      format(AL_FORMAT_MONO16) {
     // Setting up Buffers and Sources
     alGenBuffers(NUM_BUFFERS, Buffers);
