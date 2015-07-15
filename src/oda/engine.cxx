@@ -1,5 +1,5 @@
 
-#include <oda/system.h>
+#include <oda/engine.h>
 
 #include <libpd/z_libpd.h>
 
@@ -14,9 +14,9 @@ ALCcontext  *context = nullptr;
 
 // MACRO MAGIC: http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
 
-System::System() {}
+Engine::Engine() {}
 
-Status System::start() {
+Status Engine::start() {
   // Do not start if the context was already created
   if (context && device)
     return Status::INVALID("Already started");
@@ -40,7 +40,7 @@ Status System::start() {
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
 
-void System::finish() {
+void Engine::finish() {
   // Do not finish if it was not started yet
   if (!context) return;
   // Unset and destroy context
