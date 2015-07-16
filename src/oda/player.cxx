@@ -29,7 +29,7 @@ uint16_t *generateSineWave(int seconds, float frequency){
 // Default options
 Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44000),
                    format_(AL_FORMAT_MONO16) {
-  // Setting up buffers and sources
+  // Setting up buffers and Sources
   alGenBuffers(NUM_BUFFERS, buffers_);
   alGenSources(NUM_SOURCES, sources_);
 }
@@ -103,9 +103,10 @@ void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid
 // Generic Player functions
 void Player::playSineWave (int seconds, float frequency) {
   setBytesPerSample(sizeof(uint16_t));
-  playSoundOnSource(seconds, generateSineWave(seconds, frequency));
+  uint16_t *data = generateSineWave(seconds, frequency);
+  playSoundOnSource(seconds, data);
+  delete data;
 }
-
 
 }
 
