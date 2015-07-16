@@ -32,12 +32,12 @@ namespace oda {
   		void setFormatToStereo16();
 
   	private:
-  		ALuint Buffers[NUM_BUFFERS];
-    	ALuint Sources[NUM_SOURCES];
+  		ALuint buffers_[NUM_BUFFERS];
+    	ALuint sources_[NUM_SOURCES];
 
-    	size_t bytesPerSample;
-    	unsigned int sample_rate;
-    	ALenum format;
+    	size_t bytes_per_sample_;
+    	unsigned int sample_rate_;
+    	ALenum format_;
   };
 
 } // namespace oda
