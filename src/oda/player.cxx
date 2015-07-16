@@ -3,104 +3,108 @@
 
 namespace oda {
 
-  void waitFor(int secs) {
-    std::this_thread::sleep_for (std::chrono::seconds(secs));
-  }
+namespace {
 
-  uint16_t *generateSineWave(int seconds, float frequency){
-    unsigned sample_rate = 44000;
-    size_t buf_size = seconds * sample_rate * sizeof(uint16_t);
+void waitFor(int secs) {
+  std::this_thread::sleep_for (std::chrono::seconds(secs));
+}
 
-    uint16_t *samples;
-    samples = new uint16_t[buf_size];
-    for (int i=0; i<buf_size; i++) {
-      // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
-      // from -32768 to 32767
-      samples[i] = 32760 * sin( (2.f*float(M_PI)*frequency)/sample_rate * i );
-    }
-    return samples;
-  }
+uint16_t *generateSineWave(int seconds, float frequency){
+  unsigned sample_rate = 44000;
+  size_t buf_size = seconds * sample_rate * sizeof(uint16_t);
 
-  // Constructor
-  // Default options
-  Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44000),
-                     format_(AL_FORMAT_MONO16) {
-    // Setting up buffers_ and Sources
-    alGenBuffers(NUM_BUFFERS, buffers_);
-    alGenSources(NUM_SOURCES, sources_);
+  uint16_t *samples;
+  samples = new uint16_t[buf_size];
+  for (int i=0; i<buf_size; i++) {
+    // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
+    // from -32768 to 32767
+    samples[i] = 32760 * sin( (2.f*float(M_PI)*frequency)/sample_rate * i );
   }
+  return samples;
+}
 
-  // Destructor
-  Player::~Player() {
-    alDeleteBuffers(NUM_BUFFERS, buffers_);
-    alDeleteSources(NUM_SOURCES, sources_);
-  }
+} // unnamed namespace
 
-  // Sample Size setter
-  void Player::setBytesPerSample(size_t size) {
-    bytes_per_sample_ = size;
-  }
+// Constructor
+// Default options
+Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44000),
+                   format_(AL_FORMAT_MONO16) {
+  // Setting up buffers and sources
+  alGenBuffers(NUM_BUFFERS, buffers_);
+  alGenSources(NUM_SOURCES, sources_);
+}
 
-  // Sample rate setter
-  void Player::setSampleRate(unsigned int rate) {
-    sample_rate_ = rate;
-  }
+// Destructor
+Player::~Player() {
+  alDeleteBuffers(NUM_BUFFERS, buffers_);
+  alDeleteSources(NUM_SOURCES, sources_);
+}
 
-  // Format Setters
-  void Player::setFormatToMono8() {
-    format_ = AL_FORMAT_MONO8;
-  }
+// Sample Size setter
+void Player::setBytesPerSample(size_t size) {
+  bytes_per_sample_ = size;
+}
 
-  void Player::setFormatToMono16() {
-    format_ = AL_FORMAT_MONO16;
-  }
+// Sample rate setter
+void Player::setSampleRate(unsigned int rate) {
+  sample_rate_ = rate;
+}
 
-  void Player::setFormatToStereo8() {
-    format_ = AL_FORMAT_STEREO8;
-  }
+// Format Setters
+void Player::setFormatToMono8() {
+  format_ = AL_FORMAT_MONO8;
+}
 
-  void Player::setFormatToStereo16() {
-    format_ = AL_FORMAT_STEREO16;
-  }
+void Player::setFormatToMono16() {
+  format_ = AL_FORMAT_MONO16;
+}
 
-  // Set Source parameters
-  void Player::setSourcePosition(int source, float X, float Y, float Z) {
-    alSource3i(sources_[source], AL_POSITION, X, Y, Z);
-  }
+void Player::setFormatToStereo8() {
+  format_ = AL_FORMAT_STEREO8;
+}
 
-  // Fill buffers_
-  void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples, ALsizei bufferSize) {
-    alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
-  }
+void Player::setFormatToStereo16() {
+  format_ = AL_FORMAT_STEREO16;
+}
 
-  // Play Source
-  void Player::playSource(int sourceNumber) {
-    alSourcePlay(sources_[sourceNumber]);
-  }
+// Set Source parameters
+void Player::setSourcePosition(int source, float X, float Y, float Z) {
+  alSource3i(sources_[source], AL_POSITION, X, Y, Z);
+}
 
-  void Player::playAllSources() {
-    alSourcePlayv(NUM_SOURCES, sources_);
-  }
+// Fill buffers_
+void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples, ALsizei bufferSize) {
+  alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
+}
 
-  void Player::playSoundOnSource(int seconds, ALvoid *data) {
-    fillBuffer(buffers_[0], data, bytes_per_sample_ * sample_rate_ * seconds);
-    alSourcei(sources_[0], AL_BUFFER, buffers_[0]);
-    playSource(0);
-    waitFor(seconds);
-  }
+// Play Source
+void Player::playSource(int sourceNumber) {
+  alSourcePlay(sources_[sourceNumber]);
+}
 
-  void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid *data) {
-    fillBuffer(buffer, data, bytes_per_sample_ * sample_rate_ * seconds);
-    alSourcei(source, AL_BUFFER, buffer);
-    playSource(source);
-    waitFor(seconds);
-  }
+void Player::playAllSources() {
+  alSourcePlayv(NUM_SOURCES, sources_);
+}
 
-  // Generic Player functions
-  void Player::playSineWave (int seconds, float frequency) {
-    setBytesPerSample(sizeof(uint16_t));
-    playSoundOnSource(seconds, generateSineWave(seconds, frequency));
-  }
+void Player::playSoundOnSource(int seconds, ALvoid *data) {
+  fillBuffer(buffers_[0], data, bytes_per_sample_ * sample_rate_ * seconds);
+  alSourcei(sources_[0], AL_BUFFER, buffers_[0]);
+  playSource(0);
+  waitFor(seconds);
+}
+
+void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid *data) {
+  fillBuffer(buffer, data, bytes_per_sample_ * sample_rate_ * seconds);
+  alSourcei(source, AL_BUFFER, buffer);
+  playSource(source);
+  waitFor(seconds);
+}
+
+// Generic Player functions
+void Player::playSineWave (int seconds, float frequency) {
+  setBytesPerSample(sizeof(uint16_t));
+  playSoundOnSource(seconds, generateSineWave(seconds, frequency));
+}
 
 
 }
