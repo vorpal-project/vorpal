@@ -42,6 +42,12 @@ class Engine {
    * @see oda::Engine::start()
    */
   void finish();
+
+  /// Tests if audio output is working.
+  /**
+   * Plays a 440 Hz sine wave for 4 seconds.
+   */
+  void testAudio();
 };
  
 } // namespace oda

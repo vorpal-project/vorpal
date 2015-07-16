@@ -1,5 +1,6 @@
 
 #include <oda/engine.h>
+#include <oda/player.h>
 
 #include <libpd/z_libpd.h>
 
@@ -7,10 +8,20 @@
 #include <AL/alc.h>
 #include <AL/alext.h>
 
+#include <memory>
+
 namespace oda {
 
-ALCdevice   *device = nullptr;
-ALCcontext  *context = nullptr;
+// unnamed namespace
+namespace {
+
+using std::unique_ptr;
+
+ALCdevice           *device = nullptr;
+ALCcontext          *context = nullptr;
+unique_ptr<Player>  player;
+
+}
 
 // MACRO MAGIC: http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
 
@@ -36,6 +47,8 @@ Status Engine::start() {
   libpd_init();
   if (libpd_init_audio(1, 1, 44100) != 0)
     return Status::FAILURE("Could not initialize DSP");
+  // Create audio player
+  player.reset(new Player);
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
@@ -43,6 +56,8 @@ Status Engine::start() {
 void Engine::finish() {
   // Do not finish if it was not started yet
   if (!context) return;
+  // Destroy audio player
+  player.reset();
   // Unset and destroy context
   alcMakeContextCurrent(nullptr);
   alcDestroyContext(context);
@@ -50,6 +65,10 @@ void Engine::finish() {
   // Close device
   alcCloseDevice(device);
   device = nullptr;
+}
+
+void Engine::testAudio() {
+  player->playSineWave(4, 440.0f);
 }
 
 } // namespace oda
