@@ -14,6 +14,7 @@ find_package (OpenAL REQUIRED)
 set (PROJECT_SRC
   ${CMAKE_SOURCE_DIR}/src/oda/oda.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/engine.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/event.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/player.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.cxx
 )
@@ -22,6 +23,7 @@ set (PROJECT_SRC
 set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/oda.h
   ${CMAKE_SOURCE_DIR}/src/oda/engine.h
+  ${CMAKE_SOURCE_DIR}/src/oda/event.h
   ${CMAKE_SOURCE_DIR}/src/oda/status.h
   ${CMAKE_SOURCE_DIR}/src/oda/player.h
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.h

@@ -2,8 +2,7 @@
 #include <oda/engine.h>
 #include <oda/player.h>
 #include <oda/dspserver.h>
-
-#include <libpd/z_libpd.h>
+#include <oda/event.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -16,6 +15,7 @@ namespace oda {
 // unnamed namespace
 namespace {
 
+using std::string;
 using std::unique_ptr;
 
 ALCdevice           *device = nullptr;
@@ -74,6 +74,16 @@ void Engine::finish() {
   // Close device
   alcCloseDevice(device);
   device = nullptr;
+}
+
+Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
+  DSPServer dsp;
+  auto *patch = dsp.loadPatch(path_to_event + ".pd");
+  if (patch) {
+    *event_out = Event(patch);
+    return Status::OK("Event instance successfully created");
+  }
+  return Status::FAILURE("Event instance could not be created");
 }
 
 void Engine::testAudio() {
