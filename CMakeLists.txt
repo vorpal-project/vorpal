@@ -15,6 +15,7 @@ set (PROJECT_SRC
   ${CMAKE_SOURCE_DIR}/src/oda/oda.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/engine.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/player.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/dspserver.cxx
 )
 
 # Define source code headers
@@ -23,6 +24,7 @@ set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/engine.h
   ${CMAKE_SOURCE_DIR}/src/oda/status.h
   ${CMAKE_SOURCE_DIR}/src/oda/player.h
+  ${CMAKE_SOURCE_DIR}/src/oda/dspserver.h
 )
 
 # Where to look for when using #include <...>
@@ -33,11 +35,12 @@ include_directories (${CMAKE_BINARY_DIR}/externals/include)
 # Define our build target as a shared lib
 add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
 
-# Link with OpenAL
+# Link with OpenAL + libpd
 target_link_libraries (
   ${PROJECT_NAME} LINK_PUBLIC
   ${OPENAL_LIBRARY}
   ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
+  ${CMAKE_BINARY_DIR}/externals/lib/libpdcpp.so
 )
 
 # Set a few properties:
@@ -55,8 +58,10 @@ add_custom_target (
   libpd
   COMMAND git submodule update --init
   COMMAND make libpd
+  COMMAND make cpplib UTIL=true EXTRA=true
   COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/externals/lib
   COMMAND make install prefix=${CMAKE_BINARY_DIR}/externals
+  COMMAND cmake -E copy libs/libpdcpp.so ${CMAKE_BINARY_DIR}/externals/lib
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/externals/libpd
   COMMENT "Building libpd"
 )
@@ -80,7 +85,9 @@ install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
          DESTINATION include
          CONFIGURATIONS Debug Release)
 # Install libpd
-install (FILES ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
+install (FILES
+         ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
+         ${CMAKE_BINARY_DIR}/externals/lib/libpdcpp.so
          DESTINATION lib
          CONFIGURATIONS Debug Release)
 # Export cmake target

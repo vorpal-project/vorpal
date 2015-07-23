@@ -1,6 +1,7 @@
 
 #include <oda/engine.h>
 #include <oda/player.h>
+#include <oda/dspserver.h>
 
 #include <libpd/z_libpd.h>
 
@@ -38,15 +39,23 @@ Status Engine::start() {
   // Create and set context
   context = alcCreateContext(device, nullptr);
   if (!context || alcMakeContextCurrent(context) == ALC_FALSE) {
-    if (context)
+    if (context) {
       alcDestroyContext(context);
+      context = nullptr;
+    }
     alcCloseDevice(device);
-    return Status::FAILURE("Coult not set a context");
+    device = nullptr;
+    return Status::FAILURE("Could not set a context");
   }
-  // Start libpd
-  libpd_init();
-  if (libpd_init_audio(1, 1, 44100) != 0)
-    return Status::FAILURE("Could not initialize DSP");
+  // Start DSP server
+  Status dsp_start = DSPServer().start();
+  if (!dsp_start.ok()) {
+    alcDestroyContext(context);
+    alcCloseDevice(device);
+    context = nullptr;
+    device = nullptr;
+    return Status::FAILURE("Engine internal: " + dsp_start.description());
+  }
   // Create audio player
   player.reset(new Player);
   // Tell which device was opened
