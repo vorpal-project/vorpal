@@ -17,6 +17,7 @@ class DSPServer {
  public:
   Status start();
   int sample_rate() const;
+  int tick_size() const;
   double time_per_tick() const;
   pd::Patch *loadPatch(const std::string &path);
   void closePatch(pd::Patch *patch);

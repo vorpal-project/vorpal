@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 namespace oda {
 
@@ -17,6 +18,7 @@ namespace oda {
 namespace {
 
 using std::string;
+using std::transform;
 using std::unique_ptr;
 using std::vector;
 
@@ -88,8 +90,11 @@ void Engine::tick(double dt) {
   int ticks = static_cast<int>(time_accumulated);
   time_accumulated -= ticks;
   vector<float> signal;
+  vector<uint16_t> audio(ticks*dsp.tick_size());
   for (int i = 0; i < ticks; ++i) {
     dsp.tick(&signal);
+    transform(signal.begin(), signal.end(), audio.begin() + i*dsp.tick_size(),
+              [](float sample) -> uint16_t { return sample*32767; });
   }
 }
 

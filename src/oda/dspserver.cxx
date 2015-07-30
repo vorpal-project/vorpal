@@ -42,6 +42,10 @@ int DSPServer::sample_rate() const {
   return 44100;
 }
 
+int DSPServer::tick_size() const {
+  return PdBase::blockSize();
+}
+
 double DSPServer::time_per_tick() const {
   return 1.0*PdBase::blockSize()/sample_rate();
 }
