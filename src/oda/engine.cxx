@@ -76,6 +76,10 @@ void Engine::finish() {
   device = nullptr;
 }
 
+void Engine::tick(double dt) {
+  DSPServer().tick(dt);
+}
+
 Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
   DSPServer dsp;
   auto *patch = dsp.loadPatch(path_to_event + ".pd");

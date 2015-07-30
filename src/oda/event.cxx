@@ -60,6 +60,10 @@ bool EventRealImpl::active() {
   return active_;
 }
 
+void EventRealImpl::setParameter(const string &name, double value) {
+  // nothing
+}
+
 Event::Event() : impl_(new EventNullImpl) {}
 
 Event::Event(Patch *patch) : impl_(new EventRealImpl(patch)) {}

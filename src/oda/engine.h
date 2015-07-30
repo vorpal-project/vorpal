@@ -48,6 +48,11 @@ class Engine {
    */
   void finish();
 
+  /// Process dynamic audio ticks
+  /**
+   */
+  void tick(double dt);
+
   /// Creates an Event instance
   /**
    * @param path_to_event File path to event data

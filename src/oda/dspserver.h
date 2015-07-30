@@ -17,6 +17,7 @@ class DSPServer {
   Status start();
   pd::Patch *loadPatch(const std::string &path);
   void closePatch(pd::Patch *patch);
+  void tick(double dt);
 };
 
 } // namespace oda

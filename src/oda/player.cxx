@@ -1,6 +1,8 @@
 
 #include <oda/player.h>
 
+#include <iostream>
+
 namespace oda {
 
 namespace {
@@ -102,6 +104,8 @@ void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid
 
 // Generic Player functions
 void Player::playSineWave (int seconds, float frequency) {
+  std::cout << "short size: " << sizeof(short) << std::endl;
+  std::cout << "uint16_t size: " << sizeof(uint16_t) << std::endl;
   setBytesPerSample(sizeof(uint16_t));
   uint16_t *data = generateSineWave(seconds, frequency);
   playSoundOnSource(seconds, data);
