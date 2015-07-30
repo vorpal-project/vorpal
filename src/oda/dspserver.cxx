@@ -58,10 +58,12 @@ void DSPServer::tick(double dt) {
   double time = 1.0*PdBase::blockSize()/FREQ;
   time_accumulated += dt/time;
   int ticks = static_cast<int>(time_accumulated);
-  dsp.processShort(ticks, inbuf, outbuf);
   time_accumulated -= ticks;
-  for (Patch *patch : patches) {
-    // something
+  for (int i = 0; i < ticks; ++i) {
+    dsp.processShort(1, inbuf, outbuf);
+    for (Patch *patch : patches) {
+      //dsp.readArray(patch->dollarZeroStr() + "-output", output);
+    }
   }
 }
 
