@@ -4,21 +4,24 @@
 #include <libpd/PdBase.hpp>
 #include <libpd/PdTypes.hpp>
 
+#include <algorithm>
+#include <functional>
 #include <unordered_set>
 
 namespace oda {
 
+using std::plus;
 using std::string;
+using std::transform;
 using std::unordered_set;
+using std::vector;
 using pd::PdBase;
 using pd::Patch;
 
 // unnamed namespace
 namespace {
 
-const int             FREQ = 44100;
 bool                  started = false;
-double                time_accumulated = 0.0;
 PdBase                dsp;
 unordered_set<Patch*> patches;
 short                 inbuf[6400], outbuf[6400];
@@ -28,12 +31,19 @@ short                 inbuf[6400], outbuf[6400];
 Status DSPServer::start() {
   if (started)
     return Status::FAILURE("DSP Server already started");
-  if (dsp.init(1, 1, FREQ)) {
+  if (dsp.init(1, 1, sample_rate())) {
     started = true;
-    time_accumulated = 0.0;
     return Status::OK("DSP Server started succesfully");
   }
   return Status::FAILURE("DSP Server could not start");
+}
+
+int DSPServer::sample_rate() const {
+  return 44100;
+}
+
+double DSPServer::time_per_tick() const {
+  return 1.0*PdBase::blockSize()/sample_rate();
 }
 
 Patch *DSPServer::loadPatch(const string &path) {
@@ -54,16 +64,14 @@ void DSPServer::closePatch(Patch *patch) {
   delete patch;
 }
 
-void DSPServer::tick(double dt) {
-  double time = 1.0*PdBase::blockSize()/FREQ;
-  time_accumulated += dt/time;
-  int ticks = static_cast<int>(time_accumulated);
-  time_accumulated -= ticks;
-  for (int i = 0; i < ticks; ++i) {
-    dsp.processShort(1, inbuf, outbuf);
-    for (Patch *patch : patches) {
-      //dsp.readArray(patch->dollarZeroStr() + "-output", output);
-    }
+void DSPServer::tick(vector<float> *signal) {
+  vector<float> temp;
+  dsp.processShort(1, inbuf, outbuf);
+  signal->resize(PdBase::blockSize(), 0.0f);
+  for (Patch *patch : patches) {
+    dsp.readArray(patch->dollarZeroStr() + "-output", temp);
+    transform(signal->begin(), signal->end(),
+              temp.begin(), signal->begin(), plus<float>());   
   }
 }
 

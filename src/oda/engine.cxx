@@ -9,6 +9,7 @@
 #include <AL/alext.h>
 
 #include <memory>
+#include <vector>
 
 namespace oda {
 
@@ -17,10 +18,12 @@ namespace {
 
 using std::string;
 using std::unique_ptr;
+using std::vector;
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
 unique_ptr<Player>  player;
+double              time_accumulated = 0.0;
 
 }
 
@@ -58,6 +61,8 @@ Status Engine::start() {
   }
   // Create audio player
   player.reset(new Player);
+  // Initialize fields
+  time_accumulated = 0.0;
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
@@ -77,7 +82,15 @@ void Engine::finish() {
 }
 
 void Engine::tick(double dt) {
-  DSPServer().tick(dt);
+  DSPServer dsp;
+  double time = dsp.time_per_tick();
+  time_accumulated += dt/time;
+  int ticks = static_cast<int>(time_accumulated);
+  time_accumulated -= ticks;
+  vector<float> signal;
+  for (int i = 0; i < ticks; ++i) {
+    dsp.tick(&signal);
+  }
 }
 
 Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
