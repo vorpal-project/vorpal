@@ -18,10 +18,11 @@ class Event {
   Event();
   void play();
   void stop();
+  bool active();
   void setParameter(const std::string &name, double value);
  private:
   Event(pd::Patch *patch);
-  std::shared_ptr<EventImpl> impl_;
+  std::shared_ptr<EventImpl>  impl_;
   friend class Engine;
 };
 
