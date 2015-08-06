@@ -29,7 +29,8 @@ double              time_accumulated = 0.0;
 
 }
 
-// MACRO MAGIC: http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
+// MACRO MAGIC:
+// http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
 
 Engine::Engine() {}
 

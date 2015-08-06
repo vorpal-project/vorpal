@@ -75,7 +75,7 @@ void DSPServer::tick(vector<float> *signal) {
   for (Patch *patch : patches) {
     dsp.readArray(patch->dollarZeroStr() + "-output", temp);
     transform(signal->begin(), signal->end(),
-              temp.begin(), signal->begin(), plus<float>());   
+              temp.begin(), signal->begin(), plus<float>());
   }
 }
 
