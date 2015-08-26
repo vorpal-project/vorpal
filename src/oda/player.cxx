@@ -7,6 +7,8 @@ namespace oda {
 
 namespace {
 
+using std::vector;
+
 void waitFor(int secs) {
   std::this_thread::sleep_for (std::chrono::seconds(secs));
 }
@@ -34,6 +36,8 @@ Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44000),
   // Setting up buffers and Sources
   alGenBuffers(NUM_BUFFERS, buffers_);
   alGenSources(NUM_SOURCES, sources_);
+  for (unsigned i = 0; i < NUM_BUFFERS; ++i)
+    free_buffers_.push(buffers_[i]);
 }
 
 // Destructor
@@ -48,7 +52,7 @@ void Player::setBytesPerSample(size_t size) {
 }
 
 // Sample rate setter
-void Player::setSampleRate(unsigned int rate) {
+void Player::setSampleRate(unsigned rate) {
   sample_rate_ = rate;
 }
 
@@ -75,9 +79,27 @@ void Player::setSourcePosition(int source, float X, float Y, float Z) {
 }
 
 // Fill buffers_
-void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples,
+void Player::fillBuffer(ALuint buffer, const ALvoid *dataSamples,
                         ALsizei bufferSize) {
   alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
+}
+
+bool Player::prepare() {
+  int processed;
+  alGetSourcei(sources_[0], AL_BUFFERS_PROCESSED, &processed);
+  while (processed--) {
+    ALuint buffer;
+    alSourceUnqueueBuffers(sources_[0], 1, &buffer);
+    free_buffers_.push(buffer);
+  }
+  return !free_buffers_.empty();
+}
+
+void Player::streamData(const vector<uint16_t> *data) {
+  ALuint buffer = free_buffers_.front();
+  free_buffers_.pop();
+  fillBuffer(buffer, data->data(), data->size());
+  alSourceQueueBuffers(sources_[0], 1, &buffer);
 }
 
 // Play Source

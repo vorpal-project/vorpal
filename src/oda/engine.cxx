@@ -8,9 +8,10 @@
 #include <AL/alc.h>
 #include <AL/alext.h>
 
+#include <algorithm>
+#include <iostream>
 #include <memory>
 #include <vector>
-#include <algorithm>
 
 namespace oda {
 
@@ -66,7 +67,6 @@ Status Engine::start() {
   player.reset(new Player);
   // Initialize fields
   time_accumulated = 0.0;
-  player->playSource(0);
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
@@ -75,6 +75,7 @@ void Engine::finish() {
   // Do not finish if it was not started yet
   if (!context) return;
   // Destroy audio player
+  player->stopSource(0);
   player.reset();
   // Unset and destroy context
   alcMakeContextCurrent(nullptr);
@@ -86,10 +87,13 @@ void Engine::finish() {
 }
 
 void Engine::tick(double dt) {
+  if (!player->prepare()) return;
   DSPServer dsp;
   // How many dsp ticks are needed
   time_accumulated += dt/dsp.time_per_tick();
   int ticks = static_cast<int>(time_accumulated);
+  // Skip if not enugh time has passed
+  if (ticks <= 0) return;
   time_accumulated -= ticks;
   // Transfer signal from dsp server to audio server
   vector<float> signal;
@@ -99,6 +103,8 @@ void Engine::tick(double dt) {
     transform(signal.begin(), signal.end(), audio.begin() + i*dsp.tick_size(),
               [](float sample) -> uint16_t { return sample*32767; });
   }
+  player->streamData(&audio);
+  player->playSource(0);
 }
 
 Status Engine::eventInstance(const string &path_to_event, Event *event_out) {

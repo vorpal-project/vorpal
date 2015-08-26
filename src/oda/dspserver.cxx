@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iostream>
 #include <unordered_set>
 
 namespace oda {
@@ -33,6 +34,7 @@ Status DSPServer::start() {
     return Status::FAILURE("DSP Server already started");
   if (dsp.init(1, 1, sample_rate())) {
     started = true;
+    dsp.computeAudio(true);
     return Status::OK("DSP Server started succesfully");
   }
   return Status::FAILURE("DSP Server could not start");
