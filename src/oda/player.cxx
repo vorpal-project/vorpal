@@ -14,7 +14,7 @@ void waitFor(int secs) {
 }
 
 uint16_t *generateSineWave(int seconds, float frequency){
-  unsigned sample_rate = 44000;
+  unsigned sample_rate = 44100;
   size_t buf_size = seconds * sample_rate * sizeof(uint16_t);
 
   uint16_t *samples;
@@ -31,7 +31,7 @@ uint16_t *generateSineWave(int seconds, float frequency){
 
 // Constructor
 // Default options
-Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44000),
+Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44100),
                    format_(AL_FORMAT_MONO16) {
   // Setting up buffers and Sources
   alGenBuffers(NUM_BUFFERS, buffers_);
@@ -84,7 +84,7 @@ void Player::fillBuffer(ALuint buffer, const ALvoid *dataSamples,
   alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
 }
 
-bool Player::prepare() {
+void Player::update() {
   int processed;
   alGetSourcei(sources_[0], AL_BUFFERS_PROCESSED, &processed);
   while (processed--) {
@@ -92,10 +92,13 @@ bool Player::prepare() {
     alSourceUnqueueBuffers(sources_[0], 1, &buffer);
     free_buffers_.push(buffer);
   }
+}
+
+bool Player::availableBuffers() const {
   return !free_buffers_.empty();
 }
 
-void Player::streamData(const vector<uint16_t> *data) {
+void Player::streamData(const vector<int16_t> *data) {
   ALuint buffer = free_buffers_.front();
   free_buffers_.pop();
   fillBuffer(buffer, data->data(), data->size());

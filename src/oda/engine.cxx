@@ -23,10 +23,12 @@ using std::transform;
 using std::unique_ptr;
 using std::vector;
 
+const unsigned      TICK_BUFFER_SIZE = 8*4096;
+
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
 unique_ptr<Player>  player;
-double              time_accumulated = 0.0;
+bool                playing_started = false;
 
 }
 
@@ -65,8 +67,7 @@ Status Engine::start() {
   }
   // Create audio player
   player.reset(new Player);
-  // Initialize fields
-  time_accumulated = 0.0;
+  playing_started = false;
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
@@ -86,25 +87,34 @@ void Engine::finish() {
   device = nullptr;
 }
 
+//static bool nope = false;
+
 void Engine::tick(double dt) {
-  if (!player->prepare()) return;
   DSPServer dsp;
-  // How many dsp ticks are needed
-  time_accumulated += dt/dsp.time_per_tick();
-  int ticks = static_cast<int>(time_accumulated);
-  // Skip if not enugh time has passed
-  if (ticks <= 0) return;
-  time_accumulated -= ticks;
-  // Transfer signal from dsp server to audio server
-  vector<float> signal;
-  vector<uint16_t> audio(ticks*dsp.tick_size());
-  for (int i = 0; i < ticks; ++i) {
-    dsp.tick(&signal);
-    transform(signal.begin(), signal.end(), audio.begin() + i*dsp.tick_size(),
-              [](float sample) -> uint16_t { return sample*32767; });
+  player->update();
+  while (player->availableBuffers()) {
+    std::cout << "Buffer update" << std::endl;
+    // How many dsp ticks are needed for N samples
+    int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
+    // Transfer signal from dsp server to audio server
+    vector<float> signal;
+    vector<int16_t> audio(TICK_BUFFER_SIZE);
+    for (int i = 0; i < ticks; ++i) {
+      dsp.tick(&signal);
+      transform(signal.begin(), signal.end(), audio.begin() + i*dsp.tick_size(),
+                [](float sample) -> int16_t { return sample*32767.f/10.f; });
+    }
+    player->streamData(&audio);
+    if (!playing_started) {
+      player->playSource(0);
+      playing_started = true;
+    }
+    //if (!nope) {
+    //  for (unsigned i = 0; i < TICK_BUFFER_SIZE; ++i)
+    //    std::cout << audio[i*audio.size()/TICK_BUFFER_SIZE] << std::endl;
+    //  nope = true;
+    //}
   }
-  player->streamData(&audio);
-  player->playSource(0);
 }
 
 Status Engine::eventInstance(const string &path_to_event, Event *event_out) {

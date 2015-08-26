@@ -23,9 +23,10 @@ class Player {
   void playSource(int source_number);
   void stopSource(int source_number);
   void playAllSources();
-  bool prepare();
+  void update();
+  bool availableBuffers() const;
   void fillBuffer(ALuint buffer, const ALvoid *dataSamples, ALsizei bufferSize);
-  void streamData (const std::vector<uint16_t> *data);
+  void streamData (const std::vector<int16_t> *data);
   void setSourcePosition(int source, float X, float Y, float Z);
   void playSoundOnSource(int seconds, ALvoid *data);
   void playSoundOnSource(ALuint source, ALuint buffer, int seconds,

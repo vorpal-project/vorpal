@@ -25,7 +25,7 @@ namespace {
 bool                  started = false;
 PdBase                dsp;
 unordered_set<Patch*> patches;
-short                 inbuf[6400], outbuf[6400];
+float                 inbuf[6400], outbuf[6400];
 
 } // unnamed namespace
 
@@ -70,15 +70,22 @@ void DSPServer::closePatch(Patch *patch) {
   delete patch;
 }
 
+//static bool nope = false;
+
 void DSPServer::tick(vector<float> *signal) {
   vector<float> temp;
-  dsp.processShort(1, inbuf, outbuf);
+  dsp.processFloat(1, inbuf, outbuf);
   signal->resize(PdBase::blockSize(), 0.0f);
   for (Patch *patch : patches) {
     dsp.readArray(patch->dollarZeroStr() + "-output", temp);
     transform(signal->begin(), signal->end(),
               temp.begin(), signal->begin(), plus<float>());
   }
+  //if (!nope) {
+  //  for (unsigned i = 0; i < 8; ++i)
+  //    std::cout << (*signal)[i*signal->size()/8] << std::endl;
+  //  nope = true;
+  //}
 }
 
 } // namespace oda
