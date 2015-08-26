@@ -18,12 +18,14 @@ class Player {
  public:
   Player();
   ~Player();
-  void playSource(int sourceNumber);
+  void playSource(int source_number);
+  void stopSource(int source_number);
   void playAllSources();
   void fillBuffer(ALuint buffer, ALvoid *dataSamples, ALsizei bufferSize);
   void setSourcePosition(int source, float X, float Y, float Z);
   void playSoundOnSource(int seconds, ALvoid *data);
-  void playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid *data);
+  void playSoundOnSource(ALuint source, ALuint buffer, int seconds,
+                         ALvoid *data);
   void playSineWave (int seconds, float frequency);
   void setBytesPerSample(size_t size);
   void setSampleRate(unsigned int rate);

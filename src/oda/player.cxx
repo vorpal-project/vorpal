@@ -81,8 +81,12 @@ void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples,
 }
 
 // Play Source
-void Player::playSource(int sourceNumber) {
-  alSourcePlay(sources_[sourceNumber]);
+void Player::playSource(int source_number) {
+  alSourcePlay(sources_[source_number]);
+}
+
+void Player::stopSource(int source_number) {
+  alSourceStop(sources_[source_number]);
 }
 
 void Player::playAllSources() {
