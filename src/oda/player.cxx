@@ -75,7 +75,8 @@ void Player::setSourcePosition(int source, float X, float Y, float Z) {
 }
 
 // Fill buffers_
-void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples, ALsizei bufferSize) {
+void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples,
+                        ALsizei bufferSize) {
   alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
 }
 
@@ -95,7 +96,8 @@ void Player::playSoundOnSource(int seconds, ALvoid *data) {
   waitFor(seconds);
 }
 
-void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid *data) {
+void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds,
+                               ALvoid *data) {
   fillBuffer(buffer, data, bytes_per_sample_ * sample_rate_ * seconds);
   alSourcei(source, AL_BUFFER, buffer);
   playSource(source);

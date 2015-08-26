@@ -66,6 +66,7 @@ Status Engine::start() {
   player.reset(new Player);
   // Initialize fields
   time_accumulated = 0.0;
+  player->playSource(0);
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
@@ -86,10 +87,11 @@ void Engine::finish() {
 
 void Engine::tick(double dt) {
   DSPServer dsp;
-  double time = dsp.time_per_tick();
-  time_accumulated += dt/time;
+  // How many dsp ticks are needed
+  time_accumulated += dt/dsp.time_per_tick();
   int ticks = static_cast<int>(time_accumulated);
   time_accumulated -= ticks;
+  // Transfer signal from dsp server to audio server
   vector<float> signal;
   vector<uint16_t> audio(ticks*dsp.tick_size());
   for (int i = 0; i < ticks; ++i) {
