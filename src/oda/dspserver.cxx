@@ -22,6 +22,8 @@ using pd::Patch;
 // unnamed namespace
 namespace {
 
+const int             TICK_RATIO = 64;
+
 bool                  started = false;
 PdBase                dsp;
 unordered_set<Patch*> patches;
@@ -46,11 +48,11 @@ int DSPServer::sample_rate() const {
 }
 
 int DSPServer::tick_size() const {
-  return PdBase::blockSize();
+  return PdBase::blockSize()*TICK_RATIO;
 }
 
 double DSPServer::time_per_tick() const {
-  return 1.0*PdBase::blockSize()/sample_rate();
+  return 1.0*tick_size()/sample_rate();
 }
 
 Patch *DSPServer::loadPatch(const string &path) {
@@ -71,27 +73,24 @@ void DSPServer::closePatch(Patch *patch) {
   delete patch;
 }
 
-//static bool nope = false;
-
 void DSPServer::tick(int ticks, vector<float> *signal) {
   vector<float> temp;
-  // Notify patches
-  for (Patch *patch : patches)
-    dsp.sendBang(patch->dollarZeroStr() + "-input");
-  // Process global signal
-  dsp.processFloat(ticks, inbuf, outbuf);
   signal->resize(ticks*tick_size(), 0.0f);
-  // Collect individual audio
-  for (Patch *patch : patches) {
-    dsp.readArray(patch->dollarZeroStr() + "-output", temp, ticks*tick_size());
-    transform(signal->begin(), signal->end(),
-              temp.begin(), signal->begin(), plus<float>());
+  for (int i = 0; i < ticks; ++i) {
+    // Notify patches
+    for (Patch *patch : patches)
+      dsp.sendBang(patch->dollarZeroStr() + "-input");
+    // Process global signal
+    dsp.processFloat(TICK_RATIO, inbuf, outbuf);
+    // Collect individual audio
+    for (Patch *patch : patches) {
+      dsp.readArray(patch->dollarZeroStr() + "-output", temp, tick_size());
+      for (int k = 0; k < tick_size(); ++k)
+        (*signal)[k + i*tick_size()] += temp[k];
+      //transform(signal->begin(), signal->end(),
+      //          temp.begin(), signal->begin() + i*tick_size(), plus<float>());
+    }
   }
-  //if (!nope) {
-  //  for (unsigned i = 0; i < 8; ++i)
-  //    std::cout << (*signal)[i*signal->size()/8] << std::endl;
-  //  nope = true;
-  //}
 }
 
 } // namespace oda

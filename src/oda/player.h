@@ -11,7 +11,7 @@
 #include <thread>
 #include <vector>
 
-#define NUM_BUFFERS 32
+#define NUM_BUFFERS 8
 #define NUM_SOURCES 4
 
 namespace oda {

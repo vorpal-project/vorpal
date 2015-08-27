@@ -20,21 +20,29 @@ namespace oda {
 namespace {
 
 using std::ofstream;
+using std::ostream;
 using std::string;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
 
-const unsigned      TICK_BUFFER_SIZE = 64*64;
+const unsigned      TICK_BUFFER_SIZE = 16*(64*64);
 
 #define ODA_LOG
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
 unique_ptr<Player>  player;
+double              time_accumulated = 0.0;
 bool                playing_started = false;
 #ifdef ODA_LOG
 ofstream            out;
+void printSample(ostream &out, float sample) {
+  int n = static_cast<int>(sample*40.f)+40;
+  for (int i = 0; i < n; ++i)
+    out << "#";
+  out << std::endl;
+}
 #endif
 
 }
@@ -75,6 +83,7 @@ Status Engine::start() {
   // Create audio player
   player.reset(new Player);
   playing_started = false;
+  time_accumulated = 0.0;
 #ifdef ODA_LOG
   out.open("out");
 #endif
@@ -99,16 +108,18 @@ void Engine::finish() {
 
 void Engine::tick(double dt) {
   DSPServer dsp;
+  // How many dsp ticks are needed for N seconds
   player->update();
-  while (player->availableBuffers()) {
-    // How many dsp ticks are needed for N samples
+  if (player->availableBuffers()) {
     int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
     // Transfer signal from dsp server to audio server
     vector<float> signal;
     dsp.tick(ticks, &signal);
-    vector<int16_t> audio(signal.size());
-    transform(signal.begin(), signal.end(), audio.begin(),
-              [](float sample) -> int16_t { return sample*32767.f/5.f; });
+    vector<int16_t> audio(dsp.tick_size()*ticks);
+    //transform(signal.begin(), signal.end(), audio.begin(),
+    //          [](float sample) -> int16_t { return sample*32767.f/2.f; });
+    for (int i = 0; i < signal.size(); ++i)
+      audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
     player->streamData(&audio);
     if (!playing_started) {
       player->playSource(0);
@@ -116,9 +127,8 @@ void Engine::tick(double dt) {
     }
 #ifdef ODA_LOG
     out << "Buffer update: " << ticks*dsp.tick_size() << std::endl;
-    for (unsigned i = 0; i < TICK_BUFFER_SIZE; ++i)
-      out << i << ": " << audio[i*audio.size()/TICK_BUFFER_SIZE]
-          << std::endl;
+    for (unsigned i = 0; i < audio.size(); ++i)
+      printSample(out, audio[i]/32767.f);
 #endif
   }
 }
