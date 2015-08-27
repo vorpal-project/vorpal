@@ -9,6 +9,7 @@
 #include <AL/alext.h>
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -18,17 +19,23 @@ namespace oda {
 // unnamed namespace
 namespace {
 
+using std::ofstream;
 using std::string;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
 
-const unsigned      TICK_BUFFER_SIZE = 8*4096;
+const unsigned      TICK_BUFFER_SIZE = 64*64;
+
+#define ODA_LOG
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
 unique_ptr<Player>  player;
 bool                playing_started = false;
+#ifdef ODA_LOG
+ofstream            out;
+#endif
 
 }
 
@@ -68,6 +75,9 @@ Status Engine::start() {
   // Create audio player
   player.reset(new Player);
   playing_started = false;
+#ifdef ODA_LOG
+  out.open("out");
+#endif
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
 }
@@ -87,33 +97,29 @@ void Engine::finish() {
   device = nullptr;
 }
 
-//static bool nope = false;
-
 void Engine::tick(double dt) {
   DSPServer dsp;
   player->update();
   while (player->availableBuffers()) {
-    std::cout << "Buffer update" << std::endl;
     // How many dsp ticks are needed for N samples
     int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
     // Transfer signal from dsp server to audio server
     vector<float> signal;
-    vector<int16_t> audio(TICK_BUFFER_SIZE);
-    for (int i = 0; i < ticks; ++i) {
-      dsp.tick(&signal);
-      transform(signal.begin(), signal.end(), audio.begin() + i*dsp.tick_size(),
-                [](float sample) -> int16_t { return sample*32767.f/10.f; });
-    }
+    dsp.tick(ticks, &signal);
+    vector<int16_t> audio(signal.size());
+    transform(signal.begin(), signal.end(), audio.begin(),
+              [](float sample) -> int16_t { return sample*32767.f/5.f; });
     player->streamData(&audio);
     if (!playing_started) {
       player->playSource(0);
       playing_started = true;
     }
-    //if (!nope) {
-    //  for (unsigned i = 0; i < TICK_BUFFER_SIZE; ++i)
-    //    std::cout << audio[i*audio.size()/TICK_BUFFER_SIZE] << std::endl;
-    //  nope = true;
-    //}
+#ifdef ODA_LOG
+    out << "Buffer update: " << ticks*dsp.tick_size() << std::endl;
+    for (unsigned i = 0; i < TICK_BUFFER_SIZE; ++i)
+      out << i << ": " << audio[i*audio.size()/TICK_BUFFER_SIZE]
+          << std::endl;
+#endif
   }
 }
 

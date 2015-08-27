@@ -35,6 +35,7 @@ Status DSPServer::start() {
   if (dsp.init(1, 1, sample_rate())) {
     started = true;
     dsp.computeAudio(true);
+    std::cout << "DSP tick size: " << tick_size() << std::endl;
     return Status::OK("DSP Server started succesfully");
   }
   return Status::FAILURE("DSP Server could not start");
@@ -72,12 +73,17 @@ void DSPServer::closePatch(Patch *patch) {
 
 //static bool nope = false;
 
-void DSPServer::tick(vector<float> *signal) {
+void DSPServer::tick(int ticks, vector<float> *signal) {
   vector<float> temp;
-  dsp.processFloat(1, inbuf, outbuf);
-  signal->resize(PdBase::blockSize(), 0.0f);
+  // Notify patches
+  for (Patch *patch : patches)
+    dsp.sendBang(patch->dollarZeroStr() + "-input");
+  // Process global signal
+  dsp.processFloat(ticks, inbuf, outbuf);
+  signal->resize(ticks*tick_size(), 0.0f);
+  // Collect individual audio
   for (Patch *patch : patches) {
-    dsp.readArray(patch->dollarZeroStr() + "-output", temp);
+    dsp.readArray(patch->dollarZeroStr() + "-output", temp, ticks*tick_size());
     transform(signal->begin(), signal->end(),
               temp.begin(), signal->begin(), plus<float>());
   }

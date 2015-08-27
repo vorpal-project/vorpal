@@ -21,7 +21,7 @@ class DSPServer {
   double time_per_tick() const;
   pd::Patch *loadPatch(const std::string &path);
   void closePatch(pd::Patch *patch);
-  void tick(std::vector<float> *signal);
+  void tick(int ticks, std::vector<float> *signal);
 };
 
 } // namespace oda
