@@ -79,15 +79,15 @@ void Player::setSourcePosition(int source, float X, float Y, float Z) {
 }
 
 // Fill buffers_
-void Player::fillBuffer(ALuint buffer, const ALvoid *dataSamples,
-                        ALsizei bufferSize) {
-  alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
+void Player::fillBuffer(ALuint buffer, const ALvoid *data_samples,
+                        ALsizei buffer_size) {
+  alBufferData(buffer, format_, data_samples, buffer_size, sample_rate_);
 }
 
 void Player::update() {
   int processed;
   alGetSourcei(sources_[0], AL_BUFFERS_PROCESSED, &processed);
-  while (processed--) {
+  if (processed >= NUM_BUFFERS/2) while (processed--) {
     ALuint buffer;
     alSourceUnqueueBuffers(sources_[0], 1, &buffer);
     free_buffers_.push(buffer);
