@@ -66,6 +66,8 @@ class Engine {
    * Plays a 440 Hz sine wave for 4 seconds.
    */
   void testAudio();
+
+  const static size_t TICK_BUFFER_SIZE;
 };
  
 } // namespace oda

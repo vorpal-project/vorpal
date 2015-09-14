@@ -26,9 +26,7 @@ using std::transform;
 using std::unique_ptr;
 using std::vector;
 
-const unsigned      TICK_BUFFER_SIZE = 16*(64*64);
-
-#define ODA_LOG
+//#define ODA_LOG
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
@@ -46,6 +44,8 @@ void printSample(ostream &out, float sample) {
 #endif
 
 }
+
+const size_t        Engine::TICK_BUFFER_SIZE = 16*(64*64);
 
 // MACRO MAGIC:
 // http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
@@ -119,7 +119,7 @@ void Engine::tick(double dt) {
     //transform(signal.begin(), signal.end(), audio.begin(),
     //          [](float sample) -> int16_t { return sample*32767.f/2.f; });
     for (int i = 0; i < signal.size(); ++i)
-      audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
+      audio[i] = static_cast<int16_t>(signal[i]*32767.f/10.f);
     player->streamData(&audio);
     if (!playing_started) {
       player->playSource(0);

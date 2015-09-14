@@ -27,8 +27,9 @@ class Player {
   bool availableBuffers() const;
   void fillBuffer(ALuint buffer, const ALvoid *dataSamples, ALsizei bufferSize);
   void streamData (const std::vector<int16_t> *data);
+  void streamData (const std::vector<int16_t> *data, size_t start, size_t len);
   void setSourcePosition(int source, float X, float Y, float Z);
-  void playSoundOnSource(int seconds, ALvoid *data);
+  void playSoundOnSource(const std::vector<int16_t> *samples);
   void playSoundOnSource(ALuint source, ALuint buffer, int seconds,
                          ALvoid *data);
   void playSineWave (int seconds, float frequency);
