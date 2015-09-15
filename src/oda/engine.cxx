@@ -119,7 +119,7 @@ void Engine::tick(double dt) {
     //transform(signal.begin(), signal.end(), audio.begin(),
     //          [](float sample) -> int16_t { return sample*32767.f/2.f; });
     for (int i = 0; i < signal.size(); ++i)
-      audio[i] = static_cast<int16_t>(signal[i]*32767.f/10.f);
+      audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
     player->streamData(&audio);
     if (!playing_started) {
       player->playSource(0);
