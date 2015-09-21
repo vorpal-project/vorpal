@@ -46,7 +46,7 @@ void printSample(ostream &out, float sample) {
 
 }
 
-const size_t        Engine::TICK_BUFFER_SIZE = 16*(64*64);
+const size_t        Engine::TICK_BUFFER_SIZE = 64*64;
 
 // MACRO MAGIC:
 // http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
