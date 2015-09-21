@@ -6,6 +6,9 @@ cmake_minimum_required (VERSION 2.8)
 set (PROJECT_NAME oda)
 project (${PROJECT_NAME} C CXX)
 
+# Add a CMake module path for custom modules
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+
 # Find the OpenAL package
 # This sets the variables OPENAL_INCLUDE_DIR and OPENAL_LIBRARY
 find_package (OpenAL REQUIRED)
@@ -55,19 +58,7 @@ set_target_properties (
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
-# Build libpd as a dependency of liboda
-add_custom_target (
-  libpd
-  COMMAND git submodule update --init
-  COMMAND make libpd
-  COMMAND make cpplib UTIL=true EXTRA=true
-  COMMAND cmake -E make_directory ${CMAKE_BINARY_DIR}/externals/lib
-  COMMAND make install prefix=${CMAKE_BINARY_DIR}/externals
-  COMMAND cmake -E copy libs/libpdcpp.so ${CMAKE_BINARY_DIR}/externals/lib
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/externals/libpd
-  COMMENT "Building libpd"
-)
-add_dependencies (${PROJECT_NAME} libpd)
+add_subdirectory (externals)
 
 # Define a exporting name
 set (PROJECT_EXPORT "lib${PROJECT_NAME}")
