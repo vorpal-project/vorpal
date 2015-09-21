@@ -1,37 +1,48 @@
 
 #include <oda/player.h>
+#include <oda/engine.h>
+
+#include <iostream>
 
 namespace oda {
 
 namespace {
 
+using std::vector;
+
 void waitFor(int secs) {
   std::this_thread::sleep_for (std::chrono::seconds(secs));
 }
 
-uint16_t *generateSineWave(int seconds, float frequency){
-  unsigned sample_rate = 44000;
-  size_t buf_size = seconds * sample_rate * sizeof(uint16_t);
+constexpr float make_signal(float frequency, size_t t) {
+  // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
+  // from -32768 to 32767
+  return 32760.f * sin( (2.f*M_PI*frequency)/44100 * t );
+}
 
-  uint16_t *samples;
-  samples = new uint16_t[buf_size];
-  for (int i=0; i<buf_size; i++) {
-    // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
-    // from -32768 to 32767
-    samples[i] = 32760 * sin( (2.f*float(M_PI)*frequency)/sample_rate * i );
-  }
-  return samples;
+void generateSineWave(vector<int16_t> *samples, float frequency){
+  const size_t buf_size = Engine::TICK_BUFFER_SIZE;
+  const size_t total_size = NUM_BUFFERS*buf_size;
+  samples->resize(total_size);
+
+  for (size_t k=0; k < NUM_BUFFERS; ++k)
+    for (int i=0; i<buf_size; ++i) {
+      const int t = k*buf_size + i;
+      (*samples)[t] = .5 * make_signal(frequency, t);
+    }
 }
 
 } // unnamed namespace
 
 // Constructor
 // Default options
-Player::Player() : bytes_per_sample_(sizeof(uint16_t)), sample_rate_(44000),
+Player::Player() : bytes_per_sample_(sizeof(int16_t)), sample_rate_(44100),
                    format_(AL_FORMAT_MONO16) {
   // Setting up buffers and Sources
   alGenBuffers(NUM_BUFFERS, buffers_);
   alGenSources(NUM_SOURCES, sources_);
+  for (unsigned i = 0; i < NUM_BUFFERS; ++i)
+    free_buffers_.push(buffers_[i]);
 }
 
 // Destructor
@@ -46,7 +57,7 @@ void Player::setBytesPerSample(size_t size) {
 }
 
 // Sample rate setter
-void Player::setSampleRate(unsigned int rate) {
+void Player::setSampleRate(unsigned rate) {
   sample_rate_ = rate;
 }
 
@@ -73,27 +84,60 @@ void Player::setSourcePosition(int source, float X, float Y, float Z) {
 }
 
 // Fill buffers_
-void Player::fillBuffer(ALuint buffer, ALvoid *dataSamples, ALsizei bufferSize) {
-  alBufferData(buffer, format_, dataSamples, bufferSize, sample_rate_);
+void Player::fillBuffer(ALuint buffer, const ALvoid *data_samples,
+                        ALsizei buffer_size) {
+  alBufferData(buffer, AL_FORMAT_MONO16, data_samples, buffer_size,
+               sample_rate_);
+}
+
+void Player::update() {
+  int processed;
+  alGetSourcei(sources_[0], AL_BUFFERS_PROCESSED, &processed);
+  if (processed >= NUM_BUFFERS/2) while (processed--) {
+    ALuint buffer;
+    alSourceUnqueueBuffers(sources_[0], 1, &buffer);
+    free_buffers_.push(buffer);
+  }
+}
+
+bool Player::availableBuffers() const {
+  return !free_buffers_.empty();
+}
+
+void Player::streamData(const vector<int16_t> *data) {
+  streamData(data, 0u, data->size());
+}
+
+void Player::streamData(const vector<int16_t> *data, size_t start, size_t len) {
+  ALuint buffer = free_buffers_.front();
+  free_buffers_.pop();
+  fillBuffer(buffer, data->data()+start, len*sizeof(int16_t));
+  alSourceQueueBuffers(sources_[0], 1, &buffer);
 }
 
 // Play Source
-void Player::playSource(int sourceNumber) {
-  alSourcePlay(sources_[sourceNumber]);
+void Player::playSource(int source_number) {
+  alSourcePlay(sources_[source_number]);
+}
+
+void Player::stopSource(int source_number) {
+  alSourceStop(sources_[source_number]);
 }
 
 void Player::playAllSources() {
   alSourcePlayv(NUM_SOURCES, sources_);
 }
 
-void Player::playSoundOnSource(int seconds, ALvoid *data) {
-  fillBuffer(buffers_[0], data, bytes_per_sample_ * sample_rate_ * seconds);
-  alSourcei(sources_[0], AL_BUFFER, buffers_[0]);
+void Player::playSoundOnSource(const vector<int16_t> *samples) {
+  const size_t size = Engine::TICK_BUFFER_SIZE;
+  for (int i = 0; i < NUM_BUFFERS; ++i) {
+    streamData(samples, i*size, size);
+  }
   playSource(0);
-  waitFor(seconds);
 }
 
-void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid *data) {
+void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds,
+                               ALvoid *data) {
   fillBuffer(buffer, data, bytes_per_sample_ * sample_rate_ * seconds);
   alSourcei(source, AL_BUFFER, buffer);
   playSource(source);
@@ -102,10 +146,12 @@ void Player::playSoundOnSource(ALuint source, ALuint buffer, int seconds, ALvoid
 
 // Generic Player functions
 void Player::playSineWave (int seconds, float frequency) {
-  setBytesPerSample(sizeof(uint16_t));
-  uint16_t *data = generateSineWave(seconds, frequency);
-  playSoundOnSource(seconds, data);
-  delete data;
+  std::cout << "short size: " << sizeof(short) << std::endl;
+  std::cout << "int16_t size: " << sizeof(int16_t) << std::endl;
+  vector<int16_t> data;
+  setBytesPerSample(sizeof(int16_t));
+  generateSineWave(&data, frequency);
+  playSoundOnSource(&data);
 }
 
 }
@@ -118,24 +164,24 @@ void Player::playSineWave (int seconds, float frequency) {
 //
 //  // Creating the Sine-Wave
 //  unsigned sample_rate_ = 22000;
-//  size_t buf_size = 1 * sample_rate_ * sizeof(uint16_t);
+//  size_t buf_size = 1 * sample_rate_ * sizeof(int16_t);
 //
-//  uint16_t *samples1;
-//  uint16_t *samples2;
-//  uint16_t *samples3;
-//  uint16_t *samples4;
-//  uint16_t *samples5;
-//  uint16_t *samples6;
-//  uint16_t *samples7;
-//  uint16_t *samples8;
-//  samples1  = new uint16_t[buf_size];
-//  samples2  = new uint16_t[buf_size];
-//  samples3  = new uint16_t[buf_size];
-//  samples4  = new uint16_t[buf_size];
-//  samples5  = new uint16_t[buf_size];
-//  samples6  = new uint16_t[buf_size];
-//  samples7  = new uint16_t[buf_size];
-//  samples8  = new uint16_t[buf_size];
+//  int16_t *samples1;
+//  int16_t *samples2;
+//  int16_t *samples3;
+//  int16_t *samples4;
+//  int16_t *samples5;
+//  int16_t *samples6;
+//  int16_t *samples7;
+//  int16_t *samples8;
+//  samples1  = new int16_t[buf_size];
+//  samples2  = new int16_t[buf_size];
+//  samples3  = new int16_t[buf_size];
+//  samples4  = new int16_t[buf_size];
+//  samples5  = new int16_t[buf_size];
+//  samples6  = new int16_t[buf_size];
+//  samples7  = new int16_t[buf_size];
+//  samples8  = new int16_t[buf_size];
 //  for (int i=0; i<buf_size; i++) {
 //    // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
 //    // from -32768 to 32767

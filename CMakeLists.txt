@@ -14,6 +14,7 @@ find_package (OpenAL REQUIRED)
 set (PROJECT_SRC
   ${CMAKE_SOURCE_DIR}/src/oda/oda.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/engine.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/event.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/player.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.cxx
 )
@@ -22,6 +23,7 @@ set (PROJECT_SRC
 set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/oda.h
   ${CMAKE_SOURCE_DIR}/src/oda/engine.h
+  ${CMAKE_SOURCE_DIR}/src/oda/event.h
   ${CMAKE_SOURCE_DIR}/src/oda/status.h
   ${CMAKE_SOURCE_DIR}/src/oda/player.h
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.h
@@ -48,7 +50,7 @@ target_link_libraries (
 #  - Output the lib file to <build directory>/lib
 set_target_properties (
   ${PROJECT_NAME} PROPERTIES
-  COMPILE_FLAGS "-std=c++11"
+  COMPILE_FLAGS "-std=c++11 -O0 -g"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
