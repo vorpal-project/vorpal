@@ -55,6 +55,10 @@ double DSPServer::time_per_tick() const {
   return 1.0*tick_size()/sample_rate();
 }
 
+void DSPServer::addPath(const string &path) {
+  dsp.addToSearchPath(path);
+}
+
 Patch *DSPServer::loadPatch(const string &path) {
   Patch *patch = new Patch(dsp.openPatch(path, "."));
   if (patch->isValid()) {

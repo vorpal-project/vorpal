@@ -19,6 +19,7 @@ class DSPServer {
   int sample_rate() const;
   int tick_size() const;
   double time_per_tick() const;
+  void addPath(const std::string &path);
   pd::Patch *loadPatch(const std::string &path);
   void closePatch(pd::Patch *patch);
   void tick(int ticks, std::vector<float> *signal);

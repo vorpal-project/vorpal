@@ -33,6 +33,7 @@ ALCcontext          *context = nullptr;
 unique_ptr<Player>  player;
 double              time_accumulated = 0.0;
 bool                playing_started = false;
+
 #ifdef ODA_LOG
 ofstream            out;
 void printSample(ostream &out, float sample) {
@@ -89,6 +90,10 @@ Status Engine::start() {
 #endif
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
+}
+
+void Engine::registerPath(const string &path) {
+  DSPServer().addPath(path);
 }
 
 void Engine::finish() {

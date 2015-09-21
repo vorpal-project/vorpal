@@ -83,6 +83,11 @@ install (FILES
          ${CMAKE_BINARY_DIR}/externals/lib/libpdcpp.so
          DESTINATION lib
          CONFIGURATIONS Debug Release)
+# Install ODA Panel patches
+install (FILES
+         ${CMAKE_SOURCE_DIR}/patches/oda_panel.pd
+         DESTINATION patches
+         CONFIGURATIONS Debug Release)
 # Export cmake target
 install (EXPORT ${PROJECT_EXPORT}
          DESTINATION cmake)

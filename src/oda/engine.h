@@ -42,6 +42,12 @@ class Engine {
    */
   Status start();
 
+  /// Addes a path to look for event files
+  /**
+   *  @param string A path
+   */
+  void registerPath(const std::string &path);
+
   /// Finishes the main ODA engine
   /**
    * @see oda::Engine::start()

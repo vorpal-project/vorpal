@@ -1,0 +1,10 @@
+#N canvas 251 582 319 371 10;
+#N canvas 0 50 450 250 (subpatch) 0;
+#X array \$1-output 100 float 0;
+#X coords 0 1 99 -1 200 140 1;
+#X restore 18 155 graph;
+#X obj 6 96 tabwrite~ \$1-output;
+#X obj 5 3 inlet~;
+#X obj 34 49 receive \$1-input;
+#X connect 2 0 1 0;
+#X connect 3 0 1 0;
