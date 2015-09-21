@@ -28,6 +28,7 @@ bool                  started = false;
 PdBase                dsp;
 unordered_set<Patch*> patches;
 float                 inbuf[6400], outbuf[6400];
+vector<string>        search_paths;
 
 } // unnamed namespace
 
@@ -36,6 +37,7 @@ Status DSPServer::start() {
     return Status::FAILURE("DSP Server already started");
   if (dsp.init(1, 1, sample_rate())) {
     started = true;
+    search_paths.clear();
     dsp.computeAudio(true);
     std::cout << "DSP tick size: " << tick_size() << std::endl;
     return Status::OK("DSP Server started succesfully");
@@ -57,15 +59,19 @@ double DSPServer::time_per_tick() const {
 
 void DSPServer::addPath(const string &path) {
   dsp.addToSearchPath(path);
+  search_paths.push_back(path);
 }
 
 Patch *DSPServer::loadPatch(const string &path) {
-  Patch *patch = new Patch(dsp.openPatch(path, "."));
-  if (patch->isValid()) {
-    patches.insert(patch);
-    return patch;
+  string filename = path + ".pd";
+  for (string search_path : search_paths) {
+    Patch check = dsp.openPatch(filename, search_path);
+    if (check.isValid()) {
+      Patch *patch = new Patch(check);
+      patches.insert(patch);
+      return patch;
+    }
   }
-  delete patch;
   return nullptr;
 }
 

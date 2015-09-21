@@ -140,7 +140,7 @@ void Engine::tick(double dt) {
 
 Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
   DSPServer dsp;
-  auto *patch = dsp.loadPatch(path_to_event + ".pd");
+  auto *patch = dsp.loadPatch(path_to_event);
   if (patch) {
     *event_out = Event(patch);
     return Status::OK("Event instance successfully created");
