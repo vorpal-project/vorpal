@@ -9,6 +9,9 @@ project (${PROJECT_NAME} C CXX)
 # Add a CMake module path for custom modules
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
+set (CMAKE_C_FLAGS_DEBUG "-O0 -g")
+set (CMAKE_C_FLAGS_RELEASE "-O3")
+
 # Find the OpenAL package
 # This sets the variables OPENAL_INCLUDE_DIR and OPENAL_LIBRARY
 find_package (OpenAL REQUIRED)
@@ -53,7 +56,7 @@ target_link_libraries (
 #  - Output the lib file to <build directory>/lib
 set_target_properties (
   ${PROJECT_NAME} PROPERTIES
-  COMPILE_FLAGS "-std=c++11 -O0 -g"
+  COMPILE_FLAGS "-std=c++11"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
