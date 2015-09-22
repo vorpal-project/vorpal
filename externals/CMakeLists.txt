@@ -43,3 +43,10 @@ set_target_properties (
   INCLUDE_DIRECTORIES "${PD_INCLUDE_DIR};${PD_INCLUDE_DIR}/pd"
 )
 
+# Install ODA Panel patches
+install (FILES
+         ${CMAKE_BINARY_DIR}/patches/oggread~.pd_linux
+         ${CMAKE_SOURCE_DIR}/externals/pdogg/oggread~-help.pd
+         DESTINATION patches
+         CONFIGURATIONS Debug Release)
+
