@@ -1,5 +1,6 @@
 
 #include <oda/dspserver.h>
+#include <oda/event.h>
 
 #include <libpd/PdBase.hpp>
 #include <libpd/PdReceiver.hpp>
@@ -78,17 +79,17 @@ void DSPServer::addPath(const string &path) {
   search_paths.push_back(path);
 }
 
-Patch *DSPServer::loadPatch(const string &path) {
+Event DSPServer::loadEvent(const string &path) {
   string filename = path + ".pd";
   for (string search_path : search_paths) {
     Patch check = dsp.openPatch(filename, search_path);
     if (check.isValid()) {
       Patch *patch = new Patch(check);
       patches.insert(patch);
-      return patch;
+      return Event(patch);
     }
   }
-  return nullptr;
+  return Event();
 }
 
 void DSPServer::closePatch(Patch *patch) {

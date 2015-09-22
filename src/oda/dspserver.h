@@ -6,12 +6,15 @@
 #include <string>
 #include <vector>
 
-// Forward declarations
+// Forward declaration
 namespace pd {
 class Patch;
 }
 
 namespace oda {
+
+// Forwatd declaration
+class Event;
 
 class DSPServer {
  public:
@@ -20,7 +23,7 @@ class DSPServer {
   int tick_size() const;
   double time_per_tick() const;
   void addPath(const std::string &path);
-  pd::Patch *loadPatch(const std::string &path);
+  Event loadEvent(const std::string &path);
   void closePatch(pd::Patch *patch);
   void tick(int ticks, std::vector<float> *signal);
 };

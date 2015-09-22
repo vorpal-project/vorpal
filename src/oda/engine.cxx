@@ -121,8 +121,6 @@ void Engine::tick(double dt) {
     vector<float> signal;
     dsp.tick(ticks, &signal);
     vector<int16_t> audio(dsp.tick_size()*ticks);
-    //transform(signal.begin(), signal.end(), audio.begin(),
-    //          [](float sample) -> int16_t { return sample*32767.f/2.f; });
     for (int i = 0; i < signal.size(); ++i)
       audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
     player->streamData(&audio);
@@ -139,13 +137,8 @@ void Engine::tick(double dt) {
 }
 
 Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
-  DSPServer dsp;
-  auto *patch = dsp.loadPatch(path_to_event);
-  if (patch) {
-    *event_out = Event(patch);
-    return Status::OK("Event instance successfully created");
-  }
-  return Status::FAILURE("Event instance could not be created");
+  *event_out = DSPServer().loadEvent(path_to_event);
+  return event_out->status();
 }
 
 void Engine::testAudio() {
