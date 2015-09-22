@@ -28,7 +28,7 @@ class EventNullImpl : public EventImpl {
  public:
   EventNullImpl() {}
   ~EventNullImpl() {}
-  Status status() const override { return Status::OK("Null event"); }
+  Status status() const override { return Status::INVALID("Null event"); }
   void play() override {}
   void stop() override {}
   bool active() override { return false; }
