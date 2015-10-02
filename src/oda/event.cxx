@@ -98,10 +98,14 @@ void Event::pushCommand(const string &name, double value) {
   impl_->pushCommand(name, value);
 }
 
-bool Event::popCommand(Command *command_ptr) {
+bool Event::popCommand(pd::Patch **patch, std::string *which, double *value) {
   if (commands__.empty())
     return false;
-  *command_ptr = commands__.front();
+  Command command = commands__.front();
+  *patch = std::get<0>(command);
+  *which = std::get<1>(command);
+  *value = std::get<2>(command);
+  commands__.pop_front();
   return true;
 }
 

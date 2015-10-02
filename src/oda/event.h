@@ -27,7 +27,7 @@ class Event {
   void pushCommand(const std::string &name, double value = 0.0);
  private:
   Event(pd::Patch *patch);
-  static bool popCommand(Command *command_ptr);
+  static bool popCommand(pd::Patch **patch, std::string *which, double *value);
   std::shared_ptr<EventImpl> impl_;
   friend class DSPServer;
 };

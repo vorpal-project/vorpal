@@ -115,6 +115,16 @@ void DSPServer::tick(int ticks, vector<float> *signal) {
         for (int k = 0; k < tick_size(); ++k)
           (*signal)[k + i*tick_size()] += temp[k];
   }
+  {
+    Patch   *patch;
+    string  which;
+    double  value;
+    while (Event::popCommand(&patch, &which, &value)) {
+      dsp.startMessage();
+      dsp.addFloat(value);
+      dsp.finishMessage(patch->dollarZeroStr() + "-command", which);
+    }
+  }
 }
 
 } // namespace oda
