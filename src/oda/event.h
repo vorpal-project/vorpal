@@ -5,6 +5,7 @@
 #include <oda/status.h>
 
 #include <memory>
+#include <tuple>
 
 // Forward declarations
 namespace pd {
@@ -17,16 +18,17 @@ class EventImpl;
 
 class Event {
  public:
+  using Command = std::tuple<pd::Patch*, std::string, double>;
   Event();
   Status status() const;
   void play();
   void stop();
-  bool active();
-  void trigger(const std::string &name);
-  void setParameter(const std::string &name, double value);
+  bool active() const;
+  void pushCommand(const std::string &name, double value = 0.0);
  private:
   Event(pd::Patch *patch);
-  std::shared_ptr<EventImpl>  impl_;
+  static bool popCommand(Command *command_ptr);
+  std::shared_ptr<EventImpl> impl_;
   friend class DSPServer;
 };
 

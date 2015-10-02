@@ -5,11 +5,19 @@
 #include <libpd/PdTypes.hpp>
 
 #include <string>
+#include <deque>
 
 namespace oda {
 
 using std::string;
+using std::deque;
 using pd::Patch;
+
+namespace {
+
+deque<Event::Command> commands__;
+
+} // unnamed namespace
 
 class EventImpl {
  public:
@@ -17,9 +25,8 @@ class EventImpl {
   virtual Status status() const = 0;
   virtual void play() = 0;
   virtual void stop() = 0;
-  virtual bool active() = 0;
-  virtual void trigger(const string &name) = 0;
-  virtual void setParameter(const string &name, double value) = 0;
+  virtual bool active() const = 0;
+  virtual void pushCommand(const string &name, double value) = 0;
  protected:
   EventImpl() {}
 };
@@ -31,9 +38,8 @@ class EventNullImpl : public EventImpl {
   Status status() const override { return Status::INVALID("Null event"); }
   void play() override {}
   void stop() override {}
-  bool active() override { return false; }
-  void trigger(const string &name) override {}
-  void setParameter(const string &name, double value) override {}
+  bool active() const override { return false; }
+  void pushCommand(const string &name, double value) override {}
 };
 
 class EventRealImpl : public EventImpl {
@@ -41,17 +47,15 @@ class EventRealImpl : public EventImpl {
   EventRealImpl(Patch *patch) : patch_(patch) {}
   ~EventRealImpl() {
     DSPServer().closePatch(patch_);
-    patch_ = nullptr;
   }
   Status status() const override { return Status::OK("Valid event"); }
   void play() override;
   void stop() override;
-  bool active() override;
-  void trigger(const string &name) override;
-  void setParameter(const string &name, double value) override;
+  bool active() const override;
+  void pushCommand(const string &name, double value) override;
  private:
-  Patch *patch_;
-  bool  active_;
+  Patch                   *patch_;
+  bool                    active_;
 };
 
 void EventRealImpl::play() {
@@ -62,16 +66,12 @@ void EventRealImpl::stop() {
   active_ = false;
 }
 
-bool EventRealImpl::active() {
+bool EventRealImpl::active() const {
   return active_;
 }
 
-void EventRealImpl::trigger(const string &name) {
-  // TODO
-}
-
-void EventRealImpl::setParameter(const string &name, double value) {
-  // TODO
+void EventRealImpl::pushCommand(const string &name, double value) {
+  commands__.emplace_back(patch_, name, value);
 }
 
 Event::Event() : impl_(new EventNullImpl) {}
@@ -90,12 +90,19 @@ void Event::stop() {
   impl_->stop();
 }
 
-bool Event::active() {
+bool Event::active() const {
   return impl_->active();
 }
 
-void Event::setParameter(const string &name, double value) {
-  impl_->setParameter(name, value);
+void Event::pushCommand(const string &name, double value) {
+  impl_->pushCommand(name, value);
+}
+
+bool Event::popCommand(Command *command_ptr) {
+  if (commands__.empty())
+    return false;
+  *command_ptr = commands__.front();
+  return true;
 }
 
 } // namespace oda
