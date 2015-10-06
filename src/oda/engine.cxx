@@ -99,6 +99,8 @@ void Engine::registerPath(const string &path) {
 void Engine::finish() {
   // Do not finish if it was not started yet
   if (!context) return;
+  // Clean up DSP server
+  DSPServer().cleanUp();
   // Destroy audio player
   player->stopSource(0);
   player.reset();
@@ -115,11 +117,13 @@ void Engine::tick(double dt) {
   DSPServer dsp;
   // How many dsp ticks are needed for N seconds
   player->update();
+  dsp.cleanUp();
+  dsp.handleCommands();
   if (player->availableBuffers()) {
     int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
     // Transfer signal from dsp server to audio server
     vector<float> signal;
-    dsp.tick(ticks, &signal);
+    dsp.process(ticks, &signal);
     vector<int16_t> audio(dsp.tick_size()*ticks);
     for (int i = 0; i < signal.size(); ++i)
       audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);

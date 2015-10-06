@@ -10,7 +10,6 @@
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <unordered_set>
 
 namespace oda {
 
@@ -18,7 +17,6 @@ using std::plus;
 using std::string;
 using std::transform;
 using std::unique_ptr;
-using std::unordered_set;
 using std::vector;
 using pd::PdBase;
 using pd::PdReceiver;
@@ -37,7 +35,6 @@ const int             TICK_RATIO = 64;
 bool                  started = false;
 PdBase                dsp;
 unique_ptr<Receiver>  receiver;
-unordered_set<Patch*> patches;
 float                 inbuf[6400], outbuf[6400];
 vector<string>        search_paths;
 
@@ -85,35 +82,48 @@ Event DSPServer::loadEvent(const string &path) {
     Patch check = dsp.openPatch(filename, search_path);
     if (check.isValid()) {
       Patch *patch = new Patch(check);
-      patches.insert(patch);
       return Event(patch);
     }
   }
   return Event();
 }
 
-void DSPServer::closePatch(Patch *patch) {
-  if (patch->isValid()) {
-    patches.erase(patch);
-    dsp.closePatch(*patch);
+void DSPServer::handleCommands() {
+  Patch   *patch;
+  string  which;
+  double  value;
+  while (Event::popCommand(&patch, &which, &value)) {
+    dsp.startMessage();
+    dsp.addFloat(value);
+    dsp.finishMessage(patch->dollarZeroStr() + "-command", which);
   }
-  delete patch;
 }
 
-void DSPServer::tick(int ticks, vector<float> *signal) {
+void DSPServer::process(int ticks, vector<float> *signal) {
+  // Process signal
   vector<float> temp;
   signal->resize(ticks*tick_size(), 0.0f);
   for (int i = 0; i < ticks; ++i) {
     // Notify patches
-    for (Patch *patch : patches)
+    for (Patch *patch : Event::patches())
       dsp.sendBang(patch->dollarZeroStr() + "-input");
     // Process global signal
     dsp.processFloat(TICK_RATIO, inbuf, outbuf);
     // Collect individual audio
-    for (Patch *patch : patches)
+    for (Patch *patch : Event::patches())
       if (dsp.readArray(patch->dollarZeroStr() + "-output", temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)
           (*signal)[k + i*tick_size()] += temp[k];
+  }
+}
+
+void DSPServer::cleanUp() {
+  Patch *patch;
+  while (patch = Event::to_be_closed()) {
+    if (patch->isValid()) {
+      dsp.closePatch(*patch);
+    }
+    delete patch;
   }
 }
 
