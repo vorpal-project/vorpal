@@ -101,6 +101,16 @@ void DSPServer::closePatch(Patch *patch) {
 }
 
 void DSPServer::tick(int ticks, vector<float> *signal) {
+  {
+    Patch   *patch;
+    string  which;
+    double  value;
+    while (Event::popCommand(&patch, &which, &value)) {
+      dsp.startMessage();
+      dsp.addFloat(value);
+      dsp.finishMessage(patch->dollarZeroStr() + "-command", which);
+    }
+  }
   vector<float> temp;
   signal->resize(ticks*tick_size(), 0.0f);
   for (int i = 0; i < ticks; ++i) {
@@ -114,16 +124,6 @@ void DSPServer::tick(int ticks, vector<float> *signal) {
       if (dsp.readArray(patch->dollarZeroStr() + "-output", temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)
           (*signal)[k + i*tick_size()] += temp[k];
-  }
-  {
-    Patch   *patch;
-    string  which;
-    double  value;
-    while (Event::popCommand(&patch, &which, &value)) {
-      dsp.startMessage();
-      dsp.addFloat(value);
-      dsp.finishMessage(patch->dollarZeroStr() + "-command", which);
-    }
   }
 }
 
