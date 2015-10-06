@@ -9,13 +9,17 @@
 
 namespace oda {
 
-using std::string;
 using std::deque;
+using std::string;
+using std::unordered_set;
+using std::vector;
 using pd::Patch;
 
 namespace {
 
 deque<Event::Command> commands__;
+unordered_set<Patch*> patches__;
+vector<Patch*>        to_be_closed__;
 
 } // unnamed namespace
 
@@ -44,10 +48,8 @@ class EventNullImpl : public EventImpl {
 
 class EventRealImpl : public EventImpl {
  public:
-  EventRealImpl(Patch *patch) : patch_(patch) {}
-  ~EventRealImpl() {
-    DSPServer().closePatch(patch_);
-  }
+  EventRealImpl(Patch *patch);
+  ~EventRealImpl();
   Status status() const override { return Status::OK("Valid event"); }
   void play() override;
   void stop() override;
@@ -57,6 +59,15 @@ class EventRealImpl : public EventImpl {
   Patch                   *patch_;
   bool                    active_;
 };
+
+EventRealImpl::EventRealImpl(Patch *patch) : patch_(patch) {
+  patches__.insert(patch);
+}
+
+EventRealImpl::~EventRealImpl() {
+  to_be_closed__.push_back(patch_);
+  patches__.erase(patch_);
+}
 
 void EventRealImpl::play() {
   active_ = true;
@@ -107,6 +118,14 @@ bool Event::popCommand(pd::Patch **patch, std::string *which, double *value) {
   *value = std::get<2>(command);
   commands__.pop_front();
   return true;
+}
+
+const unordered_set<Patch*>& Event::patches() {
+  return patches__;
+}
+
+const vector<Patch*>& Event::to_be_closed() {
+  return to_be_closed__;
 }
 
 } // namespace oda

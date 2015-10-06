@@ -6,6 +6,8 @@
 
 #include <memory>
 #include <tuple>
+#include <vector>
+#include <unordered_set>
 
 // Forward declarations
 namespace pd {
@@ -28,6 +30,8 @@ class Event {
  private:
   Event(pd::Patch *patch);
   static bool popCommand(pd::Patch **patch, std::string *which, double *value);
+  static const std::unordered_set<pd::Patch*>& patches();
+  static const std::vector<pd::Patch*>& to_be_closed();
   std::shared_ptr<EventImpl> impl_;
   friend class DSPServer;
 };
