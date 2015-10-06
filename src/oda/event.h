@@ -31,7 +31,7 @@ class Event {
   Event(pd::Patch *patch);
   static bool popCommand(pd::Patch **patch, std::string *which, double *value);
   static const std::unordered_set<pd::Patch*>& patches();
-  static const std::vector<pd::Patch*>& to_be_closed();
+  static pd::Patch* to_be_closed();
   std::shared_ptr<EventImpl> impl_;
   friend class DSPServer;
 };

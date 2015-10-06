@@ -118,7 +118,8 @@ void DSPServer::process(int ticks, vector<float> *signal) {
 }
 
 void DSPServer::cleanUp() {
-  for (Patch *patch : Event::to_be_closed()) {
+  Patch *patch;
+  while (patch = Event::to_be_closed()) {
     if (patch->isValid()) {
       dsp.closePatch(*patch);
     }

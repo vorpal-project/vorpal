@@ -19,7 +19,7 @@ namespace {
 
 deque<Event::Command> commands__;
 unordered_set<Patch*> patches__;
-vector<Patch*>        to_be_closed__;
+deque<Patch*>         to_be_closed__;
 
 } // unnamed namespace
 
@@ -124,8 +124,12 @@ const unordered_set<Patch*>& Event::patches() {
   return patches__;
 }
 
-const vector<Patch*>& Event::to_be_closed() {
-  return to_be_closed__;
+Patch* Event::to_be_closed() {
+  if (to_be_closed__.empty())
+    return nullptr;
+  Patch *patch = to_be_closed__.front();
+  to_be_closed__.pop_front();
+  return patch;
 }
 
 } // namespace oda
