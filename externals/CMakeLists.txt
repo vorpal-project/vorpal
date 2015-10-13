@@ -14,7 +14,7 @@
 
 ###############################################################################
 
-set (CMAKE_C_FLAGS "-DPD -DHAVE_UNISTD_H -DUSEAPI_DUMMY -ldl -Wl,-Bsymbolic -lm -lpthread")
+set (CMAKE_C_FLAGS "-DPD -DHAVE_UNISTD_H -DHAVE_LIBDL -DUSEAPI_DUMMY -ldl -Wl,-Bsymbolic -lm -lpthread")
 
 include_directories (
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/libpd_wrapper 
@@ -126,12 +126,23 @@ SET (LIBPD_CPP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/cpp/PdTypes.cpp
 )
 
-add_library(libpd ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES})
-add_library(libpdcpp ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES} ${LIBPD_CPP_FILES})
+#add_library(pd    ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES})
+add_library(pdcpp SHARED ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
+                         ${LIBPD_CPP_FILES})
+
+set_target_properties (
+  pdcpp PROPERTIES
+  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals/lib
+  COMPILE_FLAGS -fPIC
+)
 
 ###############################################################################
 
-add_dependencies (${PROJECT_NAME} libpd)
+install (TARGETS pdcpp
+         EXPORT ${PROJECT_EXPORT}
+         DESTINATION lib
+         CONFIGURATIONS Debug Release
+         INCLUDES DESTINATION include)
 
 ### PD helper patches! #########################################################
 
@@ -146,18 +157,12 @@ find_package (Vorbis)
 # Define patch build target for oggread~
 add_library (oggread~ SHARED pdogg/oggread~.c)
 
-set_target_properties (
-  libpd PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals/lib
-)
-
 # Link with libvorbis and libogg
 target_link_libraries (
   oggread~ 
   ${VORBIS_LIBRARIES}
-  ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
+  pdcpp
 )
-
 
 # Set a few properties
 #   - Warning flags
@@ -165,7 +170,7 @@ target_link_libraries (
 #   - Include directories
 set_target_properties (
   oggread~ PROPERTIES
-  COMPILE_FLAGS "-Wall -W -g"
+  COMPILE_FLAGS "-Wall -W -g -O0 -fPIC"
   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/patches
   PREFIX ""
   SUFFIX ".pd_linux"
@@ -173,6 +178,9 @@ set_target_properties (
 )
 
 # Install ODA Panel patches
+install (TARGETS oggread~
+         DESTINATION patches
+         CONFIGURATIONS Debug Release)
 install (FILES
          ${CMAKE_BINARY_DIR}/patches/oggread~.pd_linux
          ${CMAKE_SOURCE_DIR}/externals/pdogg/oggread~-help.pd
