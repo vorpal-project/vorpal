@@ -40,6 +40,13 @@ include_directories (${OPENAL_INCLUDE_DIR})
 include_directories (${CMAKE_SOURCE_DIR}/src)
 include_directories (${CMAKE_BINARY_DIR}/externals/include)
 
+link_directories (${CMAKE_BINARY_DIR}/externals/lib)
+
+# Define a exporting name
+set (PROJECT_EXPORT "lib${PROJECT_NAME}")
+
+add_subdirectory (externals)
+
 # Define our build target as a shared lib
 add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
 
@@ -47,8 +54,7 @@ add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
 target_link_libraries (
   ${PROJECT_NAME} LINK_PUBLIC
   ${OPENAL_LIBRARY}
-  ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
-  ${CMAKE_BINARY_DIR}/externals/lib/libpdcpp.so
+  pdcpp
 )
 
 # Set a few properties:
@@ -61,10 +67,6 @@ set_target_properties (
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
-add_subdirectory (externals)
-
-# Define a exporting name
-set (PROJECT_EXPORT "lib${PROJECT_NAME}")
 # Is there a better way to do this?
 # Install the library target, with export option
 install (TARGETS ${PROJECT_NAME}
@@ -79,12 +81,6 @@ install (FILES ${PROJECT_HEADERS}
 # Install libpd's headers
 install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
          DESTINATION include
-         CONFIGURATIONS Debug Release)
-# Install libpd
-install (FILES
-         ${CMAKE_BINARY_DIR}/externals/lib/libpd.so
-         ${CMAKE_BINARY_DIR}/externals/lib/libpdcpp.so
-         DESTINATION lib
          CONFIGURATIONS Debug Release)
 # Install ODA Panel patches
 install (FILES
