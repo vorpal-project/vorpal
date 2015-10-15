@@ -9,7 +9,7 @@ include_directories (${LUA_INCLUDE_DIR})
 
 add_library(oda_lua SHARED oda_lua.cxx)
 
-target_link_libraries(oda_lua ${LUA_LIBRARIES})
+target_link_libraries(oda_lua ${PROJECT_NAME} ${LUA_LIBRARIES})
 
 # Set a few properties
 #   - Linking flag
@@ -17,7 +17,7 @@ target_link_libraries(oda_lua ${LUA_LIBRARIES})
 #   - Set output directory
 set_target_properties (
   oda_lua PROPERTIES
-  COMPILE_FLAGS "-fPIC -shared"
+  COMPILE_FLAGS "-fPIC -std=c++11"
   PREFIX ""
   OUTPUT_NAME "oda"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
