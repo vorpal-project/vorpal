@@ -41,10 +41,16 @@ int registerPath(lua_State *L) {
   return luaL_error(L, "%s\n", "Bad argument, expected (string)");
 }
 
+int tick(lua_State *L) {
+  Engine().tick(0.1);
+  return 0;
+}
+
 luaL_Reg module[] = {
   { "start", &start },
   { "finish", &finish },
   { "registerPath", &registerPath },
+  { "tick", &tick },
   { nullptr, nullptr }
 };
 
