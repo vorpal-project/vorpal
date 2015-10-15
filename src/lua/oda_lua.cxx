@@ -9,14 +9,20 @@ extern "C" {
 }
 
 #include <iostream>
+#include <string>
+#include <unordered_set>
 
 namespace {
+using std::cout;
 using std::string;
+using std::unordered_set;
 } // unnamed namespace
 
 namespace oda {
 namespace wrap {
 namespace {
+
+unordered_set<Event*> events;
 
 int start(lua_State *L) {
   Status status = Engine().start();
@@ -26,6 +32,9 @@ int start(lua_State *L) {
 };
 
 int finish(lua_State *L) {
+  for (Event *event : events)
+    delete event;
+  events.clear();
   Engine().finish();
   return 0;
 }
@@ -61,8 +70,6 @@ constexpr size_t size() {
 } // namespace oda
 
 extern "C" int luaopen_oda (lua_State *L) {
-  std::cout << "Module has " << oda::wrap::size()
-            << " functions" << std::endl;
   lua_createtable(L, 0, oda::wrap::size());
   luaL_register(L, nullptr, oda::wrap::module);
   return 1;
