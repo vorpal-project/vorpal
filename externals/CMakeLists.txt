@@ -14,8 +14,6 @@
 
 ###############################################################################
 
-set (CMAKE_C_FLAGS "-DPD -DHAVE_UNISTD_H -DHAVE_LIBDL -DUSEAPI_DUMMY -ldl -Wl,-Bsymbolic -lm -lpthread")
-
 include_directories (
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/libpd_wrapper 
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/pure-data/src
@@ -126,14 +124,20 @@ SET (LIBPD_CPP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/cpp/PdTypes.cpp
 )
 
+set (LIBPD_CFLAGS
+     "-fPIC -DPD -DHAVE_UNISTD_H -DHAVE_LIBDL -DUSEAPI_DUMMY -Wl,-Bsymbolic")
+
 #add_library(pd    ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES})
-add_library(pdcpp SHARED ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
+add_library(pdcpp STATIC ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
                          ${LIBPD_CPP_FILES})
+
+target_link_libraries (pdcpp dl m pthread)
 
 set_target_properties (
   pdcpp PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals/lib
-  COMPILE_FLAGS -fPIC
+  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals/lib
+  COMPILE_FLAGS ${LIBPD_CFLAGS}
 )
 
 ###############################################################################
