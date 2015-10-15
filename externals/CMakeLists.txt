@@ -155,11 +155,11 @@ set (PD_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/externals/include)
 find_package (Vorbis)
 
 # Define patch build target for oggread~
-add_library (oggread~ SHARED pdogg/oggread~.c)
+add_library (oggread SHARED pdogg/oggread~.c)
 
 # Link with libvorbis and libogg
 target_link_libraries (
-  oggread~ 
+  oggread 
   ${VORBIS_LIBRARIES}
   pdcpp
 )
@@ -169,16 +169,16 @@ target_link_libraries (
 #   - Output directory, prefix and suffix
 #   - Include directories
 set_target_properties (
-  oggread~ PROPERTIES
+  oggread PROPERTIES
   COMPILE_FLAGS "-Wall -W -g -O0 -fPIC"
   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/patches
   PREFIX ""
-  SUFFIX ".pd_linux"
+  SUFFIX "~.pd_linux"
   INCLUDE_DIRECTORIES "${PD_INCLUDE_DIR};${PD_INCLUDE_DIR}/pd"
 )
 
 # Install ODA Panel patches
-install (TARGETS oggread~
+install (TARGETS oggread
          DESTINATION patches
          CONFIGURATIONS Debug Release)
 install (FILES
