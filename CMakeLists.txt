@@ -91,3 +91,5 @@ install (FILES
 install (EXPORT ${PROJECT_EXPORT}
          DESTINATION cmake)
 
+add_subdirectory (src/lua)
+
