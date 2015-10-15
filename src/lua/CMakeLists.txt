@@ -1,9 +1,7 @@
 
 # Find the Lua package
 # This sets the variables LUA_INCLUDE_DIR and LUA_LIBRARIES
-find_package (Lua REQUIRED)
-
-message (STATUS "Found Lua ${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR}")
+find_package (Lua51 REQUIRED)
 
 include_directories (${LUA_INCLUDE_DIR})
 

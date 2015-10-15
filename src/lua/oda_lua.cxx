@@ -20,11 +20,9 @@ namespace {
 
 int start(lua_State *L) {
   Status status = Engine().start();
-  if (status.ok()) {
-    lua_pushboolean(L, true);
-    return 1;
-  }
-  return luaL_error(L, "%s\n", status.description().c_str());
+  if (!status.ok())
+    return luaL_error(L, "%s\n", status.description().c_str());
+  return 0;
 };
 
 int finish(lua_State *L) {
@@ -66,7 +64,7 @@ extern "C" int luaopen_oda (lua_State *L) {
   std::cout << "Module has " << oda::wrap::size()
             << " functions" << std::endl;
   lua_createtable(L, 0, oda::wrap::size());
-  luaL_setfuncs(L, oda::wrap::module, 0);
+  luaL_register(L, nullptr, oda::wrap::module);
   return 1;
 }
 
