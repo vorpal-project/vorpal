@@ -5,7 +5,6 @@
 #include <oda/engine.h>
 #include <oda/event.h>
 #include <oda/status.h>
-#include <oda/player.h>
 
 namespace oda {
 
