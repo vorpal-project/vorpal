@@ -49,7 +49,7 @@ int registerPath(lua_State *L) {
     Engine().registerPath(lua_tostring(L, 1));
     return 0;
   }
-  return luaL_error(L, "%s\n", "Bad argument, expected (string)");
+  return luaL_argerror(L, 1, "string expected");
 }
 
 int tick(lua_State *L) {
@@ -74,7 +74,7 @@ int eventInstance(lua_State *L) {
       return luaL_error(L, "%s\n", status.description().c_str());
     }
   }
-  return luaL_error(L, "%s\n", "Bad argument, expected (string)");
+  return luaL_argerror(L, 1, "string expected");
 }
 
 luaL_Reg module[] = {
@@ -102,11 +102,31 @@ int event_gc(lua_State *L) {
       delete event;
     }
   }
-  return luaL_error(L, "%s\n", "Bad argument, expected (userdata:Event)");
+  return luaL_argerror(L, 1, "userdata:Event expected");
+}
+
+int event_pushCommand(lua_State *L) {
+  lua_settop(L, 3);
+  if (lua_isuserdata(L, 1)) {
+    Event *event = *static_cast<Event**>(lua_touserdata(L, 1));
+    if (lua_isstring(L, 2)) {
+      string which = lua_tostring(L,2);
+      if (lua_isnumber(L, 3)) {
+        double value = static_cast<double>(lua_tonumber(L, 3));
+        event->pushCommand(which, value);
+      } else if (lua_isnil(L, 3)) {
+        event->pushCommand(which);
+      }
+      return luaL_argerror(L, 3, "number expected");
+    }
+    return luaL_argerror(L, 2, "string expected");
+  }
+  return luaL_argerror(L, 1, "userdata:Event expected");
 }
 
 luaL_Reg event_meta[] = {
   { "__gc", &event_gc },
+  { "pushCommand", &event_pushCommand },
   { nullptr, nullptr }
 };
 
@@ -121,6 +141,8 @@ constexpr size_t meta_size() {
 extern "C" int luaopen_oda (lua_State *L) {
   luaL_newmetatable(L, "event");
   luaL_register(L, nullptr, oda::wrap::event_meta);
+  lua_pushvalue(L, -1);
+  lua_setfield(L, -2, "__index");
   lua_createtable(L, 0, oda::wrap::size());
   luaL_register(L, nullptr, oda::wrap::module);
   return 1;
