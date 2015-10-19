@@ -116,8 +116,8 @@ int event_pushCommand(lua_State *L) {
         event->pushCommand(which, value);
       } else if (lua_isnil(L, 3)) {
         event->pushCommand(which);
-      }
-      return luaL_argerror(L, 3, "number expected");
+      } else return luaL_argerror(L, 3, "number expected");
+      return 0;
     }
     return luaL_argerror(L, 2, "string expected");
   }
