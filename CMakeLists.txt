@@ -48,7 +48,7 @@ set (PROJECT_EXPORT "lib${PROJECT_NAME}")
 add_subdirectory (externals)
 
 # Define our build target as a shared lib
-add_library (${PROJECT_NAME} SHARED ${PROJECT_SRC} ${PROJECT_HEADERS})
+add_library (${PROJECT_NAME} STATIC ${PROJECT_SRC} ${PROJECT_HEADERS})
 
 # Link with OpenAL + libpd
 target_link_libraries (
@@ -62,7 +62,7 @@ target_link_libraries (
 #  - Output the lib file to <build directory>/lib
 set_target_properties (
   ${PROJECT_NAME} PROPERTIES
-  COMPILE_FLAGS "-std=c++11"
+  COMPILE_FLAGS "-std=c++11 -fPIC"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
@@ -90,4 +90,6 @@ install (FILES
 # Export cmake target
 install (EXPORT ${PROJECT_EXPORT}
          DESTINATION cmake)
+
+add_subdirectory (src/lua)
 

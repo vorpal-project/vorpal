@@ -55,7 +55,7 @@ Engine::Engine() {}
 
 Status Engine::start() {
   // Do not start if the context was already created
-  if (context && device)
+  if (started())
     return Status::INVALID("Already started");
   // Open device
   device = alcOpenDevice(nullptr);
@@ -90,6 +90,10 @@ Status Engine::start() {
 #endif
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
+}
+
+bool Engine::started() const {
+  return context && device;
 }
 
 void Engine::registerPath(const string &path) {

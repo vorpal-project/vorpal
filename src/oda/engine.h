@@ -42,6 +42,13 @@ class Engine {
    */
   Status start();
 
+  /// Tells whether the engine has already started
+  /**
+   * @return True if the engine has already started, false otherwise
+   * @see oda::start()
+   */
+  bool started() const;
+
   /// Addes a path to look for event files
   /**
    *  @param string A path
