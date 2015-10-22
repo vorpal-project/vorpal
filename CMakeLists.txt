@@ -52,7 +52,7 @@ add_library (${PROJECT_NAME} STATIC ${PROJECT_SRC} ${PROJECT_HEADERS})
 
 # Link with OpenAL + libpd
 target_link_libraries (
-  ${PROJECT_NAME} LINK_PUBLIC
+  ${PROJECT_NAME} PUBLIC
   ${OPENAL_LIBRARY}
   pdcpp
 )

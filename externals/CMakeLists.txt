@@ -128,10 +128,10 @@ set (LIBPD_CFLAGS
      "-fPIC -DPD -DHAVE_UNISTD_H -DHAVE_LIBDL -DUSEAPI_DUMMY -Wl,-Bsymbolic")
 
 #add_library(pd    ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES})
-add_library(pdcpp STATIC ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
+add_library(pdcpp SHARED ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
                          ${LIBPD_CPP_FILES})
 
-target_link_libraries (pdcpp dl m pthread)
+target_link_libraries (pdcpp PUBLIC dl m pthread)
 
 set_target_properties (
   pdcpp PROPERTIES
@@ -164,6 +164,7 @@ add_library (oggread SHARED pdogg/oggread~.c)
 # Link with libvorbis and libogg
 target_link_libraries (
   oggread 
+  PUBLIC
   ${VORBIS_LIBRARIES}
   pdcpp
 )
@@ -174,7 +175,7 @@ target_link_libraries (
 #   - Include directories
 set_target_properties (
   oggread PROPERTIES
-  COMPILE_FLAGS "-Wall -W -g -O0 -fPIC"
+  COMPILE_FLAGS "-Wall -W -fPIC"
   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/patches
   PREFIX ""
   SUFFIX "~.pd_linux"
@@ -183,6 +184,7 @@ set_target_properties (
 
 # Install ODA Panel patches
 install (TARGETS oggread
+         EXPORT ${PROJECT_EXPORT}
          DESTINATION patches
          CONFIGURATIONS Debug Release)
 install (FILES
