@@ -20,6 +20,12 @@ constexpr float make_signal(float frequency, size_t t) {
   return 32760.f * sin( (2.f*M_PI*frequency)/44100 * t );
 }
 
+bool isSourcePlaying(int source) {
+  int state;
+  alGetSourcei(source, AL_SOURCE_STATE, &state);
+  return state == AL_PLAYING;
+}
+
 void generateSineWave(vector<int16_t> *samples, float frequency){
   const size_t buf_size = Engine::TICK_BUFFER_SIZE;
   const size_t total_size = NUM_BUFFERS*buf_size;
@@ -93,7 +99,7 @@ void Player::fillBuffer(ALuint buffer, const ALvoid *data_samples,
 void Player::update() {
   int processed;
   alGetSourcei(sources_[0], AL_BUFFERS_PROCESSED, &processed);
-  if (processed >= NUM_BUFFERS/2) while (processed--) {
+  if (processed > 0) while (processed--) {
     ALuint buffer;
     alSourceUnqueueBuffers(sources_[0], 1, &buffer);
     free_buffers_.push(buffer);
@@ -113,6 +119,8 @@ void Player::streamData(const vector<int16_t> *data, size_t start, size_t len) {
   free_buffers_.pop();
   fillBuffer(buffer, data->data()+start, len*sizeof(int16_t));
   alSourceQueueBuffers(sources_[0], 1, &buffer);
+  if (!isSourcePlaying(sources_[0]))
+   alSourcePlay(sources_[0]); 
 }
 
 // Play Source
@@ -157,74 +165,3 @@ void Player::playSineWave (int seconds, float frequency) {
 }
 
 
-
-//void playScale () {
-//  ALuint buffers_[8];
-//  alGenbuffers_(8, buffers_);
-//
-//  // Creating the Sine-Wave
-//  unsigned sample_rate_ = 22000;
-//  size_t buf_size = 1 * sample_rate_ * sizeof(int16_t);
-//
-//  int16_t *samples1;
-//  int16_t *samples2;
-//  int16_t *samples3;
-//  int16_t *samples4;
-//  int16_t *samples5;
-//  int16_t *samples6;
-//  int16_t *samples7;
-//  int16_t *samples8;
-//  samples1  = new int16_t[buf_size];
-//  samples2  = new int16_t[buf_size];
-//  samples3  = new int16_t[buf_size];
-//  samples4  = new int16_t[buf_size];
-//  samples5  = new int16_t[buf_size];
-//  samples6  = new int16_t[buf_size];
-//  samples7  = new int16_t[buf_size];
-//  samples8  = new int16_t[buf_size];
-//  for (int i=0; i<buf_size; i++) {
-//    // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
-//    // from -32768 to 32767
-//    samples1[i] = 32760 * sin( (2.f*float(M_PI)*440.0000)/sample_rate_ * i );
-//    samples2[i] = 32760 * sin( (2.f*float(M_PI)*493.8833)/sample_rate_ * i );
-//    samples3[i] = 32760 * sin( (2.f*float(M_PI)*523.2510)/sample_rate_ * i );
-//    samples4[i] = 32760 * sin( (2.f*float(M_PI)*587.3295)/sample_rate_ * i );
-//    samples5[i] = 32760 * sin( (2.f*float(M_PI)*659.2551)/sample_rate_ * i );
-//    samples6[i] = 32760 * sin( (2.f*float(M_PI)*698.4564)/sample_rate_ * i );
-//    samples7[i] = 32760 * sin( (2.f*float(M_PI)*783.9908)/sample_rate_ * i );
-//    samples8[i] = 32760 * sin( (2.f*float(M_PI)*880.0000)/sample_rate_ * i );
-//  }
-//
-//  alBufferData(buffers_[0], AL_FORMAT_MONO16, samples1, buf_size, sample_rate_);
-//  alBufferData(buffers_[1], AL_FORMAT_MONO16, samples2, buf_size, sample_rate_);
-//  alBufferData(buffers_[2], AL_FORMAT_MONO16, samples3, buf_size, sample_rate_);
-//  alBufferData(buffers_[3], AL_FORMAT_MONO16, samples4, buf_size, sample_rate_);
-//  alBufferData(buffers_[4], AL_FORMAT_MONO16, samples5, buf_size, sample_rate_);
-//  alBufferData(buffers_[5], AL_FORMAT_MONO16, samples6, buf_size, sample_rate_);
-//  alBufferData(buffers_[6], AL_FORMAT_MONO16, samples7, buf_size, sample_rate_);
-//  alBufferData(buffers_[7], AL_FORMAT_MONO16, samples8, buf_size, sample_rate_);
-//
-//  ALuint Source;
-//  alGenSources(1, &Source);
-//
-//  alSourceQueuebuffers_(Source, 8, buffers_);
-//
-//  alSource3i(Source, AL_POSITION, 0, 0, -1);
-//  alSourcei(Source, AL_SOURCE_RELATIVE, AL_TRUE);
-//  alSourcei(Source, AL_ROLLOFF_FACTOR, 0); 
-//
-//  alSourcePlay(Source);
-//
-//  std::this_thread::sleep_for (std::chrono::seconds(8));
-//
-//  alDeletebuffers_(8, buffers_);
-//  alDeleteSources(1, &Source);
-//  delete[] samples1;
-//  delete[] samples2;
-//  delete[] samples3;
-//  delete[] samples4;
-//  delete[] samples5;
-//  delete[] samples6;
-//  delete[] samples7;
-//  delete[] samples8;
-//}

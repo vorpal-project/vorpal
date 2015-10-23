@@ -30,7 +30,7 @@ class Receiver : public PdReceiver {
   void print(const string &message) override;
 };
 
-const int             TICK_RATIO = 64;
+const int             TICK_RATIO = 1;
 
 bool                  started = false;
 PdBase                dsp;
@@ -114,6 +114,7 @@ void DSPServer::process(int ticks, vector<float> *signal) {
       if (dsp.readArray(patch->dollarZeroStr() + "-output", temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)
           (*signal)[k + i*tick_size()] += temp[k];
+      else std::printf("Failed to read array!\n");
   }
 }
 

@@ -26,7 +26,7 @@ using std::transform;
 using std::unique_ptr;
 using std::vector;
 
-//#define ODA_LOG
+#define ODA_LOG
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
@@ -46,7 +46,7 @@ void printSample(ostream &out, float sample) {
 
 }
 
-const size_t        Engine::TICK_BUFFER_SIZE = 64*64;
+const size_t        Engine::TICK_BUFFER_SIZE = 64;
 
 // MACRO MAGIC:
 // http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
@@ -123,7 +123,7 @@ void Engine::tick(double dt) {
   player->update();
   dsp.cleanUp();
   dsp.handleCommands();
-  if (player->availableBuffers()) {
+  while (player->availableBuffers()) {
     int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
     // Transfer signal from dsp server to audio server
     vector<float> signal;
@@ -133,7 +133,7 @@ void Engine::tick(double dt) {
       audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
     player->streamData(&audio);
     if (!playing_started) {
-      player->playSource(0);
+      //player->playSource(0);
       playing_started = true;
     }
 #ifdef ODA_LOG
