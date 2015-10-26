@@ -1,6 +1,7 @@
 
 #include <oda/dspserver.h>
 #include <oda/event.h>
+#include <oda/parameter.h>
 
 #include <libpd/PdBase.hpp>
 #include <libpd/PdReceiver.hpp>
@@ -11,8 +12,9 @@
 #include <iostream>
 #include <memory>
 
-namespace oda {
-
+namespace {
+using std::bind;
+using std::mem_fn;
 using std::plus;
 using std::string;
 using std::transform;
@@ -21,6 +23,9 @@ using std::vector;
 using pd::PdBase;
 using pd::PdReceiver;
 using pd::Patch;
+} // unnamed namespace
+
+namespace oda {
 
 // unnamed namespace
 namespace {
@@ -40,6 +45,14 @@ vector<string>        search_paths;
 
 void Receiver::print(const string &message) {
   std::printf("%s\n", message.c_str());
+}
+
+void addNumber(float number) {
+  dsp.addFloat(number);
+}
+
+void addSymbol(const std::string &symbol) {
+  dsp.addSymbol(symbol);
 }
 
 } // unnamed namespace
@@ -89,13 +102,16 @@ Event DSPServer::loadEvent(const string &path) {
 }
 
 void DSPServer::handleCommands() {
-  Patch   *patch;
-  string  which;
-  double  value;
-  while (Event::popCommand(&patch, &which, &value)) {
+  using namespace std::placeholders;
+  Patch             *patch;
+  string            identifier;
+  vector<Parameter> parameters;
+  ParameterSwitch   switcher(&addNumber, &addSymbol);
+  while (Event::popCommand(&patch, &identifier, &parameters)) {
     dsp.startMessage();
-    dsp.addFloat(value);
-    dsp.finishMessage(patch->dollarZeroStr() + "-command", which);
+    for (Parameter param : parameters)
+      switcher.handle(param);
+    dsp.finishMessage(patch->dollarZeroStr() + "-command", identifier);
   }
 }
 

@@ -11,12 +11,14 @@ extern "C" {
 #include <iostream>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 namespace {
 using std::cout;
 using std::endl;
 using std::string;
 using std::unordered_set;
+using std::vector;
 } // unnamed namespace
 
 namespace oda {
@@ -35,7 +37,7 @@ int start(lua_State *L) {
 };
 
 int finish(lua_State *L) {
-  cout << "[WRAP] finishing strike!" << endl;
+  lua_settop(L, 0);
   for (Event *event : events)
     delete event;
   events.clear();
@@ -53,6 +55,7 @@ int registerPath(lua_State *L) {
 }
 
 int tick(lua_State *L) {
+  lua_settop(L, 0);
   Engine().tick(0.1);
   return 0;
 }
@@ -106,22 +109,25 @@ int event_gc(lua_State *L) {
 }
 
 int event_pushCommand(lua_State *L) {
-  lua_settop(L, 3);
-  if (lua_isuserdata(L, 1)) {
-    Event *event = *static_cast<Event**>(lua_touserdata(L, 1));
-    if (lua_isstring(L, 2)) {
-      string which = lua_tostring(L,2);
-      if (lua_isnumber(L, 3)) {
-        double value = static_cast<double>(lua_tonumber(L, 3));
-        event->pushCommand(which, value);
-      } else if (lua_isnil(L, 3)) {
-        event->pushCommand(which);
-      } else return luaL_argerror(L, 3, "number expected");
-      return 0;
-    }
+  if (lua_gettop(L) < 2)
+    return luaL_error(L, "at least 2 arguments expected (got %d)",
+                      lua_gettop(L));
+  if (!lua_isuserdata(L, 1))
+    return luaL_argerror(L, 1, "userdata:Event expected");
+  if (!lua_isstring(L, 2))
     return luaL_argerror(L, 2, "string expected");
+  Event             *event = *static_cast<Event**>(lua_touserdata(L, 1));
+  string            identifier = lua_tostring(L, 2);
+  vector<Parameter> parameters;
+  for (int i = 3; i <= lua_gettop(L); ++i) {
+    if (lua_isnumber(L, i))
+      parameters.emplace_back(static_cast<float>(lua_tonumber(L, i)));
+    else if (lua_isstring(L, i))
+      parameters.emplace_back(lua_tostring(L, i));
+    else luaL_argerror(L, i, "string or number expected");
   }
-  return luaL_argerror(L, 1, "userdata:Event expected");
+  event->pushCommand(identifier, parameters);
+  return 0;
 }
 
 luaL_Reg event_meta[] = {

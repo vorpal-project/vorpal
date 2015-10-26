@@ -30,7 +30,8 @@ class EventImpl {
   virtual void play() = 0;
   virtual void stop() = 0;
   virtual bool active() const = 0;
-  virtual void pushCommand(const string &name, double value) = 0;
+  virtual void pushCommand(const string &identifier,
+                           const vector<Parameter> &parameters) = 0;
  protected:
   EventImpl() {}
 };
@@ -43,7 +44,8 @@ class EventNullImpl : public EventImpl {
   void play() override {}
   void stop() override {}
   bool active() const override { return false; }
-  void pushCommand(const string &name, double value) override {}
+  void pushCommand(const string &identifier,
+                   const vector<Parameter> &parameters) override {}
 };
 
 class EventRealImpl : public EventImpl {
@@ -54,7 +56,8 @@ class EventRealImpl : public EventImpl {
   void play() override;
   void stop() override;
   bool active() const override;
-  void pushCommand(const string &name, double value) override;
+  void pushCommand(const string &identifier,
+                   const vector<Parameter> &parameters) override;
  private:
   Patch                   *patch_;
   bool                    active_;
@@ -81,8 +84,9 @@ bool EventRealImpl::active() const {
   return active_;
 }
 
-void EventRealImpl::pushCommand(const string &name, double value) {
-  commands__.emplace_back(patch_, name, value);
+void EventRealImpl::pushCommand(const string &identifier,
+                                const vector<Parameter> &parameters) {
+  commands__.emplace_back(patch_, identifier, parameters);
 }
 
 Event::Event() : impl_(new EventNullImpl) {}
@@ -105,17 +109,19 @@ bool Event::active() const {
   return impl_->active();
 }
 
-void Event::pushCommand(const string &name, double value) {
-  impl_->pushCommand(name, value);
+void Event::pushCommand(const string &identifier,
+                        const vector<Parameter> &parameters) {
+  impl_->pushCommand(identifier, parameters);
 }
 
-bool Event::popCommand(pd::Patch **patch, std::string *which, double *value) {
+bool Event::popCommand(pd::Patch **patch, string *identifier,
+                       vector<Parameter> *parameters) {
   if (commands__.empty())
     return false;
   Command command = commands__.front();
   *patch = std::get<0>(command);
-  *which = std::get<1>(command);
-  *value = std::get<2>(command);
+  *identifier = std::get<1>(command);
+  *parameters = std::get<2>(command);
   commands__.pop_front();
   return true;
 }
