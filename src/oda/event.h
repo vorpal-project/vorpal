@@ -27,13 +27,11 @@ class Event {
   void play();
   void stop();
   bool active() const;
-  //template <typename T, typename... Args>
-  //void pushCommand(T first_parameter, Args... args);
   void pushCommand(const std::vector<Parameter> &parameters);
+  template <typename... Args> void pushCommand(Args... args);
  private:
   friend class DSPServer;
-  //template <typename T, typename... Args>
-  //struct CommandPusher;
+  template <typename... Args> struct CommandPusher;
   Event(pd::Patch *patch);
   static bool popCommand(pd::Patch **patch, std::vector<Parameter> *parameters);
   static const std::unordered_set<pd::Patch*>& patches();
@@ -41,22 +39,28 @@ class Event {
   std::shared_ptr<EventImpl> impl_;
 };
 
-//template <typename... Args>
-//struct Event::CommandPusher<double, Args...> {
-//  static void push(std::vector<Parameter> *parameters, double first_parameter,
-//                   Args... args) {
-//    
-//  }
-//};
-//
-//template <typename T, typename... Args>
-//inline void pushCommand(T first_parameter, Args... args) {
-//  if (impl_->active()) {
-//    std::vector<Parameter> parameters;
-//    CommandPusher<T, Args...>::push(&parameters, first_parameter, args...);
-//    pushCommand(parameters);
-//  }
-//}
+template <>
+struct Event::CommandPusher<> {
+  static void push(std::vector<Parameter> *parameters) {
+    parameters->size();
+  }
+};
+
+template <typename T, typename... Args>
+struct Event::CommandPusher<T, Args...> {
+  static void push(std::vector<Parameter> *parameters, T parameter,
+                   Args... args) {
+    parameters->emplace_back(parameter);
+    CommandPusher<Args...>::push(parameters, args...);
+  }
+};
+
+template <typename... Args>
+inline void Event::pushCommand(Args... args) {
+  std::vector<Parameter> parameters;
+  CommandPusher<Args...>::push(&parameters, args...);
+  pushCommand(parameters);
+}
 
 } // namespace oda
 
