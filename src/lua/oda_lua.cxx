@@ -109,20 +109,25 @@ int event_gc(lua_State *L) {
 }
 
 int event_pushCommand(lua_State *L) {
-  if (lua_gettop(L) >= 1 && lua_isuserdata(L, 1)) {
-    Event             *event = *static_cast<Event**>(lua_touserdata(L, 1));
-    vector<Parameter> parameters;
-    for (int i = 2; i <= lua_gettop(L); ++i) {
-      if (lua_isnumber(L, i))
-        parameters.emplace_back(static_cast<float>(lua_tonumber(L, i)));
-      else if (lua_isstring(L, i))
-        parameters.emplace_back(lua_tostring(L, i));
-      else luaL_argerror(L, i, "string or number expected");
-    }
-    event->pushCommand(parameters);
-    return 0;
+  if (lua_gettop(L) < 2)
+    return luaL_error(L, "at least 2 arguments expected (got %d)",
+                      lua_gettop(L));
+  if (!lua_isuserdata(L, 1))
+    return luaL_argerror(L, 1, "userdata:Event expected");
+  if (!lua_isstring(L, 2))
+    return luaL_argerror(L, 2, "string expected");
+  Event             *event = *static_cast<Event**>(lua_touserdata(L, 1));
+  string            identifier = lua_tostring(L, 2);
+  vector<Parameter> parameters;
+  for (int i = 3; i <= lua_gettop(L); ++i) {
+    if (lua_isnumber(L, i))
+      parameters.emplace_back(static_cast<float>(lua_tonumber(L, i)));
+    else if (lua_isstring(L, i))
+      parameters.emplace_back(lua_tostring(L, i));
+    else luaL_argerror(L, i, "string or number expected");
   }
-  return luaL_argerror(L, 1, "userdata:Event expected");
+  event->pushCommand(identifier, parameters);
+  return 0;
 }
 
 luaL_Reg event_meta[] = {

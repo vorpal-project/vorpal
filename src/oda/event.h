@@ -21,19 +21,22 @@ class EventImpl;
 
 class Event {
  public:
-  using Command = std::tuple<pd::Patch*, std::vector<Parameter>>;
+  using Command = std::tuple<pd::Patch*, std::string, std::vector<Parameter>>;
   Event();
   Status status() const;
   void play();
   void stop();
   bool active() const;
-  void pushCommand(const std::vector<Parameter> &parameters);
-  template <typename... Args> void pushCommand(Args... args);
+  void pushCommand(const std::string &identifier,
+                   const std::vector<Parameter> &parameters);
+  template <typename... Args> void pushCommand(const std::string &identifier,
+                                               Args... args);
  private:
   friend class DSPServer;
   template <typename... Args> struct CommandPusher;
   Event(pd::Patch *patch);
-  static bool popCommand(pd::Patch **patch, std::vector<Parameter> *parameters);
+  static bool popCommand(pd::Patch **patch, std::string *identifier,
+                         std::vector<Parameter> *parameters);
   static const std::unordered_set<pd::Patch*>& patches();
   static pd::Patch* to_be_closed();
   std::shared_ptr<EventImpl> impl_;
@@ -56,10 +59,10 @@ struct Event::CommandPusher<T, Args...> {
 };
 
 template <typename... Args>
-inline void Event::pushCommand(Args... args) {
+inline void Event::pushCommand(const std::string &identifier, Args... args) {
   std::vector<Parameter> parameters;
   CommandPusher<Args...>::push(&parameters, args...);
-  pushCommand(parameters);
+  pushCommand(identifier, parameters);
 }
 
 } // namespace oda

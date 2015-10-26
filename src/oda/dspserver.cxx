@@ -104,14 +104,14 @@ Event DSPServer::loadEvent(const string &path) {
 void DSPServer::handleCommands() {
   using namespace std::placeholders;
   Patch             *patch;
+  string            identifier;
   vector<Parameter> parameters;
   ParameterSwitch   switcher(&addNumber, &addSymbol);
-  while (Event::popCommand(&patch, &parameters)) {
+  while (Event::popCommand(&patch, &identifier, &parameters)) {
     dsp.startMessage();
     for (Parameter param : parameters)
       switcher.handle(param);
-    std::printf("[ODA] Command sent to %s\n", patch->dollarZeroStr().c_str());
-    dsp.finishList(patch->dollarZeroStr() + "-command");
+    dsp.finishMessage(patch->dollarZeroStr() + "-command", identifier);
   }
 }
 
