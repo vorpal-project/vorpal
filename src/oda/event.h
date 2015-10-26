@@ -2,7 +2,7 @@
 #ifndef ODA_EVENT_H_
 #define ODA_EVENT_H_
 
-#include <oda/command.h>
+#include <oda/parameter.h>
 #include <oda/status.h>
 
 #include <memory>
@@ -21,21 +21,42 @@ class EventImpl;
 
 class Event {
  public:
-  using Command = std::tuple<pd::Patch*, std::string, double>;
+  using Command = std::tuple<pd::Patch*, std::vector<Parameter>>;
   Event();
   Status status() const;
   void play();
   void stop();
   bool active() const;
-  void pushCommand(const std::string &name, double value = 0.0);
+  //template <typename T, typename... Args>
+  //void pushCommand(T first_parameter, Args... args);
+  void pushCommand(const std::vector<Parameter> &parameters);
  private:
+  friend class DSPServer;
+  //template <typename T, typename... Args>
+  //struct CommandPusher;
   Event(pd::Patch *patch);
-  static bool popCommand(pd::Patch **patch, std::string *which, double *value);
+  static bool popCommand(pd::Patch **patch, std::vector<Parameter> *parameters);
   static const std::unordered_set<pd::Patch*>& patches();
   static pd::Patch* to_be_closed();
   std::shared_ptr<EventImpl> impl_;
-  friend class DSPServer;
 };
+
+//template <typename... Args>
+//struct Event::CommandPusher<double, Args...> {
+//  static void push(std::vector<Parameter> *parameters, double first_parameter,
+//                   Args... args) {
+//    
+//  }
+//};
+//
+//template <typename T, typename... Args>
+//inline void pushCommand(T first_parameter, Args... args) {
+//  if (impl_->active()) {
+//    std::vector<Parameter> parameters;
+//    CommandPusher<T, Args...>::push(&parameters, first_parameter, args...);
+//    pushCommand(parameters);
+//  }
+//}
 
 } // namespace oda
 

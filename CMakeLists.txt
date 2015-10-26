@@ -23,7 +23,7 @@ set (PROJECT_SRC
   ${CMAKE_SOURCE_DIR}/src/oda/event.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/player.cxx
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.cxx
-  ${CMAKE_SOURCE_DIR}/src/oda/command.cxx
+  ${CMAKE_SOURCE_DIR}/src/oda/parameter.cxx
 )
 
 # Define source code headers
@@ -34,7 +34,7 @@ set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/status.h
   ${CMAKE_SOURCE_DIR}/src/oda/player.h
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.h
-  ${CMAKE_SOURCE_DIR}/src/oda/command.h
+  ${CMAKE_SOURCE_DIR}/src/oda/parameter.h
 )
 
 # Where to look for when using #include <...>

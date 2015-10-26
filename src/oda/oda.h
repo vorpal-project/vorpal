@@ -4,6 +4,7 @@
 
 #include <oda/engine.h>
 #include <oda/event.h>
+#include <oda/parameter.h>
 #include <oda/status.h>
 
 namespace oda {

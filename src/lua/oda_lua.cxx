@@ -11,12 +11,14 @@ extern "C" {
 #include <iostream>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 namespace {
 using std::cout;
 using std::endl;
 using std::string;
 using std::unordered_set;
+using std::vector;
 } // unnamed namespace
 
 namespace oda {
@@ -107,20 +109,18 @@ int event_gc(lua_State *L) {
 }
 
 int event_pushCommand(lua_State *L) {
-  lua_settop(L, 3);
-  if (lua_isuserdata(L, 1)) {
-    Event *event = *static_cast<Event**>(lua_touserdata(L, 1));
-    if (lua_isstring(L, 2)) {
-      string which = lua_tostring(L,2);
-      if (lua_isnumber(L, 3)) {
-        double value = static_cast<double>(lua_tonumber(L, 3));
-        event->pushCommand(which, value);
-      } else if (lua_isnil(L, 3)) {
-        event->pushCommand(which);
-      } else return luaL_argerror(L, 3, "number expected");
-      return 0;
+  if (lua_gettop(L) >= 1 && lua_isuserdata(L, 1)) {
+    Event             *event = *static_cast<Event**>(lua_touserdata(L, 1));
+    vector<Parameter> parameters;
+    for (int i = 2; i <= lua_gettop(L); ++i) {
+      if (lua_isnumber(L, i))
+        parameters.emplace_back(static_cast<float>(lua_tonumber(L, i)));
+      else if (lua_isstring(L, i))
+        parameters.emplace_back(lua_tostring(L, i));
+      else luaL_argerror(L, i, "string or number expected");
     }
-    return luaL_argerror(L, 2, "string expected");
+    event->pushCommand(parameters);
+    return 0;
   }
   return luaL_argerror(L, 1, "userdata:Event expected");
 }
