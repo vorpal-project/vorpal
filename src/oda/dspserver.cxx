@@ -47,6 +47,14 @@ void Receiver::print(const string &message) {
   std::printf("%s\n", message.c_str());
 }
 
+void addNumber(float number) {
+  dsp.addFloat(number);
+}
+
+void addSymbol(const std::string &symbol) {
+  dsp.addSymbol(symbol);
+}
+
 } // unnamed namespace
 
 Status DSPServer::start() {
@@ -97,12 +105,12 @@ void DSPServer::handleCommands() {
   using namespace std::placeholders;
   Patch             *patch;
   vector<Parameter> parameters;
-  ParameterSwitch   switcher(bind(&PdBase::addFloat, dsp, _1),
-                             bind(&PdBase::addSymbol, dsp, _1));
+  ParameterSwitch   switcher(&addNumber, &addSymbol);
   while (Event::popCommand(&patch, &parameters)) {
     dsp.startMessage();
     for (Parameter param : parameters)
       switcher.handle(param);
+    std::printf("[ODA] Command sent to %s\n", patch->dollarZeroStr().c_str());
     dsp.finishList(patch->dollarZeroStr() + "-command");
   }
 }
