@@ -2,6 +2,7 @@
 #ifndef ODA_EVENT_H_
 #define ODA_EVENT_H_
 
+#include <oda/command.h>
 #include <oda/status.h>
 
 #include <memory>

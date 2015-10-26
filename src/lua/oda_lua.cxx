@@ -35,7 +35,7 @@ int start(lua_State *L) {
 };
 
 int finish(lua_State *L) {
-  cout << "[WRAP] finishing strike!" << endl;
+  lua_settop(L, 0);
   for (Event *event : events)
     delete event;
   events.clear();
@@ -53,6 +53,7 @@ int registerPath(lua_State *L) {
 }
 
 int tick(lua_State *L) {
+  lua_settop(L, 0);
   Engine().tick(0.1);
   return 0;
 }
