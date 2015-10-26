@@ -50,11 +50,9 @@ ParameterSwitch::ParameterSwitch(const NumblerHandler &the_numbher_handler,
 void ParameterSwitch::handle(const Parameter &command) {
   switch(command.type_) {
     case Parameter::Type::NUMBER:
-      std::printf("[ODA] Handled parameter '%f'\n", command.number_);
       number_handler_(command.number_);
       break;
     case Parameter::Type::SYMBOL:
-      std::printf("[ODA] Handled parameter '%s'\n", command.symbol_.c_str());
       symbol_handler_(command.symbol_);
       break;
     default:

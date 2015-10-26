@@ -26,7 +26,7 @@ using std::transform;
 using std::unique_ptr;
 using std::vector;
 
-#define ODA_LOG
+//#define ODA_LOG
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
