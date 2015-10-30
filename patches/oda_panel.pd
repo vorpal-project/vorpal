@@ -1,34 +1,19 @@
-#N canvas 767 391 843 362 16;
+#N canvas 767 397 843 362 16;
 #X obj 484 100 tabwrite~ \$1-output;
 #X obj 331 41 inlet~;
 #X obj 492 62 receive \$1-input;
 #X obj 484 27 bang~;
 #X obj 393 147 dac~;
-#X obj 331 179 rfft~;
-#X obj 333 302 tabwrite~ \$1-spectre;
-#X obj 332 237 expr~ abs(sqrt($v1*$v1 + $v2*$v2));
-#X obj 352 269 bang~;
 #X obj 10 20 cnv 15 256 128 empty empty empty 20 12 0 14 -34543 -66577
 0;
 #N canvas 0 50 450 250 (subpatch) 0;
 #X array \$1-output 64 float 4;
 #X coords 0 1 63 -1 128 64 2 0 0;
-#X restore 138 84 graph;
-#N canvas 3 81 450 250 (subpatch) 0;
-#X array \$1-spectre 33 float 5;
-#A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-0 0;
-#X coords 0 32 32 -8 128 64 2 0 0;
 #X restore 10 84 graph;
 #X text 88 30 ODA PANEL;
 #X connect 1 0 0 0;
 #X connect 1 0 4 0;
 #X connect 1 0 4 1;
-#X connect 1 0 5 0;
 #X connect 2 0 0 0;
 #X connect 3 0 0 0;
-#X connect 5 0 7 0;
-#X connect 5 1 7 1;
-#X connect 7 0 6 0;
-#X connect 8 0 6 0;
 #X coords 0 -1 1 1 256 128 2 10 20;
