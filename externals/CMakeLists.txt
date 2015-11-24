@@ -183,10 +183,6 @@ set_target_properties (
 )
 
 # Install ODA Panel patches
-install (TARGETS oggread
-         EXPORT ${PROJECT_EXPORT}
-         DESTINATION patches
-         CONFIGURATIONS Debug Release)
 install (FILES
          ${CMAKE_BINARY_DIR}/patches/oggread~.pd_linux
          ${CMAKE_SOURCE_DIR}/externals/pdogg/oggread~-help.pd
