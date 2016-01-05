@@ -88,6 +88,7 @@ install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
 install (FILES
          ${CMAKE_SOURCE_DIR}/patches/oda_panel.pd
          ${CMAKE_SOURCE_DIR}/patches/oda_sound.pd
+         ${CMAKE_SOURCE_DIR}/patches/oda_synth1.pd
          DESTINATION patches
          CONFIGURATIONS Debug Release)
 # Export cmake target

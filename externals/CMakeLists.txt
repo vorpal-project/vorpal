@@ -113,13 +113,13 @@ set (PD_EXTRA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/pure-data/extra/stdout/stdout.c
 )
 
-SET (LIBPD_UTILS_FILES
+set (LIBPD_UTILS_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/libpd_wrapper/util/z_print_util.c
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/libpd_wrapper/util/z_queued.c
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/libpd_wrapper/util/ringbuffer.c
 )
 
-SET (LIBPD_CPP_FILES
+set (LIBPD_CPP_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/cpp/PdBase.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/libpd/cpp/PdTypes.cpp
 )
@@ -127,16 +127,35 @@ SET (LIBPD_CPP_FILES
 set (LIBPD_CFLAGS
      "-fPIC -DPD -DHAVE_UNISTD_H -DHAVE_LIBDL -DUSEAPI_DUMMY -Wl,-Bsymbolic")
 
+set (LIBPD_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals)
+set (LIBPD_INCLUDE_DIR ${LIBPD_OUTPUT_DIRECTORY}/include/libpd)
+
+add_custom_target (libpd-headers ALL
+  COMMAND cmake -E make_directory ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E copy libpd/cpp/PdBase.hpp ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E copy libpd/cpp/PdMidiReceiver.hpp ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E copy libpd/cpp/PdReceiver.hpp ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E copy libpd/cpp/PdTypes.hpp ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E copy libpd/pure-data/src/m_pd.h ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E copy libpd/libpd_wrapper/z_libpd.h ${LIBPD_INCLUDE_DIR}
+  COMMAND cmake -E make_directory ${LIBPD_INCLUDE_DIR}/util
+  COMMAND cmake -E copy_directory libpd/libpd_wrapper/util
+                                  ${LIBPD_INCLUDE_DIR}/util
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMENT "Moving libpd headers"
+)
+
 #add_library(pd    ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES})
-add_library(pdcpp SHARED ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
+add_library (pdcpp SHARED ${PD_SRC_FILES} ${PD_EXTRA_FILES} ${LIBPD_UTILS_FILES}
                          ${LIBPD_CPP_FILES})
 
+add_dependencies (pdcpp libpd-headers)
 target_link_libraries (pdcpp PUBLIC dl m pthread)
 
 set_target_properties (
   pdcpp PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals/lib
-  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/externals/lib
+  LIBRARY_OUTPUT_DIRECTORY ${LIBPD_OUTPUT_DIRECTORY}/lib
+  ARCHIVE_OUTPUT_DIRECTORY ${LIBPD_OUTPUT_DIRECTORY}/lib
   COMPILE_FLAGS ${LIBPD_CFLAGS}
 )
 
