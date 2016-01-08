@@ -7,11 +7,5 @@
 #include <oda/parameter.h>
 #include <oda/status.h>
 
-namespace oda {
-
-void dummy ();
-
-} // namespace oda
-
 #endif // LIBODA_ODA_H_
 

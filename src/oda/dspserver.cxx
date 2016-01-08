@@ -66,7 +66,6 @@ Status DSPServer::start() {
     dsp.computeAudio(true);
     receiver.reset(new Receiver);
     dsp.setReceiver(receiver.get());
-    std::cout << "DSP tick size: " << tick_size() << std::endl;
     return Status::OK("DSP Server started succesfully");
   }
   return Status::FAILURE("DSP Server could not start");
