@@ -42,6 +42,7 @@ PdBase                dsp;
 unique_ptr<Receiver>  receiver;
 float                 inbuf[6400], outbuf[6400];
 vector<string>        search_paths;
+Event                 core;
 
 void Receiver::print(const string &message) {
   std::printf("%s\n", message.c_str());
@@ -57,7 +58,7 @@ void addSymbol(const std::string &symbol) {
 
 } // unnamed namespace
 
-Status DSPServer::start() {
+Status DSPServer::start(const vector<string>& patch_paths) {
   if (started)
     return Status::FAILURE("DSP Server already started");
   if (dsp.init(1, 1, sample_rate())) {
@@ -66,6 +67,9 @@ Status DSPServer::start() {
     dsp.computeAudio(true);
     receiver.reset(new Receiver);
     dsp.setReceiver(receiver.get());
+    for (const string& path : patch_paths)
+      addPath(path);
+    core = loadEvent("openda_core");
     return Status::OK("DSP Server started succesfully");
   }
   return Status::FAILURE("DSP Server could not start");
@@ -119,17 +123,13 @@ void DSPServer::process(int ticks, vector<float> *signal) {
   vector<float> temp;
   signal->resize(ticks*tick_size(), 0.0f);
   for (int i = 0; i < ticks; ++i) {
-    // Notify patches
-    for (Patch *patch : Event::patches())
-      dsp.sendBang(patch->dollarZeroStr() + "-input");
     // Process global signal
     dsp.processFloat(TICK_RATIO, inbuf, outbuf);
-    // Collect individual audio
-    for (Patch *patch : Event::patches())
-      if (dsp.readArray(patch->dollarZeroStr() + "-output", temp, tick_size()))
-        for (int k = 0; k < tick_size(); ++k)
-          (*signal)[k + i*tick_size()] += temp[k];
-      else std::printf("Failed to read array!\n");
+    // Collect processed audio
+    if (dsp.readArray("openda_master", temp, tick_size()))
+      for (int k = 0; k < tick_size(); ++k)
+        (*signal)[k + i*tick_size()] = temp[k];
+    else std::printf("Failed to read array!\n");
   }
 }
 
@@ -141,6 +141,11 @@ void DSPServer::cleanUp() {
     }
     delete patch;
   }
+}
+
+void DSPServer::finish() {
+  core = Event();
+  cleanUp();
 }
 
 } // namespace oda

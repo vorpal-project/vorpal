@@ -53,7 +53,7 @@ const size_t        Engine::TICK_BUFFER_SIZE = 64;
 
 Engine::Engine() {}
 
-Status Engine::start() {
+Status Engine::start(const vector<string>& patch_paths) {
   // Do not start if the context was already created
   if (started())
     return Status::INVALID("Already started");
@@ -73,7 +73,7 @@ Status Engine::start() {
     return Status::FAILURE("Could not set a context");
   }
   // Start DSP server
-  Status dsp_start = DSPServer().start();
+  Status dsp_start = DSPServer().start(patch_paths);
   if (!dsp_start.ok()) {
     alcDestroyContext(context);
     alcCloseDevice(device);
@@ -103,8 +103,8 @@ void Engine::registerPath(const string &path) {
 void Engine::finish() {
   // Do not finish if it was not started yet
   if (!context) return;
-  // Clean up DSP server
-  DSPServer().cleanUp();
+  // Finish DSP server
+  DSPServer().finish();
   // Destroy audio player
   player->stopSource(0);
   player.reset();
