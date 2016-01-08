@@ -1,0 +1,61 @@
+#N struct display float x float y array v sample;
+#N struct sample float y;
+#N canvas 931 419 450 345 16;
+#X obj 22 21 cnv 15 400 172 empty empty OpenDA 128 36 0 32 -66577 -191407
+0;
+#N canvas 248 304 804 715 buffer_out 1;
+#X obj 57 540 snapshot~;
+#X obj 60 589 print derp;
+#X obj 68 498 bng 32 250 50 0 empty empty empty 17 7 0 10 -203904 -1
+-1;
+#X obj 433 597 tabread;
+#X obj 16 43 table openda_master;
+#N canvas 3 87 520 190 display-struct 0;
+#X obj 19 35 struct display float x float y array v sample;
+#X obj 26 94 plot v 852 3 0 0 4;
+#X restore 27 112 pd display-struct;
+#N canvas 129 383 450 300 display-elem 0;
+#X obj 18 60 struct sample float y;
+#X restore 31 150 pd display-elem;
+#X obj 462 37 loadbang;
+#X msg 462 65 bang;
+#X obj 462 377 setsize display v;
+#X msg 462 345 64;
+#X obj 462 93 t b b b;
+#X msg 495 184 traverse pd-dataDisplay \, bang;
+#X obj 495 218 pointer;
+#X msg 462 248 0 64;
+#X obj 462 276 append display x y;
+#X obj 462 309 t b p;
+#X text 242 546 Needs to iterate through table and update struct;
+#X msg 529 132 \; pd-dataDisplay clear;
+#N canvas 3 90 450 300 dataDisplay 0;
+#X scalar display 0 64 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
+\; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \;
+0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
+\; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \;
+0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
+\; 0 \; \;;
+#X coords 0 -1 255 126 400 128 2 100 100;
+#X restore 16 196 pd dataDisplay;
+#X obj 57 429 openda_core;
+#X connect 0 0 1 0;
+#X connect 2 0 0 0;
+#X connect 7 0 8 0;
+#X connect 8 0 11 0;
+#X connect 10 0 9 0;
+#X connect 11 0 14 0;
+#X connect 11 1 12 0;
+#X connect 11 2 18 0;
+#X connect 12 0 13 0;
+#X connect 13 0 15 2;
+#X connect 14 0 15 0;
+#X connect 15 0 16 0;
+#X connect 16 0 10 0;
+#X connect 16 1 9 1;
+#X connect 20 0 0 0;
+#X coords 0 -1 1 1 400 128 2 16 196;
+#X restore 22 193 pd buffer_out;
+#X obj 22 193 cnv 15 400 128 empty empty empty 20 12 0 14 -99865 -66577
+0;
+#X coords 0 345 1 344 85 60 0;
