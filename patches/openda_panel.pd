@@ -1,11 +1,12 @@
 #N struct display float x float y array v sample;
 #N struct sample float y;
-#N canvas 931 422 450 345 16;
+#N canvas 48 578 450 345 16;
 #X obj 22 21 cnv 15 400 172 empty empty OpenDA 128 36 0 32 -66577 -191407
 0;
-#N canvas 248 307 804 715 buffer_out 1;
+#X obj 22 193 cnv 15 400 128 empty empty empty 20 12 0 14 -99865 -66577
+0;
+#N canvas 244 278 804 715 buffer_out 1;
 #X obj 57 540 snapshot~;
-#X obj 60 589 print derp;
 #X obj 68 498 bng 32 250 50 0 empty empty empty 17 7 0 10 -203904 -1
 -1;
 #X obj 433 597 tabread;
@@ -38,23 +39,20 @@
 #X coords 0 -1 255 126 400 128 2 100 100;
 #X restore 16 196 pd dataDisplay;
 #X obj 57 429 openda_core;
-#X connect 0 0 1 0;
-#X connect 2 0 0 0;
-#X connect 6 0 7 0;
-#X connect 7 0 10 0;
-#X connect 9 0 8 0;
-#X connect 10 0 13 0;
-#X connect 10 1 11 0;
-#X connect 10 2 17 0;
-#X connect 11 0 12 0;
-#X connect 12 0 14 2;
+#X connect 1 0 0 0;
+#X connect 5 0 6 0;
+#X connect 6 0 9 0;
+#X connect 8 0 7 0;
+#X connect 9 0 12 0;
+#X connect 9 1 10 0;
+#X connect 9 2 16 0;
+#X connect 10 0 11 0;
+#X connect 11 0 13 2;
+#X connect 12 0 13 0;
 #X connect 13 0 14 0;
-#X connect 14 0 15 0;
-#X connect 15 0 9 0;
-#X connect 15 1 8 1;
-#X connect 19 0 0 0;
+#X connect 14 0 8 0;
+#X connect 14 1 7 1;
+#X connect 18 0 0 0;
 #X coords 0 -1 1 1 400 128 2 16 196;
 #X restore 22 193 pd buffer_out;
-#X obj 22 193 cnv 15 400 128 empty empty empty 20 12 0 14 -99865 -66577
-0;
 #X coords 0 345 1 344 85 60 0;
