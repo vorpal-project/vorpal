@@ -1,12 +1,11 @@
-#N canvas 127 367 450 300 16;
+#N canvas 127 373 450 300 16;
 #X obj 138 98 bang~;
-#X obj 56 159 dac~;
 #X obj 138 171 tabwrite~ openda_master;
 #X obj 55 62 catch~ openda_mainbus;
 #X obj 153 138 outlet;
 #X obj 55 24 table openda_master;
-#X connect 0 0 2 0;
-#X connect 0 0 4 0;
-#X connect 3 0 1 0;
-#X connect 3 0 1 1;
-#X connect 3 0 2 0;
+#X obj 56 207 outlet~;
+#X connect 0 0 1 0;
+#X connect 0 0 3 0;
+#X connect 2 0 1 0;
+#X connect 2 0 5 0;
