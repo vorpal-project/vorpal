@@ -1,32 +1,38 @@
-#N struct display float x float y float c array v sample;
+#N struct display float x float y float c float s array v sample;
 #N struct sample float w;
-#N canvas 29 577 450 345 16;
+#N canvas 29 595 450 345 16;
 #X obj 22 21 cnv 15 400 172 empty empty OpenDA 128 36 0 32 -66577 -191407
 0;
 #X obj 22 193 cnv 15 400 128 empty empty empty 20 12 0 14 -99865 -66577
 0;
-#N canvas 539 316 954 597 buffer_out 1;
-#N canvas 3 102 594 190 display-struct 0;
-#X obj 19 35 struct display float x float y float c array v sample
-;
-#X obj 26 94 plot curve v c 3 0 0 4;
+#N canvas 177 332 954 597 buffer_out 0;
+#N canvas 3 108 594 190 display-struct 0;
+#X obj 19 35 struct display float x float y float c float s array v
+sample;
+#X obj 26 94 plot curve v c 3 0 0 s;
 #X restore 27 22 pd display-struct;
 #N canvas 129 389 450 300 display-elem 0;
 #X obj 18 60 struct sample float w;
 #X restore 27 60 pd display-elem;
-#N canvas 3 96 450 300 dataDisplay 0;
-#X scalar display 0 96 582 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
-\; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \;
-0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
-\; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \;
-0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
-\; 0 \; 0 \; \;;
-#X scalar display 0 32 852 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
-\; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \;
-0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
-\; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \;
-0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0 \; 0
-\; 0 \; 0 \; \;;
+#N canvas 3 99 450 300 dataDisplay 0;
+#X scalar display 0 96 582 8 \; 6.85633 \; 9.83468 \; 8.41743 \; 6.93379
+\; 0.936919 \; 1.32159 \; 7.20616 \; 7.02621 \; 2.24875 \; 5.63768
+\; 3.79934 \; 2.38657 \; 1.86998 \; 2.223 \; 4.13839 \; 1.54369 \;
+3.51852 \; 0.70472 \; 2.73151 \; 0.420286 \; 1.16665 \; 0.261604 \;
+0.800448 \; 0.20206 \; 0.16078 \; 0.605762 \; 0.400433 \; 0.336018
+\; 0.0526582 \; 0.241066 \; 2.39952 \; 1.36464 \; \;;
+#X scalar display 0 32 852 4 \; -5.26744 \; 8.47973 \; -1.41614 \;
+0.939322 \; 7.70306 \; 2.96657 \; -0.330782 \; -3.49124 \; 3.76394
+\; -4.83876 \; -3.13998 \; -1.90104 \; -2.70557 \; -8.14142 \; 3.18108
+\; -1.95502 \; -3.19688 \; 0.279141 \; 3.37456 \; -8.80747 \; 7.79406
+\; -3.10279 \; 2.76024 \; -1.62783 \; 0.215608 \; -2.32069 \; 5.12317
+\; -5.5691 \; 7.72476 \; -2.53562 \; 1.78763 \; 1.71977 \; 2.62167
+\; -3.80481 \; 9.24811 \; 3.16727 \; -1.51935 \; 7.33355 \; -6.32132
+\; 0.138343 \; -4.33226 \; -18.0746 \; -0.924372 \; -5.00757 \; 2.57702
+\; 0.703874 \; -10.7277 \; 1.37269 \; 14.2123 \; 6.62879 \; -10.1753
+\; 0.430041 \; -1.68211 \; -0.20955 \; -5.34226 \; 8.54035 \; -4.66077
+\; 6.84741 \; -6.73862 \; 0.66453 \; -3.35753 \; 4.44865 \; -4.83995
+\; 0.897955 \; \;;
 #X coords 0 -1 255 126 400 128 2 100 100;
 #X restore 16 196 pd dataDisplay;
 #X obj 526 46 openda_core;
@@ -99,10 +105,6 @@
 #X connect 10 0 3 1;
 #X connect 12 0 0 0;
 #X restore 700 124 pd display-update;
-#X obj 527 210 rfft~;
-#X obj 525 323 tabwrite~ spectre;
-#X obj 526 260 expr~ sqrt($v1*$v1 +$v2*$v2)/5;
-#X obj 33 139 table spectre;
 #X obj 47 345 loadbang;
 #X obj 343 374 r openda_plotcmd;
 #X obj 47 530 s openda_plotcmd;
@@ -111,29 +113,40 @@
 #X obj 633 83 t b b;
 #X obj 633 194 s openda_plotcmd;
 #X msg 47 377 bang;
-#X obj 390 446 openda_plot pd-dataDisplay 0 32 852 openda_master;
 #X obj 343 409 t a a;
 #X msg 47 490 load;
 #X msg 633 149 update;
-#X obj 343 492 openda_plot pd-dataDisplay 0 96 582 spectre;
+#N canvas 202 466 450 300 spectre-control 0;
+#X obj 49 82 inlet~ signal;
+#X obj 50 141 rfft~;
+#X obj 49 238 tabwrite~ spectre;
+#X obj 171 129 bang~;
+#X obj 78 29 block~ 64;
+#X obj 49 191 expr~ sqrt($v1*$v1 +$v2*$v2)/16;
+#X connect 0 0 1 0;
+#X connect 1 0 5 0;
+#X connect 1 1 5 1;
+#X connect 3 0 2 0;
+#X connect 5 0 2 0;
+#X restore 526 259 pd spectre-control;
+#X obj 390 446 openda_plot pd-dataDisplay 0 32 852 openda_master 64
+;
+#X obj 33 139 table spectre 32;
+#X obj 343 492 openda_plot pd-dataDisplay 0 96 582 spectre 32;
 #X connect 3 0 4 0;
 #X connect 3 0 4 1;
-#X connect 3 0 7 0;
-#X connect 3 1 16 0;
-#X connect 7 0 9 0;
-#X connect 7 1 9 1;
-#X connect 9 0 8 0;
-#X connect 11 0 18 0;
-#X connect 12 0 20 0;
-#X connect 14 0 21 0;
-#X connect 14 1 15 0;
-#X connect 16 0 22 0;
-#X connect 16 1 8 0;
-#X connect 18 0 14 0;
-#X connect 20 0 23 0;
-#X connect 20 1 19 0;
-#X connect 21 0 13 0;
-#X connect 22 0 17 0;
+#X connect 3 0 18 0;
+#X connect 3 1 12 0;
+#X connect 7 0 14 0;
+#X connect 8 0 15 0;
+#X connect 10 0 16 0;
+#X connect 10 1 11 0;
+#X connect 12 0 17 0;
+#X connect 14 0 10 0;
+#X connect 15 0 21 0;
+#X connect 15 1 19 0;
+#X connect 16 0 9 0;
+#X connect 17 0 13 0;
 #X coords 0 -1 1 1 400 128 2 16 196;
 #X restore 22 193 pd buffer_out;
 #X coords 0 345 1 344 85 60 0;
