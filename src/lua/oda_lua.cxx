@@ -30,7 +30,17 @@ namespace {
 unordered_set<Event*> events;
 
 int start(lua_State *L) {
-  Status status = Engine().start();
+  lua_settop(L, 1);
+  vector<string> paths;
+  if (lua_istable(L, 1)) {
+    for (size_t i = 0; i < lua_objlen(L, 1); ++i) {
+      lua_pushinteger(L, i+1);
+      lua_gettable(L, 1);
+      paths.push_back(lua_tostring(L, 2));
+      lua_settop(L, 1);
+    }
+  }
+  Status status = Engine().start(paths);
   if (!status.ok())
     return luaL_error(L, "%s\n", status.description().c_str());
   return 0;
