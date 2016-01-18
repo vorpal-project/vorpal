@@ -9,11 +9,13 @@
 
 #include <algorithm>
 #include <functional>
+#include <fstream>
 #include <iostream>
 #include <memory>
 
 namespace {
 using std::bind;
+using std::fstream;
 using std::mem_fn;
 using std::plus;
 using std::string;
@@ -52,8 +54,17 @@ void addNumber(float number) {
   dsp.addFloat(number);
 }
 
-void addSymbol(const std::string &symbol) {
+void addSymbol(const string &symbol) {
   dsp.addSymbol(symbol);
+}
+
+bool checkPath (const string &path) {
+  fstream check;
+  check.open(path, fstream::in);
+  if (check.fail())
+    return false;
+  check.close();
+  return true;
 }
 
 } // unnamed namespace
@@ -95,10 +106,12 @@ void DSPServer::addPath(const string &path) {
 Event DSPServer::loadEvent(const string &path) {
   string filename = path + ".pd";
   for (string search_path : search_paths) {
-    Patch check = dsp.openPatch(filename, search_path);
-    if (check.isValid()) {
-      Patch *patch = new Patch(check);
-      return Event(patch);
+    if (checkPath(search_path+"/"+filename)) {
+      Patch check = dsp.openPatch(filename, search_path);
+      if (check.isValid()) {
+        Patch *patch = new Patch(check);
+        return Event(patch);
+      }
     }
   }
   return Event();
