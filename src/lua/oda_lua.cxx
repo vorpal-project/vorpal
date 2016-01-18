@@ -84,7 +84,7 @@ int eventInstance(lua_State *L) {
       return 1;
     } else {
       delete event;
-      return luaL_error(L, "%s\n", status.description().c_str());
+      return luaL_error(L, "[oda binding] %s\n", status.description().c_str());
     }
   }
   return luaL_argerror(L, 1, "string expected");
