@@ -18,7 +18,7 @@ class Event;
 
 class DSPServer {
  public:
-  Status start();
+  Status start(const std::vector<std::string>& patch_paths);
   int sample_rate() const;
   int tick_size() const;
   double time_per_tick() const;
@@ -27,6 +27,7 @@ class DSPServer {
   void handleCommands();
   void process(int ticks, std::vector<float> *signal);
   void cleanUp();
+  void finish();
  private:
 };
 

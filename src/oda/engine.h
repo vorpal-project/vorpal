@@ -5,6 +5,7 @@
 #include <oda/status.h>
 
 #include <string>
+#include <vector>
 
 namespace oda {
 
@@ -16,7 +17,7 @@ class Event;
  * All instances of this class handle the same shared resources. Thus, there
  * is no need to dynamically allocate objects for it.
  * 
-   * Use the `start()` method to initialize the engine, and the `finish()` method
+ * Use the `start()` method to initialize the engine, and the `finish()` method
  * to release it. Example:
  *
  * ~~~.cxx
@@ -40,7 +41,7 @@ class Engine {
    * @see oda::Status
    * @see oda::Engine::finish()
    */
-  Status start();
+  Status start(const std::vector<std::string>& patch_paths = {});
 
   /// Tells whether the engine has already started
   /**
