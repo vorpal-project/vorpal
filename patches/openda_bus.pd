@@ -1,19 +1,17 @@
-#N canvas 502 440 375 309 16;
+#N canvas 502 446 316 309 16;
 #X obj 20 228 throw~ openda_mainbus;
 #X obj 22 26 inlet~;
 #X obj 21 188 *~;
 #X obj 51 88 hsl 128 24 0.01 1 1 1 empty empty empty -2 -8 0 10 -128992
--1 -1 10788 1;
+-1 -1 6350 1;
 #X text 63 65 Bus Volume;
 #X obj 48 155 line;
 #X msg 48 122 \$1 100;
-#X obj 143 10 loadbang;
-#X msg 143 38 0.1;
+#X obj 154 10 inlet;
 #X connect 1 0 2 0;
 #X connect 2 0 0 0;
 #X connect 3 0 6 0;
 #X connect 5 0 2 1;
 #X connect 6 0 5 0;
-#X connect 7 0 8 0;
-#X connect 8 0 3 0;
+#X connect 7 0 3 0;
 #X coords 0 -1 1 1 133 48 2 48 64;
