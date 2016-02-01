@@ -1,4 +1,4 @@
-#N canvas 551 366 357 330 16;
+#N canvas 551 372 357 330 16;
 #X obj 20 228 throw~ openda_mainbus;
 #X obj 22 26 inlet~;
 #X obj 21 188 *~;
@@ -7,7 +7,7 @@
 #X obj 154 10 inlet;
 #X obj 48 64 cnv 15 139 54 empty empty empty 33 15 0 14 -33289 -1 0
 ;
-#X obj 53 65 cnv 15 133 48 empty empty Audio_Bus 30 15 0 14 -128992
+#X obj 53 65 cnv 32 133 48 empty empty Audio_Bus 30 15 1 14 -128992
 -1 0;
 #X obj 59 90 hsl 120 20 0.01 1 1 1 empty empty empty -2 -8 0 10 -162280
 -1 -1 6350 1;

@@ -1,0 +1,38 @@
+#N canvas 275 520 525 428 16;
+#X obj 254 220 metro;
+#X obj 348 137 / 60000;
+#X obj 301 174 /;
+#X obj 301 112 f 1;
+#X obj 254 250 f 0;
+#X obj 254 285 t f f;
+#X obj 254 326 outlet beat;
+#X obj 370 250 + 1;
+#X obj 31 64 cnv 32 180 64 empty empty empty 20 12 0 14 -33289 -66577
+0;
+#X obj 37 64 cnv 32 174 58 empty empty empty 20 12 0 14 -99865 -66577
+0;
+#X obj 94 75 nbx 5 20 10 1024 0 0 empty empty BPM -48 8 1 16 -162280
+-1 -1 10 256;
+#X obj 94 97 nbx 5 20 1 64 0 0 empty empty Time -48 8 1 16 -162280
+-1 -1 1 256;
+#X obj 254 6 inlet;
+#X obj 302 250 mod 1;
+#X obj 301 75 t b f;
+#X obj 176 84 tgl 24 1 empty empty empty 17 7 0 10 -162280 -1 -1 0
+1;
+#X connect 0 0 4 0;
+#X connect 1 0 2 1;
+#X connect 2 0 0 1;
+#X connect 3 0 2 0;
+#X connect 4 0 5 0;
+#X connect 5 0 6 0;
+#X connect 5 1 7 0;
+#X connect 7 0 13 0;
+#X connect 10 0 14 0;
+#X connect 11 0 13 1;
+#X connect 12 0 0 0;
+#X connect 13 0 4 1;
+#X connect 14 0 3 0;
+#X connect 14 1 1 0;
+#X connect 15 0 0 0;
+#X coords 0 -1 1 1 182 64 2 30 64;
