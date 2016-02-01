@@ -1,6 +1,19 @@
-#N canvas 969 546 332 177 16;
-#X obj 83 32 r \$1-command;
-#X obj 83 72 route \$2;
-#X obj 83 118 outlet;
+#N canvas 969 576 559 238 16;
+#X obj 27 24 r \$1-command;
+#X obj 27 64 route \$2;
+#X obj 27 101 outlet;
+#X obj 221 19 loadbang;
+#X msg 226 151 bang;
+#X obj 220 59 symbol \$2;
+#X obj 100 100 cnv 15 262 36 empty empty empty 20 12 0 14 -33289 -1
+0;
+#X obj 105 101 cnv 15 256 30 empty empty Parameter 8 16 0 14 -128992
+-1 0;
+#X symbolatom 195 106 16 0 0 0 - - -, f 16;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
+#X connect 3 0 5 0;
+#X connect 4 0 5 0;
+#X connect 5 0 8 0;
+#X connect 8 0 4 0;
+#X coords 0 -1 1 1 262 36 2 100 100;
