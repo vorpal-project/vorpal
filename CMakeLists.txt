@@ -93,6 +93,8 @@ install (FILES
          ${CMAKE_SOURCE_DIR}/patches/openda_panel.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_bus.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_parameter.pd
+         ${CMAKE_SOURCE_DIR}/patches/openda_seq16.pd
+         ${CMAKE_SOURCE_DIR}/patches/openda_metro.pd
          DESTINATION patches
          CONFIGURATIONS Debug Release)
 # Export cmake target
