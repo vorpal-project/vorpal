@@ -86,15 +86,14 @@ install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
          CONFIGURATIONS Debug Release)
 # Install ODA Panel patches
 install (FILES
-         ${CMAKE_SOURCE_DIR}/patches/oda_panel.pd
-         ${CMAKE_SOURCE_DIR}/patches/oda_sound.pd
-         ${CMAKE_SOURCE_DIR}/patches/oda_synth1.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_core.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_panel.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_bus.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_parameter.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_seq16.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_metro.pd
+         ${CMAKE_SOURCE_DIR}/patches/openda_sample.pd
+         ${CMAKE_SOURCE_DIR}/patches/openda_osc.pd
          DESTINATION patches
          CONFIGURATIONS Debug Release)
 # Export cmake target

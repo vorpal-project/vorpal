@@ -1,101 +1,104 @@
-#N canvas 656 311 914 590 10;
+#N canvas 200 131 1141 772 16;
 #X obj 53 40 mod 16;
-#X obj 568 339 r \$0-synth;
-#X obj 33 257 cnv 32 598 48 empty empty empty 20 12 1 16 -33289 -66577
+#X obj 568 383 r \$0-synth;
+#X obj 33 301 cnv 32 598 48 empty empty empty 20 12 1 16 -33289 -66577
 0;
-#X obj 39 257 cnv 42 592 42 empty empty Sequencer 6 20 1 16 -128992
+#X obj 39 301 cnv 42 592 42 empty empty Sequencer 6 20 1 16 -128992
 -1 0;
-#X obj 136 267 tgl 24 1 empty \$0-tgl-0 empty 17 7 0 10 -166441 -16853
+#X obj 136 311 tgl 24 1 empty \$0-tgl-0 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 103 319 spigot;
-#X obj 103 343 s \$0-synth;
-#X obj 161 267 tgl 24 1 empty \$0-tgl-1 empty 17 7 0 10 -166441 -16853
+#X obj 73 403 spigot;
+#X obj 73 437 s \$0-synth;
+#X obj 161 311 tgl 24 1 empty \$0-tgl-1 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 128 369 spigot;
-#X obj 128 393 s \$0-synth;
-#X obj 186 267 tgl 24 1 empty \$0-tgl-2 empty 17 7 0 10 -166441 -16853
+#X obj 98 473 spigot;
+#X obj 98 507 s \$0-synth;
+#X obj 186 311 tgl 24 1 empty \$0-tgl-2 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 153 419 spigot;
-#X obj 153 443 s \$0-synth;
-#X obj 211 267 tgl 24 1 empty \$0-tgl-3 empty 17 7 0 10 -166441 -16853
+#X obj 123 543 spigot;
+#X obj 123 577 s \$0-synth;
+#X obj 211 311 tgl 24 1 empty \$0-tgl-3 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 178 469 spigot;
-#X obj 178 493 s \$0-synth;
-#X obj 236 267 tgl 24 1 empty \$0-tgl-4 empty 17 7 0 10 -166441 -16853
+#X obj 148 613 spigot;
+#X obj 148 647 s \$0-synth;
+#X obj 236 311 tgl 24 1 empty \$0-tgl-4 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 203 319 spigot;
-#X obj 203 343 s \$0-synth;
-#X obj 261 267 tgl 24 1 empty \$0-tgl-5 empty 17 7 0 10 -166441 -16853
+#X obj 183 403 spigot;
+#X obj 183 437 s \$0-synth;
+#X obj 261 311 tgl 24 1 empty \$0-tgl-5 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 228 369 spigot;
-#X obj 228 393 s \$0-synth;
-#X obj 286 267 tgl 24 1 empty \$0-tgl-6 empty 17 7 0 10 -166441 -16853
+#X obj 208 473 spigot;
+#X obj 208 507 s \$0-synth;
+#X obj 286 311 tgl 24 1 empty \$0-tgl-6 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 253 419 spigot;
-#X obj 253 443 s \$0-synth;
-#X obj 311 267 tgl 24 1 empty \$0-tgl-7 empty 17 7 0 10 -166441 -16853
+#X obj 233 543 spigot;
+#X obj 233 577 s \$0-synth;
+#X obj 311 311 tgl 24 1 empty \$0-tgl-7 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 278 469 spigot;
-#X obj 278 493 s \$0-synth;
-#X obj 336 267 tgl 24 1 empty \$0-tgl-8 empty 17 7 0 10 -166441 -16853
+#X obj 258 613 spigot;
+#X obj 258 647 s \$0-synth;
+#X obj 336 311 tgl 24 1 empty \$0-tgl-8 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 303 319 spigot;
-#X obj 303 343 s \$0-synth;
-#X obj 361 267 tgl 24 1 empty \$0-tgl-9 empty 17 7 0 10 -166441 -16853
+#X obj 293 403 spigot;
+#X obj 293 437 s \$0-synth;
+#X obj 361 311 tgl 24 1 empty \$0-tgl-9 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 328 369 spigot;
-#X obj 328 393 s \$0-synth;
-#X obj 386 267 tgl 24 1 empty \$0-tgl-10 empty 17 7 0 10 -166441 -16853
+#X obj 318 473 spigot;
+#X obj 318 507 s \$0-synth;
+#X obj 386 311 tgl 24 1 empty \$0-tgl-10 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 353 419 spigot;
-#X obj 353 443 s \$0-synth;
-#X obj 411 267 tgl 24 1 empty \$0-tgl-11 empty 17 7 0 10 -166441 -16853
+#X obj 343 543 spigot;
+#X obj 343 577 s \$0-synth;
+#X obj 411 311 tgl 24 1 empty \$0-tgl-11 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 378 469 spigot;
-#X obj 378 493 s \$0-synth;
-#X obj 436 267 tgl 24 1 empty \$0-tgl-12 empty 17 7 0 10 -166441 -16853
+#X obj 368 613 spigot;
+#X obj 368 647 s \$0-synth;
+#X obj 436 311 tgl 24 1 empty \$0-tgl-12 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 403 319 spigot;
-#X obj 403 343 s \$0-synth;
-#X obj 461 267 tgl 24 1 empty \$0-tgl-13 empty 17 7 0 10 -166441 -16853
+#X obj 403 403 spigot;
+#X obj 403 437 s \$0-synth;
+#X obj 461 311 tgl 24 1 empty \$0-tgl-13 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 428 369 spigot;
-#X obj 428 393 s \$0-synth;
-#X obj 486 267 tgl 24 1 empty \$0-tgl-14 empty 17 7 0 10 -166441 -16853
+#X obj 428 473 spigot;
+#X obj 428 507 s \$0-synth;
+#X obj 486 311 tgl 24 1 empty \$0-tgl-14 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 453 419 spigot;
-#X obj 453 443 s \$0-synth;
-#X obj 511 267 tgl 24 1 empty \$0-tgl-15 empty 17 7 0 10 -166441 -16853
+#X obj 453 543 spigot;
+#X obj 453 577 s \$0-synth;
+#X obj 511 311 tgl 24 1 empty \$0-tgl-15 empty 17 7 0 10 -166441 -16853
 -262144 0 1;
-#X obj 478 469 spigot;
-#X obj 478 493 s \$0-synth;
-#X obj 53 188 route 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15;
-#X obj 736 78 f \$0;
-#X msg 736 108 \; \$1-tgl-0 color 1 \; \$1-tgl-1 color 1 \; \$1-tgl-2
+#X obj 478 613 spigot;
+#X obj 478 647 s \$0-synth;
+#X obj 53 228 route 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15;
+#X obj 889 361 f \$0;
+#X msg 889 391 \; \$1-tgl-0 color 1 \; \$1-tgl-1 color 1 \; \$1-tgl-2
 color 1 \; \$1-tgl-3 color 1 \; \$1-tgl-4 color 1 \; \$1-tgl-5 color
 1 \; \$1-tgl-6 color 1 \; \$1-tgl-7 color 1 \; \$1-tgl-8 color 1 \;
 \$1-tgl-9 color 1 \; \$1-tgl-10 color 1 \; \$1-tgl-11 color 1 \; \$1-tgl-12
 color 1 \; \$1-tgl-13 color 1 \; \$1-tgl-14 color 1 \; \$1-tgl-15 color
 1 \;;
-#X obj 151 92 t b f;
-#X obj 151 116 pack \$0 0;
-#X msg 151 140 \; \$1-tgl-\$2 color 16;
+#X obj 201 102 t b f;
+#X obj 201 136 pack \$0 0;
+#X msg 201 170 \; \$1-tgl-\$2 color 16;
 #X obj 53 12 inlet metro;
-#X obj 53 64 t f b f;
-#X obj 568 405 outlet;
-#X obj 736 47 r \$0-clear;
-#X obj 72 152 s \$0-clear;
-#X obj 601 267 tgl 24 1 empty empty Active -56 12 1 16 -166441 -16853
+#X obj 53 68 t f b f;
+#X obj 568 449 outlet;
+#X obj 889 330 r \$0-clear;
+#X obj 86 161 s \$0-clear;
+#X obj 601 311 tgl 24 1 empty empty Active -56 12 1 16 -166441 -16853
 -1 0 1;
-#X obj 568 367 spigot;
-#X obj 724 437 r \$0-done;
-#X obj 724 471 outlet;
-#X obj 341 224 s \$0-done;
+#X obj 568 411 spigot;
+#X obj 663 649 r \$0-done;
+#X obj 663 683 outlet;
+#X obj 472 266 s \$0-done;
 #X obj 422 64 inlet active;
-#X obj 72 126 delay 200;
-#X obj 463 135 list prepend \$0;
-#X msg 463 172 \; \$1-tgl-\$2 \$3;
+#X obj 86 125 delay 200;
+#X obj 491 134 list prepend \$0;
+#X msg 491 171 \; \$1-tgl-\$2 \$3;
 #X obj 422 97 route float list bang;
+#X obj 689 142 route clear;
+#X msg 689 186 0 0 \, 1 0 \, 2 0 \, 3 0 \, 4 0 \, 5 0 \, 6 0 \, 7 0
+\, 8 0 \, 9 0 \, 10 0 \, 11 0 \, 12 0 \, 13 0 \, 14 0 \, 15 0;
 #X connect 0 0 59 0;
 #X connect 1 0 64 0;
 #X connect 4 0 5 1;
@@ -165,4 +168,7 @@ color 1 \; \$1-tgl-13 color 1 \; \$1-tgl-14 color 1 \; \$1-tgl-15 color
 #X connect 72 0 63 0;
 #X connect 72 1 70 0;
 #X connect 72 2 63 0;
-#X coords 0 -1 1 1 600 50 2 32 256;
+#X connect 72 3 73 0;
+#X connect 73 0 74 0;
+#X connect 74 0 72 0;
+#X coords 0 -1 1 1 600 50 2 32 300;

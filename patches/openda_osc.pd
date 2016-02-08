@@ -1,0 +1,40 @@
+#N canvas 654 319 520 595 16;
+#X obj 30 113 inlet~ freq;
+#X obj 54 317 inlet~ amp;
+#X obj 30 536 outlet~ signal;
+#X obj 30 279 osc~;
+#X obj 215 149 inlet set;
+#X obj 215 186 route freq amp phase;
+#X obj 31 198 +~;
+#X obj 215 327 s \$0-freq;
+#X obj 280 297 s \$0-amp;
+#X obj 346 248 s \$0-phase;
+#X obj 58 162 r \$0-freq;
+#X obj 29 469 *~;
+#X obj 55 409 +~;
+#X obj 82 358 r \$0-amp;
+#X obj 67 235 r \$0-phase;
+#X obj 65 13 cnv 15 280 80 empty empty empty 33 15 0 14 -33289 -1 0
+;
+#X obj 71 13 cnv 32 274 74 empty empty Oscillator 100 15 1 14 -128992
+-1 0;
+#X obj 140 40 hsl 120 20 40 4000 1 1 \$0-freq empty Frequency -64 10
+1 10 -162280 -1 -1 6200 1;
+#X obj 140 64 hsl 120 20 0.01 1 1 1 \$0-amp empty Amplitude -64 10
+1 10 -162280 -1 -1 5950 1;
+#X floatatom 267 40 5 0 0 1 Hz #0-freq -, f 5;
+#X floatatom 267 64 5 0 0 1 - #0-amp -, f 5;
+#X connect 0 0 6 0;
+#X connect 1 0 12 0;
+#X connect 3 0 11 0;
+#X connect 4 0 5 0;
+#X connect 5 0 7 0;
+#X connect 5 1 8 0;
+#X connect 5 2 9 0;
+#X connect 6 0 3 0;
+#X connect 10 0 6 1;
+#X connect 11 0 2 0;
+#X connect 12 0 11 1;
+#X connect 13 0 12 1;
+#X connect 14 0 3 1;
+#X coords 0 -1 1 1 282 82 2 64 12;
