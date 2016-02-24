@@ -64,10 +64,15 @@ target_link_libraries (
 #  - Output the lib file to <build directory>/lib
 set_target_properties (
   ${PROJECT_NAME} PROPERTIES
-  COMPILE_FLAGS "-std=c++11 -fPIC"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
+if (UNIX)
+  set_target_properties (
+    ${PROJECT_NAME} PROPERTIES
+    COMPILE_FLAGS "-std=c++11 -fPIC"
+  )
+endif (UNIX)
 
 # Is there a better way to do this?
 # Install the library target, with export option
