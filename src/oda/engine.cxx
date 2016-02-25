@@ -7,7 +7,6 @@
 
 #include ODA_OPENAL_DIR(al.h)
 #include ODA_OPENAL_DIR(alc.h)
-#include ODA_OPENAL_DIR(alext.h)
 
 #include <algorithm>
 #include <fstream>
