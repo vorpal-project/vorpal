@@ -38,6 +38,10 @@ set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/portable.h
 )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set (ODA_OSX 1)
+endif ()
+
 configure_file (
   ${CMAKE_SOURCE_DIR}/src/oda/portable.in.h
   ${CMAKE_SOURCE_DIR}/src/oda/portable.h

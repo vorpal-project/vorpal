@@ -1,5 +1,5 @@
 
-#cmakedefine _OSX @APPLE@
+#cmakedefine _OSX @ODA_OSX@
 
 #ifdef _OSX
 # define ODA_OPENAL_DIR(header) <OpenAL/header>
