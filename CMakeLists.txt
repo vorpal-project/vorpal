@@ -35,6 +35,12 @@ set (PROJECT_HEADERS
   ${CMAKE_SOURCE_DIR}/src/oda/player.h
   ${CMAKE_SOURCE_DIR}/src/oda/dspserver.h
   ${CMAKE_SOURCE_DIR}/src/oda/parameter.h
+  ${CMAKE_SOURCE_DIR}/src/oda/portable.h
+)
+
+configure_file (
+  ${CMAKE_SOURCE_DIR}/src/oda/portable.in.h
+  ${CMAKE_SOURCE_DIR}/src/oda/portable.h
 )
 
 # Where to look for when using #include <...>

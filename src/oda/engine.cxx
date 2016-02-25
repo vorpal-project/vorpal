@@ -3,10 +3,11 @@
 #include <oda/player.h>
 #include <oda/dspserver.h>
 #include <oda/event.h>
+#include <oda/portable.h>
 
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
+#include ODA_OPENAL_DIR(al.h)
+#include ODA_OPENAL_DIR(alc.h)
+#include ODA_OPENAL_DIR(alext.h)
 
 #include <algorithm>
 #include <fstream>

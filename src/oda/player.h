@@ -2,8 +2,10 @@
 #ifndef LIBODA_PLAYER_H_
 #define LIBODA_PLAYER_H_
 
-#include <AL/al.h>
-#include <AL/alc.h>
+#include <oda/portable.h>
+
+#include ODA_OPENAL_DIR(al.h)
+#include ODA_OPENAL_DIR(alc.h)
 
 #include <chrono>
 #include <cmath>
