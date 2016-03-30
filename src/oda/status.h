@@ -3,7 +3,6 @@
 #define LIBODA_ODA_STATUS_H_
 
 #include <string>
-#include <cstdint>
 
 namespace oda {
 
