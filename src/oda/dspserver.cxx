@@ -75,12 +75,16 @@ Status DSPServer::start(const vector<string>& patch_paths) {
   if (dsp.init(1, 1, sample_rate())) {
     started = true;
     search_paths.clear();
-    dsp.computeAudio(true);
-    receiver.reset(new Receiver);
-    dsp.setReceiver(receiver.get());
     for (const string& path : patch_paths)
       addPath(path);
     core = loadEvent("openda_core");
+    if (!core.status().ok()) {
+      search_paths.clear();
+      return Status::FAILURE("DSP Server could not load core event");
+    }
+    dsp.computeAudio(true);
+    receiver.reset(new Receiver);
+    dsp.setReceiver(receiver.get());
     return Status::OK("DSP Server started succesfully");
   }
   return Status::FAILURE("DSP Server could not start");
