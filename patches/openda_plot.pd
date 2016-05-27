@@ -1,4 +1,4 @@
-#N canvas 547 308 711 581 16;
+#N canvas 547 311 711 581 16;
 #X msg 48 128 bang;
 #X obj 48 541 setsize display v;
 #X obj 115 274 pointer;
@@ -26,6 +26,7 @@
 #X obj 304 251 moses \$6;
 #X obj 304 397 set sample y;
 #X obj 304 367 * -100;
+#X obj 449 105 inlet settable;
 #X connect 0 0 19 0;
 #X connect 2 0 17 4;
 #X connect 3 0 4 0;
@@ -60,3 +61,4 @@
 #X connect 24 0 10 0;
 #X connect 24 1 12 0;
 #X connect 26 0 25 0;
+#X connect 27 0 13 0;

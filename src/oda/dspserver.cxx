@@ -44,7 +44,6 @@ PdBase                dsp;
 unique_ptr<Receiver>  receiver;
 float                 inbuf[6400], outbuf[6400];
 vector<string>        search_paths;
-Event                 core;
 
 void Receiver::print(const string &message) {
   std::printf("%s\n", message.c_str());
@@ -77,11 +76,6 @@ Status DSPServer::start(const vector<string>& patch_paths) {
     search_paths.clear();
     for (const string& path : patch_paths)
       addPath(path);
-    core = loadEvent("openda_core");
-    if (!core.status().ok()) {
-      search_paths.clear();
-      return Status::FAILURE("DSP Server could not load core event");
-    }
     dsp.computeAudio(true);
     receiver.reset(new Receiver);
     dsp.setReceiver(receiver.get());
@@ -143,10 +137,12 @@ void DSPServer::process(int ticks, vector<float> *signal) {
     // Process global signal
     dsp.processFloat(TICK_RATIO, inbuf, outbuf);
     // Collect processed audio
-    if (dsp.readArray("openda_master", temp, tick_size()))
-      for (int k = 0; k < tick_size(); ++k)
-        (*signal)[k + i*tick_size()] = temp[k];
-    else std::printf("Failed to read array!\n");
+    for (Patch *patch : Event::patches()) {
+      const string array_name = "openda-bus-"+patch->dollarZeroStr();
+      if (dsp.readArray(array_name, temp, tick_size()))
+        for (int k = 0; k < tick_size(); ++k)
+          (*signal)[k + i*tick_size()] += temp[k];
+    }
   }
 }
 
@@ -161,7 +157,6 @@ void DSPServer::cleanUp() {
 }
 
 void DSPServer::finish() {
-  core = Event();
   cleanUp();
 }
 

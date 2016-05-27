@@ -1,20 +1,29 @@
-#N canvas 631 624 357 330 16;
-#X obj 20 228 throw~ openda_mainbus;
-#X obj 22 26 inlet~;
-#X obj 21 188 *~;
-#X obj 48 155 line;
-#X msg 48 122 \$1 100;
+#N canvas 706 361 396 411 16;
+#X obj 33 26 inlet~;
+#X obj 32 188 *~;
+#X obj 154 38 line;
 #X obj 154 10 inlet;
-#X obj 49 65 cnv 15 139 54 empty empty empty 33 15 0 14 -33289 -1 0
+#X obj 49 81 cnv 15 200 54 empty empty empty 33 15 0 14 -33289 -1 0
 ;
-#X obj 55 65 cnv 32 133 48 empty empty Audio_Bus 30 15 1 14 -128992
+#X obj 55 81 cnv 32 194 48 empty empty Audio_Bus 30 15 1 14 -128992
 -1 0;
-#X obj 59 90 hsl 120 20 0.01 1 1 1 empty empty empty -2 -8 0 10 -162280
+#X obj 62 106 hsl 120 20 0.01 1 1 1 empty empty empty -2 -8 0 10 -162280
 -1 -1 6350 1;
-#X connect 1 0 2 0;
-#X connect 2 0 0 0;
-#X connect 3 0 2 1;
-#X connect 4 0 3 0;
-#X connect 5 0 8 0;
-#X connect 8 0 4 0;
-#X coords 0 -1 1 1 141 56 2 48 64;
+#X obj 31 358 table openda-bus-\$1 64;
+#X obj 31 328 tabwrite~ openda-bus-\$1;
+#X obj 61 248 send~ openda-bus-\$1;
+#X obj 206 95 bng 24 250 50 0 empty empty empty 17 7 0 10 -162280 -1
+-1;
+#X obj 206 189 s openda-focus;
+#X obj 59 296 bang~;
+#X obj 206 154 i \$1;
+#X connect 0 0 1 0;
+#X connect 1 0 8 0;
+#X connect 1 0 9 0;
+#X connect 2 0 6 0;
+#X connect 3 0 2 0;
+#X connect 6 0 1 1;
+#X connect 10 0 13 0;
+#X connect 12 0 8 0;
+#X connect 13 0 11 0;
+#X coords 0 -1 1 1 201 56 2 48 80;
