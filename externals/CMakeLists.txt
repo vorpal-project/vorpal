@@ -166,6 +166,10 @@ install (TARGETS pdcpp
          DESTINATION lib
          CONFIGURATIONS Debug Release
          INCLUDES DESTINATION include)
+# Install libpd's headers
+install (DIRECTORY ${CMAKE_BINARY_DIR}/externals/include/libpd
+         DESTINATION include
+         CONFIGURATIONS Debug Release)
 
 ### PD helper patches! #########################################################
 
