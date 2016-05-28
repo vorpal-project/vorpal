@@ -2,7 +2,7 @@
 #include <oda/engine.h>
 #include <oda/audioserver.h>
 #include <oda/dspserver.h>
-#include <oda/event.h>
+#include <oda/dspunit.h>
 #include <oda/portable.h>
 
 #include ODA_OPENAL_DIR(al.h)
@@ -144,9 +144,9 @@ void Engine::tick(double dt) {
   }
 }
 
-Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
-  *event_out = DSPServer().loadEvent(path_to_event);
-  return event_out->status();
+Status Engine::eventInstance(const string &path_to_event, DSPUnit *unit_out) {
+  *unit_out = DSPServer().loadUnit(path_to_event);
+  return unit_out->status();
 }
 
 void Engine::testAudio() {

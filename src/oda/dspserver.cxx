@@ -1,6 +1,6 @@
 
 #include <oda/dspserver.h>
-#include <oda/event.h>
+#include <oda/dspunit.h>
 #include <oda/parameter.h>
 
 #include <libpd/PdBase.hpp>
@@ -101,18 +101,18 @@ void DSPServer::addPath(const string &path) {
   search_paths.push_back(path);
 }
 
-Event DSPServer::loadEvent(const string &path) {
+DSPUnit DSPServer::loadUnit(const string &path) {
   string filename = path + ".pd";
   for (string search_path : search_paths) {
     if (checkPath(search_path+"/"+filename)) {
       Patch check = dsp.openPatch(filename, search_path);
       if (check.isValid()) {
         Patch *patch = new Patch(check);
-        return Event(patch);
+        return DSPUnit(patch);
       }
     }
   }
-  return Event();
+  return DSPUnit();
 }
 
 void DSPServer::handleCommands() {
@@ -121,7 +121,7 @@ void DSPServer::handleCommands() {
   string            identifier;
   vector<Parameter> parameters;
   ParameterSwitch   switcher(&addNumber, &addSymbol);
-  while (Event::popCommand(&patch, &identifier, &parameters)) {
+  while (DSPUnit::popCommand(&patch, &identifier, &parameters)) {
     dsp.startMessage();
     for (Parameter param : parameters)
       switcher.handle(param);
@@ -137,7 +137,7 @@ void DSPServer::process(int ticks, vector<float> *signal) {
     // Process global signal
     dsp.processFloat(TICK_RATIO, inbuf, outbuf);
     // Collect processed audio
-    for (Patch *patch : Event::patches()) {
+    for (Patch *patch : DSPUnit::patches()) {
       const string array_name = "openda-bus-"+patch->dollarZeroStr();
       if (dsp.readArray(array_name, temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)
@@ -148,7 +148,7 @@ void DSPServer::process(int ticks, vector<float> *signal) {
 
 void DSPServer::cleanUp() {
   Patch *patch;
-  while (patch = Event::to_be_closed()) {
+  while (patch = DSPUnit::to_be_closed()) {
     if (patch->isValid()) {
       dsp.closePatch(*patch);
     }

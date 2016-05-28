@@ -1,6 +1,6 @@
 
-#ifndef ODA_EVENT_H_
-#define ODA_EVENT_H_
+#ifndef ODA_DSPUNIT_H_
+#define ODA_DSPUNIT_H_
 
 #include <oda/parameter.h>
 #include <oda/status.h>
@@ -17,12 +17,12 @@ class Patch;
 
 namespace oda {
 
-class EventImpl;
+class DSPUnitImpl;
 
-class Event {
+class DSPUnit {
  public:
   using Command = std::tuple<pd::Patch*, std::string, std::vector<Parameter>>;
-  Event();
+  DSPUnit();
   Status status() const;
   void play();
   void stop();
@@ -34,23 +34,23 @@ class Event {
  private:
   friend class DSPServer;
   template <typename... Args> struct CommandPusher;
-  Event(pd::Patch *patch);
+  DSPUnit(pd::Patch *patch);
   static bool popCommand(pd::Patch **patch, std::string *identifier,
                          std::vector<Parameter> *parameters);
   static const std::unordered_set<pd::Patch*>& patches();
   static pd::Patch* to_be_closed();
-  std::shared_ptr<EventImpl> impl_;
+  std::shared_ptr<DSPUnitImpl> impl_;
 };
 
 template <>
-struct Event::CommandPusher<> {
+struct DSPUnit::CommandPusher<> {
   static void push(std::vector<Parameter> *parameters) {
     parameters->size();
   }
 };
 
 template <typename T, typename... Args>
-struct Event::CommandPusher<T, Args...> {
+struct DSPUnit::CommandPusher<T, Args...> {
   static void push(std::vector<Parameter> *parameters, T parameter,
                    Args... args) {
     parameters->emplace_back(parameter);
@@ -59,7 +59,7 @@ struct Event::CommandPusher<T, Args...> {
 };
 
 template <typename... Args>
-inline void Event::pushCommand(const std::string &identifier, Args... args) {
+inline void DSPUnit::pushCommand(const std::string &identifier, Args... args) {
   std::vector<Parameter> parameters;
   CommandPusher<Args...>::push(&parameters, args...);
   pushCommand(identifier, parameters);
@@ -67,5 +67,5 @@ inline void Event::pushCommand(const std::string &identifier, Args... args) {
 
 } // namespace oda
 
-#endif // ODA_EVENT_H_
+#endif // ODA_DSPUNIT_H_
 

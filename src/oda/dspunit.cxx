@@ -1,5 +1,5 @@
 
-#include <oda/event.h>
+#include <oda/dspunit.h>
 #include <oda/dspserver.h>
 
 #include <libpd/PdTypes.hpp>
@@ -17,15 +17,15 @@ using pd::Patch;
 
 namespace {
 
-deque<Event::Command> commands__;
+deque<DSPUnit::Command> commands__;
 unordered_set<Patch*> patches__;
 deque<Patch*>         to_be_closed__;
 
 } // unnamed namespace
 
-class EventImpl {
+class DSPUnitImpl {
  public:
-  virtual ~EventImpl() {}
+  virtual ~DSPUnitImpl() {}
   virtual Status status() const = 0;
   virtual void play() = 0;
   virtual void stop() = 0;
@@ -33,14 +33,14 @@ class EventImpl {
   virtual void pushCommand(const string &identifier,
                            const vector<Parameter> &parameters) = 0;
  protected:
-  EventImpl() {}
+  DSPUnitImpl() {}
 };
 
-class EventNullImpl : public EventImpl {
+class DSPUnitNullImpl : public DSPUnitImpl {
  public:
-  EventNullImpl() {}
-  ~EventNullImpl() {}
-  Status status() const override { return Status::INVALID("Null event"); }
+  DSPUnitNullImpl() {}
+  ~DSPUnitNullImpl() {}
+  Status status() const override { return Status::INVALID("Null dsp unit"); }
   void play() override {}
   void stop() override {}
   bool active() const override { return false; }
@@ -48,11 +48,11 @@ class EventNullImpl : public EventImpl {
                    const vector<Parameter> &parameters) override {}
 };
 
-class EventRealImpl : public EventImpl {
+class DSPUnitRealImpl : public DSPUnitImpl {
  public:
-  EventRealImpl(Patch *patch);
-  ~EventRealImpl();
-  Status status() const override { return Status::OK("Valid event"); }
+  DSPUnitRealImpl(Patch *patch);
+  ~DSPUnitRealImpl();
+  Status status() const override { return Status::OK("Valid dsp unit"); }
   void play() override;
   void stop() override;
   bool active() const override;
@@ -63,58 +63,58 @@ class EventRealImpl : public EventImpl {
   bool                    active_;
 };
 
-EventRealImpl::EventRealImpl(Patch *patch) : patch_(patch) {
+DSPUnitRealImpl::DSPUnitRealImpl(Patch *patch) : patch_(patch) {
   patches__.insert(patch);
 }
 
-EventRealImpl::~EventRealImpl() {
+DSPUnitRealImpl::~DSPUnitRealImpl() {
   to_be_closed__.push_back(patch_);
   patches__.erase(patch_);
 }
 
-void EventRealImpl::play() {
+void DSPUnitRealImpl::play() {
   active_ = true;
 }
 
-void EventRealImpl::stop() {
+void DSPUnitRealImpl::stop() {
   active_ = false;
 }
 
-bool EventRealImpl::active() const {
+bool DSPUnitRealImpl::active() const {
   return active_;
 }
 
-void EventRealImpl::pushCommand(const string &identifier,
+void DSPUnitRealImpl::pushCommand(const string &identifier,
                                 const vector<Parameter> &parameters) {
   commands__.emplace_back(patch_, identifier, parameters);
 }
 
-Event::Event() : impl_(new EventNullImpl) {}
+DSPUnit::DSPUnit() : impl_(new DSPUnitNullImpl) {}
 
-Event::Event(Patch *patch) : impl_(new EventRealImpl(patch)) {}
+DSPUnit::DSPUnit(Patch *patch) : impl_(new DSPUnitRealImpl(patch)) {}
 
-Status Event::status() const {
+Status DSPUnit::status() const {
   return impl_->status();
 }
 
-void Event::play() {
+void DSPUnit::play() {
   impl_->play();
 }
 
-void Event::stop() {
+void DSPUnit::stop() {
   impl_->stop();
 }
 
-bool Event::active() const {
+bool DSPUnit::active() const {
   return impl_->active();
 }
 
-void Event::pushCommand(const string &identifier,
+void DSPUnit::pushCommand(const string &identifier,
                         const vector<Parameter> &parameters) {
   impl_->pushCommand(identifier, parameters);
 }
 
-bool Event::popCommand(pd::Patch **patch, string *identifier,
+bool DSPUnit::popCommand(pd::Patch **patch, string *identifier,
                        vector<Parameter> *parameters) {
   if (commands__.empty())
     return false;
@@ -126,11 +126,11 @@ bool Event::popCommand(pd::Patch **patch, string *identifier,
   return true;
 }
 
-const unordered_set<Patch*>& Event::patches() {
+const unordered_set<Patch*>& DSPUnit::patches() {
   return patches__;
 }
 
-Patch* Event::to_be_closed() {
+Patch* DSPUnit::to_be_closed() {
   if (to_be_closed__.empty())
     return nullptr;
   Patch *patch = to_be_closed__.front();

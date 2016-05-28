@@ -7,9 +7,9 @@ find_package (OpenAL REQUIRED)
 set (PROJECT_SRC
   oda.cxx
   engine.cxx
-  event.cxx
   audioserver.cxx
   dspserver.cxx
+  dspunit.cxx
   parameter.cxx
 )
 
@@ -17,10 +17,10 @@ set (PROJECT_SRC
 set (PROJECT_HEADERS
   oda.h
   engine.h
-  event.h
   status.h
   audioserver.h
   dspserver.h
+  dspunit.h
   parameter.h
   portable.h
 )

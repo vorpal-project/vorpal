@@ -14,7 +14,7 @@ class Patch;
 namespace oda {
 
 // Forwatd declaration
-class Event;
+class DSPUnit;
 
 class DSPServer {
  public:
@@ -23,7 +23,7 @@ class DSPServer {
   int tick_size() const;
   double time_per_tick() const;
   void addPath(const std::string &path);
-  Event loadEvent(const std::string &path);
+  DSPUnit loadUnit(const std::string &path);
   void handleCommands();
   void process(int ticks, std::vector<float> *signal);
   void cleanUp();

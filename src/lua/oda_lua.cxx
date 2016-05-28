@@ -27,7 +27,7 @@ namespace {
 
 // Engine methods
 
-unordered_set<Event*> events;
+unordered_set<DSPUnit*> events;
 
 int start(lua_State *L) {
   lua_settop(L, 1);
@@ -48,7 +48,7 @@ int start(lua_State *L) {
 
 int finish(lua_State *L) {
   lua_settop(L, 0);
-  for (Event *event : events)
+  for (DSPUnit *event : events)
     delete event;
   events.clear();
   Engine().finish();
@@ -73,11 +73,11 @@ int tick(lua_State *L) {
 int eventInstance(lua_State *L) {
   lua_settop(L, 1);
   if (lua_isstring(L, 1)) {
-    Event *event = new Event;
+    DSPUnit *event = new DSPUnit;
     Status status = Engine().eventInstance(lua_tostring(L, 1), event);
     if (status.ok()) {
       events.insert(event);
-      Event **data = static_cast<Event**>(lua_newuserdata(L, sizeof(event)));
+      DSPUnit **data = static_cast<DSPUnit**>(lua_newuserdata(L, sizeof(event)));
       *data = event;
       luaL_getmetatable(L, "event");
       lua_setmetatable(L, -2);
@@ -103,19 +103,19 @@ constexpr size_t size() {
   return sizeof(module)/sizeof(luaL_Reg) - 1;
 }
 
-// Event methods
+// DSPUnit methods
 
 int event_gc(lua_State *L) {
   lua_settop(L, 1);
   if (lua_isuserdata(L, 1)) {
     cout << "[WRAP] event collected" << endl;
-    Event *event = *static_cast<Event**>(lua_touserdata(L, 1));
+    DSPUnit *event = *static_cast<DSPUnit**>(lua_touserdata(L, 1));
     if (events.find(event) != events.end()) {
       events.erase(event);
       delete event;
     }
   }
-  return luaL_argerror(L, 1, "userdata:Event expected");
+  return luaL_argerror(L, 1, "userdata:DSPUnit expected");
 }
 
 int event_pushCommand(lua_State *L) {
@@ -123,10 +123,10 @@ int event_pushCommand(lua_State *L) {
     return luaL_error(L, "at least 2 arguments expected (got %d)",
                       lua_gettop(L));
   if (!lua_isuserdata(L, 1))
-    return luaL_argerror(L, 1, "userdata:Event expected");
+    return luaL_argerror(L, 1, "userdata:DSPUnit expected");
   if (!lua_isstring(L, 2))
     return luaL_argerror(L, 2, "string expected");
-  Event             *event = *static_cast<Event**>(lua_touserdata(L, 1));
+  DSPUnit           *event = *static_cast<DSPUnit**>(lua_touserdata(L, 1));
   string            identifier = lua_tostring(L, 2);
   vector<Parameter> parameters;
   for (int i = 3; i <= lua_gettop(L); ++i) {
