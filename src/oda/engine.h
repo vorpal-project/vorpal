@@ -76,12 +76,6 @@ class Engine {
   Status eventInstance(const std::string &path_to_event,
                        SoundtrackEvent *event_out);
 
-  /// Tests if audio output is working.
-  /**
-   * Plays a 440 Hz sine wave for 4 seconds.
-   */
-  void testAudio();
-
   const static size_t TICK_BUFFER_SIZE;
 };
  

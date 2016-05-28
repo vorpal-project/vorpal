@@ -1,5 +1,7 @@
 
 #include <oda/audioserver.h>
+
+#include <oda/audiounit.h>
 #include <oda/engine.h>
 
 #include <iostream>
@@ -10,78 +12,38 @@ namespace {
 
 using std::vector;
 
-void waitFor(int secs) {
-  std::this_thread::sleep_for (std::chrono::seconds(secs));
-}
-
-constexpr float make_signal(float frequency, size_t t) {
-  // 32760 because we're creating a MONO16 sound, and 16 bits integers goes
-  // from -32768 to 32767
-  return 32760.f * sin( (2.f*M_PI*frequency)/44100 * t );
-}
-
 bool isSourcePlaying(int source) {
   int state;
   alGetSourcei(source, AL_SOURCE_STATE, &state);
   return state == AL_PLAYING;
 }
 
-void generateSineWave(vector<int16_t> *samples, float frequency){
-  const size_t buf_size = Engine::TICK_BUFFER_SIZE;
-  const size_t total_size = NUM_BUFFERS*buf_size;
-  samples->resize(total_size);
-
-  for (size_t k=0; k < NUM_BUFFERS; ++k)
-    for (int i=0; i<buf_size; ++i) {
-      const int t = k*buf_size + i;
-      (*samples)[t] = .5 * make_signal(frequency, t);
-    }
-}
-
 } // unnamed namespace
 
 // Constructor
 // Default options
-AudioServer::AudioServer() : bytes_per_sample_(sizeof(int16_t)), sample_rate_(44100),
-                   format_(AL_FORMAT_MONO16) {
+AudioServer::AudioServer()
+  : sources_(NUM_SOURCES), bytes_per_sample_(sizeof(int16_t)),
+    sample_rate_(44100), format_(AL_FORMAT_MONO16) {
   // Setting up buffers and Sources
+  // FIXME: check for errors
   alGenBuffers(NUM_BUFFERS, buffers_);
-  alGenSources(NUM_SOURCES, sources_);
   for (unsigned i = 0; i < NUM_BUFFERS; ++i)
     free_buffers_.push(buffers_[i]);
+  alGenSources(NUM_SOURCES, sources_.data());
+  for (size_t i = 0; i < sources_.size(); ++i)
+    free_sources_.push(i);
 }
 
 // Destructor
 AudioServer::~AudioServer() {
   alDeleteBuffers(NUM_BUFFERS, buffers_);
-  alDeleteSources(NUM_SOURCES, sources_);
+  alDeleteSources(NUM_SOURCES, sources_.data());
+  sources_.clear();
 }
 
-// Sample Size setter
-void AudioServer::setBytesPerSample(size_t size) {
-  bytes_per_sample_ = size;
-}
-
-// Sample rate setter
-void AudioServer::setSampleRate(unsigned rate) {
-  sample_rate_ = rate;
-}
-
-// Format Setters
-void AudioServer::setFormatToMono8() {
-  format_ = AL_FORMAT_MONO8;
-}
-
-void AudioServer::setFormatToMono16() {
-  format_ = AL_FORMAT_MONO16;
-}
-
-void AudioServer::setFormatToStereo8() {
-  format_ = AL_FORMAT_STEREO8;
-}
-
-void AudioServer::setFormatToStereo16() {
-  format_ = AL_FORMAT_STEREO16;
+AudioUnit AudioServer::loadUnit() {
+  return AudioUnit();
 }
 
 // Set Source parameters
@@ -133,7 +95,7 @@ void AudioServer::stopSource(int source_number) {
 }
 
 void AudioServer::playAllSources() {
-  alSourcePlayv(NUM_SOURCES, sources_);
+  alSourcePlayv(NUM_SOURCES, sources_.data());
 }
 
 void AudioServer::playSoundOnSource(const vector<int16_t> *samples) {
@@ -142,24 +104,6 @@ void AudioServer::playSoundOnSource(const vector<int16_t> *samples) {
     streamData(samples, i*size, size);
   }
   playSource(0);
-}
-
-void AudioServer::playSoundOnSource(ALuint source, ALuint buffer, int seconds,
-                               ALvoid *data) {
-  fillBuffer(buffer, data, bytes_per_sample_ * sample_rate_ * seconds);
-  alSourcei(source, AL_BUFFER, buffer);
-  playSource(source);
-  waitFor(seconds);
-}
-
-// Generic AudioServer functions
-void AudioServer::playSineWave (int seconds, float frequency) {
-  std::cout << "short size: " << sizeof(short) << std::endl;
-  std::cout << "int16_t size: " << sizeof(int16_t) << std::endl;
-  vector<int16_t> data;
-  setBytesPerSample(sizeof(int16_t));
-  generateSineWave(&data, frequency);
-  playSoundOnSource(&data);
 }
 
 }

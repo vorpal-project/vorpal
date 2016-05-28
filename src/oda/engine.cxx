@@ -151,9 +151,5 @@ Status Engine::eventInstance(const string &path_to_dspunit,
   return event_out->status();
 }
 
-void Engine::testAudio() {
-  audioserver->playSineWave(4, 440.0f);
-}
-
 } // namespace oda
 
