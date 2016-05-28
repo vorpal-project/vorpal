@@ -8,6 +8,7 @@ set (PROJECT_SRC
   oda.cxx
   engine.cxx
   audioserver.cxx
+  audiounit.cxx
   dspserver.cxx
   dspunit.cxx
   parameter.cxx
@@ -20,6 +21,7 @@ set (PROJECT_HEADERS
   engine.h
   status.h
   audioserver.h
+  audiounit.h
   dspserver.h
   dspunit.h
   parameter.h
