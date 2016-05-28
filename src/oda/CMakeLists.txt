@@ -8,7 +8,7 @@ set (PROJECT_SRC
   oda.cxx
   engine.cxx
   event.cxx
-  player.cxx
+  audioserver.cxx
   dspserver.cxx
   parameter.cxx
 )
@@ -19,7 +19,7 @@ set (PROJECT_HEADERS
   engine.h
   event.h
   status.h
-  player.h
+  audioserver.h
   dspserver.h
   parameter.h
   portable.h

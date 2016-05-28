@@ -1,6 +1,6 @@
 
-#ifndef LIBODA_PLAYER_H_
-#define LIBODA_PLAYER_H_
+#ifndef LIBODA_AUDIOSERVER_H_
+#define LIBODA_AUDIOSERVER_H_
 
 #include <oda/portable.h>
 
@@ -18,10 +18,10 @@
 
 namespace oda {
 
-class Player {
+class AudioServer {
  public:
-  Player();
-  ~Player();
+  AudioServer();
+  ~AudioServer();
   void playSource(int source_number);
   void stopSource(int source_number);
   void playAllSources();
@@ -54,4 +54,4 @@ class Player {
 
 } // namespace oda
 
-#endif // LIBODA_PLAYER_H_
+#endif // LIBODA_AUDIOSERVER_H_

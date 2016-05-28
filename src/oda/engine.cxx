@@ -1,6 +1,6 @@
 
 #include <oda/engine.h>
-#include <oda/player.h>
+#include <oda/audioserver.h>
 #include <oda/dspserver.h>
 #include <oda/event.h>
 #include <oda/portable.h>
@@ -30,7 +30,7 @@ using std::vector;
 
 ALCdevice           *device = nullptr;
 ALCcontext          *context = nullptr;
-unique_ptr<Player>  player;
+unique_ptr<AudioServer>  audioserver;
 double              time_accumulated = 0.0;
 bool                playing_started = false;
 
@@ -81,8 +81,8 @@ Status Engine::start(const vector<string>& patch_paths) {
     device = nullptr;
     return Status::FAILURE("Engine internal: " + dsp_start.description());
   }
-  // Create audio player
-  player.reset(new Player);
+  // Create audio audioserver
+  audioserver.reset(new AudioServer);
   playing_started = false;
   time_accumulated = 0.0;
 #ifdef ODA_LOG
@@ -105,9 +105,9 @@ void Engine::finish() {
   if (!context) return;
   // Finish DSP server
   DSPServer().finish();
-  // Destroy audio player
-  player->stopSource(0);
-  player.reset();
+  // Destroy audio audioserver
+  audioserver->stopSource(0);
+  audioserver.reset();
   // Unset and destroy context
   alcMakeContextCurrent(nullptr);
   alcDestroyContext(context);
@@ -120,10 +120,10 @@ void Engine::finish() {
 void Engine::tick(double dt) {
   DSPServer dsp;
   // How many dsp ticks are needed for N seconds
-  player->update();
+  audioserver->update();
   dsp.cleanUp();
   dsp.handleCommands();
-  while (player->availableBuffers()) {
+  while (audioserver->availableBuffers()) {
     int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
     // Transfer signal from dsp server to audio server
     vector<float> signal;
@@ -131,9 +131,9 @@ void Engine::tick(double dt) {
     vector<int16_t> audio(dsp.tick_size()*ticks);
     for (int i = 0; i < signal.size(); ++i)
       audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
-    player->streamData(&audio);
+    audioserver->streamData(&audio);
     if (!playing_started) {
-      //player->playSource(0);
+      //audioserver->playSource(0);
       playing_started = true;
     }
 #ifdef ODA_LOG
@@ -150,7 +150,7 @@ Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
 }
 
 void Engine::testAudio() {
-  player->playSineWave(4, 440.0f);
+  audioserver->playSineWave(4, 440.0f);
 }
 
 } // namespace oda
