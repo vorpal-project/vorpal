@@ -1,42 +1,26 @@
 
 #include <oda/audiounit.h>
 
+#include <oda/audioserver.h>
+
 namespace oda {
 
 namespace {
 using std::shared_ptr;
 } // unnamed namespace
 
-class AudioUnitImpl {
+class AudioUnit::NullImpl : public AudioUnit::Impl {
  public:
-  virtual ~AudioUnitImpl() {}
-  virtual Status status() const = 0;
- protected:
-  AudioUnitImpl() {}
-};
-
-class AudioUnitNullImpl : public AudioUnitImpl {
- public:
-  ~AudioUnitNullImpl() {}
+  ~NullImpl() {}
   Status status() const override { return Status::INVALID("Null audio unit"); }
  private:
   friend class AudioUnit;
-  AudioUnitNullImpl() {}
+  NullImpl() {}
 };
 
-class AudioUnitRealImpl : public AudioUnitImpl {
- public:
-  ~AudioUnitRealImpl() {}
-  Status status() const override { return Status::OK("Valid audio unit"); }
- private:
-  friend class AudioUnit;
-  AudioUnitRealImpl(size_t unit_id) : unit_id_(unit_id) {}
-  size_t unit_id_;
-};
+AudioUnit::AudioUnit() : impl_(new NullImpl) {}
 
-AudioUnit::AudioUnit() : impl_(new AudioUnitNullImpl) {}
-
-AudioUnit::AudioUnit(size_t unit_id) : impl_(new AudioUnitRealImpl(unit_id)) {}
+AudioUnit::AudioUnit(Impl *impl) : impl_(impl) {}
 
 Status AudioUnit::status() const {
   return impl_->status();

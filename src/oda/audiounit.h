@@ -8,16 +8,24 @@
 
 namespace oda {
 
-class AudioUnitImpl;
-
 class AudioUnit {
  public:
   AudioUnit();
   Status status() const;
  private:
   friend class AudioServer;
-  AudioUnit(size_t unit_id);
-  std::shared_ptr<AudioUnitImpl> impl_;
+  class Impl;
+  class NullImpl;
+  AudioUnit(Impl *impl);
+  std::shared_ptr<Impl> impl_;
+};
+
+class AudioUnit::Impl {
+ public:
+  virtual ~Impl() {}
+  virtual Status status() const = 0;
+ protected:
+  Impl() {}
 };
 
 } // namespace oda

@@ -38,6 +38,9 @@ class AudioServer {
   void playSoundOnSource(const std::vector<int16_t> *samples);
 
  private:
+  class UnitImpl;
+  friend class UnitImpl;
+  void freeUnit(const UnitImpl *unit);
   ALuint  buffers_[NUM_BUFFERS];
   std::queue<ALuint>  free_buffers_;
   std::vector<ALuint> sources_;

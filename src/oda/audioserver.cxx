@@ -20,6 +20,18 @@ bool isSourcePlaying(int source) {
 
 } // unnamed namespace
 
+class AudioServer::UnitImpl : public AudioUnit::Impl {
+ public:
+  ~UnitImpl() { server_->freeUnit(this); }
+  Status status() const override { return Status::OK("Valid audio unit"); }
+ private:
+  friend class AudioServer;
+  UnitImpl(AudioServer* server, size_t unit_id)
+    : server_(server), unit_id_(unit_id) {}
+  AudioServer *server_;
+  size_t      unit_id_;
+};
+
 // Constructor
 // Default options
 AudioServer::AudioServer()
@@ -43,7 +55,17 @@ AudioServer::~AudioServer() {
 }
 
 AudioUnit AudioServer::loadUnit() {
-  return AudioUnit();
+  if (free_sources_.empty())
+    return AudioUnit();
+  else {
+    AudioUnit unit(new UnitImpl(this, free_sources_.front()));
+    free_sources_.pop();
+    return unit;
+  }
+}
+
+void AudioServer::freeUnit(const UnitImpl *unit) {
+  free_sources_.push(unit->unit_id_);
 }
 
 // Set Source parameters
