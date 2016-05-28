@@ -20,7 +20,7 @@ namespace oda {
 
 class AudioUnit;
 
-class AudioServer {
+class AudioServer final {
  public:
   AudioServer();
   ~AudioServer();
@@ -37,10 +37,12 @@ class AudioServer {
   void setSourcePosition(int source, float X, float Y, float Z);
   void playSoundOnSource(const std::vector<int16_t> *samples);
 
- private:
+ protected:
   class UnitImpl;
   friend class UnitImpl;
   void freeUnit(const UnitImpl *unit);
+
+ private:
   ALuint  buffers_[NUM_BUFFERS];
   std::queue<ALuint>  free_buffers_;
   std::vector<ALuint> sources_;
