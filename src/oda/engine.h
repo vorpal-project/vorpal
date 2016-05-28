@@ -10,7 +10,7 @@
 namespace oda {
 
 // Forward declarations
-class DSPUnit;
+class SoundtrackEvent;
 
 /// Open Dynamic Audio engine class.
 /** 
@@ -73,7 +73,8 @@ class Engine {
    * @param event_out Pointer to event output variable
    * @return Status Whether the event was successfully created or not
    */
-  Status eventInstance(const std::string &path_to_event, DSPUnit *unit_out);
+  Status eventInstance(const std::string &path_to_event,
+                       SoundtrackEvent *event_out);
 
   /// Tests if audio output is working.
   /**

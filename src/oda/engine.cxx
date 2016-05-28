@@ -4,6 +4,7 @@
 #include <oda/dspserver.h>
 #include <oda/dspunit.h>
 #include <oda/portable.h>
+#include <oda/soundtrackevent.h>
 
 #include ODA_OPENAL_DIR(al.h)
 #include ODA_OPENAL_DIR(alc.h)
@@ -144,9 +145,10 @@ void Engine::tick(double dt) {
   }
 }
 
-Status Engine::eventInstance(const string &path_to_event, DSPUnit *unit_out) {
-  *unit_out = DSPServer().loadUnit(path_to_event);
-  return unit_out->status();
+Status Engine::eventInstance(const string &path_to_dspunit,
+                             SoundtrackEvent *event_out) {
+  *event_out = SoundtrackEvent(DSPServer().loadUnit(path_to_dspunit));
+  return event_out->status();
 }
 
 void Engine::testAudio() {

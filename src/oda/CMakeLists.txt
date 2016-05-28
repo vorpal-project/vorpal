@@ -11,6 +11,7 @@ set (PROJECT_SRC
   dspserver.cxx
   dspunit.cxx
   parameter.cxx
+  soundtrackevent.cxx
 )
 
 # Define source code headers
@@ -23,6 +24,7 @@ set (PROJECT_HEADERS
   dspunit.h
   parameter.h
   portable.h
+  soundtrackevent.h
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
