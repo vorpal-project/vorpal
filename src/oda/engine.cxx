@@ -22,19 +22,21 @@ namespace {
 using std::make_shared;
 using std::ofstream;
 using std::ostream;
+using std::shared_ptr;
 using std::string;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
-using std::shared_ptr;
+using std::weak_ptr;
 
 //#define ODA_LOG
 
-ALCdevice           *device = nullptr;
-ALCcontext          *context = nullptr;
-unique_ptr<AudioServer>  audioserver;
-double              time_accumulated = 0.0;
-bool                playing_started = false;
+ALCdevice                         *device = nullptr;
+ALCcontext                        *context = nullptr;
+unique_ptr<AudioServer>           audioserver;
+vector<weak_ptr<SoundtrackEvent>> events;
+double                            time_accumulated = 0.0;
+bool                              playing_started = false;
 
 #ifdef ODA_LOG
 ofstream            out;
@@ -157,6 +159,7 @@ Status Engine::eventInstance(const string &path_to_dspunit,
     return Status::FAILURE("Could not load Audio Unit: "
                            + audiounit.status().description());
   *event_out = make_shared<SoundtrackEvent>(dspunit, audiounit);
+  events.emplace_back(*event_out);
   return Status::OK("Soundtrack event successfully created");
 }
 
