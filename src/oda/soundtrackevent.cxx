@@ -10,11 +10,9 @@ using std::vector;
 
 SoundtrackEvent::SoundtrackEvent() : dspunit_() {}
 
-SoundtrackEvent::SoundtrackEvent(const DSPUnit &dspunit) : dspunit_(dspunit) {}
-
-Status SoundtrackEvent::status() const {
-  return dspunit_.status();
-}
+SoundtrackEvent::SoundtrackEvent(const DSPUnit &dspunit,
+                                 const AudioUnit &audiounit)
+  : dspunit_(dspunit), audiounit_(audiounit) {}
 
 void SoundtrackEvent::pushCommand(const string &identifier,
                                   const vector<Parameter> &parameters) {

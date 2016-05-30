@@ -147,8 +147,16 @@ void Engine::tick(double dt) {
 
 Status Engine::eventInstance(const string &path_to_dspunit,
                              SoundtrackEvent *event_out) {
-  *event_out = SoundtrackEvent(DSPServer().loadUnit(path_to_dspunit));
-  return event_out->status();
+  DSPUnit dspunit = DSPServer().loadUnit(path_to_dspunit);
+  if (!dspunit.status().ok())
+    return Status::FAILURE("Could not load DSP Unit: "
+                           + dspunit.status().description());
+  AudioUnit audiounit = audioserver->loadUnit();
+  if (!audiounit.status().ok())
+    return Status::FAILURE("Could not load Audio Unit: "
+                           + audiounit.status().description());
+  *event_out = SoundtrackEvent(dspunit, audiounit);
+  return Status::OK("Soundtrack event successfully created");
 }
 
 } // namespace oda

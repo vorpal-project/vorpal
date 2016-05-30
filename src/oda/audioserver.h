@@ -3,6 +3,7 @@
 #define LIBODA_AUDIOSERVER_H_
 
 #include <oda/portable.h>
+#include <oda/status.h>
 
 #include ODA_OPENAL_DIR(al.h)
 #include ODA_OPENAL_DIR(alc.h)
