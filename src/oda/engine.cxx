@@ -48,7 +48,9 @@ void printSample(ostream &out, float sample) {
 }
 #endif
 
-}
+} // unnamed namespace
+
+const static size_t TICK_BUFFER_SIZE = 64;
 
 Engine::Engine() {}
 

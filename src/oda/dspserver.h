@@ -5,6 +5,7 @@
 #include <oda/status.h>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 // Forward declaration
 namespace pd {
@@ -26,9 +27,12 @@ class DSPServer {
   DSPUnit loadUnit(const std::string &path);
   void handleCommands();
   void process(int ticks, std::vector<float> *signal);
+  void processTick();
   void cleanUp();
   void finish();
  private:
+  class UnitImpl;
+  static std::unordered_set<UnitImpl*> units__;
 };
 
 } // namespace oda

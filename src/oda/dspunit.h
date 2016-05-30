@@ -24,19 +24,29 @@ class DSPUnit {
   using Command = std::tuple<pd::Patch*, std::string, std::vector<Parameter>>;
   DSPUnit();
   Status status() const;
+  void processTick();
   void pushCommand(const std::string &identifier,
                    const std::vector<Parameter> &parameters);
   template <typename... Args> void pushCommand(const std::string &identifier,
                                                Args... args);
  private:
   friend class DSPServer;
+  class Impl;
+  class NullImpl;
   template <typename... Args> struct CommandPusher;
-  DSPUnit(pd::Patch *patch);
-  static bool popCommand(pd::Patch **patch, std::string *identifier,
-                         std::vector<Parameter> *parameters);
-  static const std::unordered_set<pd::Patch*>& patches();
-  static pd::Patch* to_be_closed();
-  std::shared_ptr<DSPUnitImpl> impl_;
+  DSPUnit(Impl *impl);
+  std::shared_ptr<Impl> impl_;
+};
+
+class DSPUnit::Impl {
+ public:
+  virtual ~Impl() {}
+  virtual Status status() const = 0;
+  virtual void processTick() = 0;
+  virtual void pushCommand(const std::string &identifier,
+                           const std::vector<Parameter> &parameters) = 0;
+ protected:
+  Impl() {}
 };
 
 template <>
