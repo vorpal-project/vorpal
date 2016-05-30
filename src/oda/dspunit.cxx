@@ -27,9 +27,6 @@ class DSPUnitImpl {
  public:
   virtual ~DSPUnitImpl() {}
   virtual Status status() const = 0;
-  virtual void play() = 0;
-  virtual void stop() = 0;
-  virtual bool active() const = 0;
   virtual void pushCommand(const string &identifier,
                            const vector<Parameter> &parameters) = 0;
  protected:
@@ -41,9 +38,6 @@ class DSPUnitNullImpl : public DSPUnitImpl {
   DSPUnitNullImpl() {}
   ~DSPUnitNullImpl() {}
   Status status() const override { return Status::INVALID("Null dsp unit"); }
-  void play() override {}
-  void stop() override {}
-  bool active() const override { return false; }
   void pushCommand(const string &identifier,
                    const vector<Parameter> &parameters) override {}
 };
@@ -53,14 +47,10 @@ class DSPUnitRealImpl : public DSPUnitImpl {
   DSPUnitRealImpl(Patch *patch);
   ~DSPUnitRealImpl();
   Status status() const override { return Status::OK("Valid dsp unit"); }
-  void play() override;
-  void stop() override;
-  bool active() const override;
   void pushCommand(const string &identifier,
                    const vector<Parameter> &parameters) override;
  private:
   Patch                   *patch_;
-  bool                    active_;
 };
 
 DSPUnitRealImpl::DSPUnitRealImpl(Patch *patch) : patch_(patch) {
@@ -70,18 +60,6 @@ DSPUnitRealImpl::DSPUnitRealImpl(Patch *patch) : patch_(patch) {
 DSPUnitRealImpl::~DSPUnitRealImpl() {
   to_be_closed__.push_back(patch_);
   patches__.erase(patch_);
-}
-
-void DSPUnitRealImpl::play() {
-  active_ = true;
-}
-
-void DSPUnitRealImpl::stop() {
-  active_ = false;
-}
-
-bool DSPUnitRealImpl::active() const {
-  return active_;
 }
 
 void DSPUnitRealImpl::pushCommand(const string &identifier,
@@ -95,18 +73,6 @@ DSPUnit::DSPUnit(Patch *patch) : impl_(new DSPUnitRealImpl(patch)) {}
 
 Status DSPUnit::status() const {
   return impl_->status();
-}
-
-void DSPUnit::play() {
-  impl_->play();
-}
-
-void DSPUnit::stop() {
-  impl_->stop();
-}
-
-bool DSPUnit::active() const {
-  return impl_->active();
 }
 
 void DSPUnit::pushCommand(const string &identifier,

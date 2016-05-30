@@ -24,9 +24,6 @@ class DSPUnit {
   using Command = std::tuple<pd::Patch*, std::string, std::vector<Parameter>>;
   DSPUnit();
   Status status() const;
-  void play();
-  void stop();
-  bool active() const;
   void pushCommand(const std::string &identifier,
                    const std::vector<Parameter> &parameters);
   template <typename... Args> void pushCommand(const std::string &identifier,
