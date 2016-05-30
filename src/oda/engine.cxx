@@ -50,11 +50,6 @@ void printSample(ostream &out, float sample) {
 
 }
 
-const size_t        Engine::TICK_BUFFER_SIZE = 64;
-
-// MACRO MAGIC:
-// http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
-
 Engine::Engine() {}
 
 Status Engine::start(const vector<string>& patch_paths) {

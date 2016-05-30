@@ -1,21 +1,25 @@
 
 #include <oda/dspunit.h>
+
 #include <oda/dspserver.h>
+#include <oda/engine.h>
 
 #include <libpd/PdTypes.hpp>
 
+#include <array>
 #include <string>
 #include <deque>
 
 namespace oda {
 
+namespace {
+
+using std::array;
 using std::deque;
 using std::string;
 using std::unordered_set;
 using std::vector;
 using pd::Patch;
-
-namespace {
 
 deque<DSPUnit::Command> commands__;
 unordered_set<Patch*> patches__;
@@ -50,7 +54,8 @@ class DSPUnitRealImpl : public DSPUnitImpl {
   void pushCommand(const string &identifier,
                    const vector<Parameter> &parameters) override;
  private:
-  Patch                   *patch_;
+  Patch                                   *patch_;
+  array<float, Engine::TICK_BUFFER_SIZE>  buffer_;
 };
 
 DSPUnitRealImpl::DSPUnitRealImpl(Patch *patch) : patch_(patch) {

@@ -77,7 +77,7 @@ class Engine {
   Status eventInstance(const std::string &path_to_event,
                        std::shared_ptr<SoundtrackEvent> *event_out);
 
-  const static size_t TICK_BUFFER_SIZE;
+  const static size_t TICK_BUFFER_SIZE = 64;
 };
  
 } // namespace oda
