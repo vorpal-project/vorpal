@@ -4,6 +4,7 @@
 
 #include <oda/status.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -74,7 +75,7 @@ class Engine {
    * @return Status Whether the event was successfully created or not
    */
   Status eventInstance(const std::string &path_to_event,
-                       SoundtrackEvent *event_out);
+                       std::shared_ptr<SoundtrackEvent> *event_out);
 
   const static size_t TICK_BUFFER_SIZE;
 };

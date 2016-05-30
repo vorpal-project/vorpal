@@ -9,6 +9,7 @@ extern "C" {
 }
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -16,6 +17,7 @@ extern "C" {
 namespace {
 using std::cout;
 using std::endl;
+using std::shared_ptr;
 using std::string;
 using std::unordered_set;
 using std::vector;
@@ -27,7 +29,7 @@ namespace {
 
 // Engine methods
 
-unordered_set<SoundtrackEvent*> events;
+unordered_set<shared_ptr<SoundtrackEvent>*> events;
 
 int start(lua_State *L) {
   lua_settop(L, 1);
@@ -48,7 +50,7 @@ int start(lua_State *L) {
 
 int finish(lua_State *L) {
   lua_settop(L, 0);
-  for (SoundtrackEvent *event : events)
+  for (shared_ptr<SoundtrackEvent> *event : events)
     delete event;
   events.clear();
   Engine().finish();
@@ -73,11 +75,14 @@ int tick(lua_State *L) {
 int eventInstance(lua_State *L) {
   lua_settop(L, 1);
   if (lua_isstring(L, 1)) {
-    SoundtrackEvent *event = new SoundtrackEvent;
+    shared_ptr<SoundtrackEvent> *event = new shared_ptr<SoundtrackEvent>;
     Status status = Engine().eventInstance(lua_tostring(L, 1), event);
     if (status.ok()) {
       events.insert(event);
-      SoundtrackEvent **data = static_cast<SoundtrackEvent**>(lua_newuserdata(L, sizeof(event)));
+      shared_ptr<SoundtrackEvent> **data =
+        static_cast<shared_ptr<SoundtrackEvent>**>(
+            lua_newuserdata(L, sizeof(event))
+        );
       *data = event;
       luaL_getmetatable(L, "event");
       lua_setmetatable(L, -2);
@@ -109,7 +114,8 @@ int event_gc(lua_State *L) {
   lua_settop(L, 1);
   if (lua_isuserdata(L, 1)) {
     cout << "[WRAP] event collected" << endl;
-    SoundtrackEvent *event = *static_cast<SoundtrackEvent**>(lua_touserdata(L, 1));
+    shared_ptr<SoundtrackEvent> *event =
+      *static_cast<shared_ptr<SoundtrackEvent>**>(lua_touserdata(L, 1));
     if (events.find(event) != events.end()) {
       events.erase(event);
       delete event;

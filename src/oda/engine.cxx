@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <vector>
 
 namespace oda {
@@ -20,12 +19,14 @@ namespace oda {
 // unnamed namespace
 namespace {
 
+using std::make_shared;
 using std::ofstream;
 using std::ostream;
 using std::string;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
+using std::shared_ptr;
 
 //#define ODA_LOG
 
@@ -146,7 +147,7 @@ void Engine::tick(double dt) {
 }
 
 Status Engine::eventInstance(const string &path_to_dspunit,
-                             SoundtrackEvent *event_out) {
+                             shared_ptr<SoundtrackEvent> *event_out) {
   DSPUnit dspunit = DSPServer().loadUnit(path_to_dspunit);
   if (!dspunit.status().ok())
     return Status::FAILURE("Could not load DSP Unit: "
@@ -155,7 +156,7 @@ Status Engine::eventInstance(const string &path_to_dspunit,
   if (!audiounit.status().ok())
     return Status::FAILURE("Could not load Audio Unit: "
                            + audiounit.status().description());
-  *event_out = SoundtrackEvent(dspunit, audiounit);
+  *event_out = make_shared<SoundtrackEvent>(dspunit, audiounit);
   return Status::OK("Soundtrack event successfully created");
 }
 
