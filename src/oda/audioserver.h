@@ -10,6 +10,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <memory>
 #include <queue>
 #include <thread>
 #include <vector>
@@ -25,7 +26,7 @@ class AudioServer final {
  public:
   AudioServer();
   ~AudioServer();
-  AudioUnit loadUnit();
+  std::shared_ptr<AudioUnit> loadUnit();
 
   void playSource(int source_number);
   void stopSource(int source_number);
@@ -57,4 +58,3 @@ class AudioServer final {
 } // namespace oda
 
 #endif // LIBODA_AUDIOSERVER_H_
-

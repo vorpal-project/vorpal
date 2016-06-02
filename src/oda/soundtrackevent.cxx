@@ -4,6 +4,7 @@
 namespace oda {
 
 namespace {
+using std::shared_ptr;
 using std::string;
 using std::vector;
 } // unnamed namespace
@@ -11,7 +12,7 @@ using std::vector;
 SoundtrackEvent::SoundtrackEvent() : dspunit_() {}
 
 SoundtrackEvent::SoundtrackEvent(const DSPUnit &dspunit,
-                                 const AudioUnit &audiounit)
+                                 const shared_ptr<AudioUnit> &audiounit)
   : dspunit_(dspunit), audiounit_(audiounit) {}
 
 void SoundtrackEvent::pushCommand(const string &identifier,

@@ -10,6 +10,8 @@ namespace oda {
 
 namespace {
 
+using std::make_shared;
+using std::shared_ptr;
 using std::vector;
 
 bool isSourcePlaying(int source) {
@@ -20,7 +22,7 @@ bool isSourcePlaying(int source) {
 
 } // unnamed namespace
 
-class AudioServer::UnitImpl : public AudioUnit::Impl {
+class AudioServer::UnitImpl final : public AudioUnit {
  public:
   ~UnitImpl() { server_->freeUnit(this); }
   Status status() const override { return Status::OK("Valid audio unit"); }
@@ -54,11 +56,11 @@ AudioServer::~AudioServer() {
   sources_.clear();
 }
 
-AudioUnit AudioServer::loadUnit() {
+shared_ptr<AudioUnit> AudioServer::loadUnit() {
   if (free_sources_.empty())
-    return AudioUnit();
+    return make_shared<AudioUnit::Null>();
   else {
-    AudioUnit unit(new UnitImpl(this, free_sources_.front()));
+    shared_ptr<AudioUnit> unit(new UnitImpl(this, free_sources_.front()));
     free_sources_.pop();
     return unit;
   }
@@ -104,7 +106,7 @@ void AudioServer::streamData(const vector<int16_t> *data, size_t start, size_t l
   fillBuffer(buffer, data->data()+start, len*sizeof(int16_t));
   alSourceQueueBuffers(sources_[0], 1, &buffer);
   if (!isSourcePlaying(sources_[0]))
-   alSourcePlay(sources_[0]); 
+   alSourcePlay(sources_[0]);
 }
 
 // Play Source
@@ -129,5 +131,3 @@ void AudioServer::playSoundOnSource(const vector<int16_t> *samples) {
 }
 
 }
-
-

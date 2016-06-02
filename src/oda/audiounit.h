@@ -4,28 +4,21 @@
 
 #include <oda/status.h>
 
-#include <memory>
-
 namespace oda {
 
 class AudioUnit {
  public:
-  AudioUnit();
-  Status status() const;
+  virtual ~AudioUnit() {}
+  virtual Status status() const = 0;
  private:
   friend class AudioServer;
-  class Impl;
-  class NullImpl;
-  AudioUnit(Impl *impl);
-  std::shared_ptr<Impl> impl_;
+  class Null;
+  AudioUnit() {}
 };
 
-class AudioUnit::Impl {
+class AudioUnit::Null final : public AudioUnit {
  public:
-  virtual ~Impl() {}
-  virtual Status status() const = 0;
- protected:
-  Impl() {}
+  Status status() const override;
 };
 
 } // namespace oda

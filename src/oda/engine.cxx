@@ -151,10 +151,10 @@ Status Engine::eventInstance(const string &path_to_dspunit,
   if (!dspunit.status().ok())
     return Status::FAILURE("Could not load DSP Unit: "
                            + dspunit.status().description());
-  AudioUnit audiounit = audioserver->loadUnit();
-  if (!audiounit.status().ok())
+  shared_ptr<AudioUnit> audiounit = audioserver->loadUnit();
+  if (!audiounit->status().ok())
     return Status::FAILURE("Could not load Audio Unit: "
-                           + audiounit.status().description());
+                           + audiounit->status().description());
   *event_out = make_shared<SoundtrackEvent>(dspunit, audiounit);
   events.emplace_back(*event_out);
   return Status::OK("Soundtrack event successfully created");
