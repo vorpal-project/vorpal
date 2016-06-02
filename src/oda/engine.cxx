@@ -130,7 +130,7 @@ void Engine::tick(double dt) {
     vector<float> signal;
     dsp.process(ticks, &signal);
     vector<int16_t> audio(dsp.tick_size()*ticks);
-    for (int i = 0; i < signal.size(); ++i)
+    for (size_t i = 0; i < signal.size(); ++i)
       audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
     audioserver->streamData(&audio);
     if (!playing_started) {
@@ -139,7 +139,7 @@ void Engine::tick(double dt) {
     }
 #ifdef ODA_LOG
     out << "Buffer update: " << ticks*dsp.tick_size() << std::endl;
-    for (unsigned i = 0; i < audio.size(); ++i)
+    for (size_t i = 0; i < audio.size(); ++i)
       printSample(out, audio[i]/32767.f);
 #endif
   }

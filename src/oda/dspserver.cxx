@@ -227,7 +227,7 @@ void DSPServer::processTick() {
 
 void DSPServer::cleanUp() {
   Patch *patch;
-  while (patch = UnitImpl::to_be_closed()) {
+  while ((patch = UnitImpl::to_be_closed())) {
     if (patch->isValid()) {
       dsp.closePatch(*patch);
     }
