@@ -3,14 +3,11 @@
 #define ODA_DSPSERVER_H_
 
 #include <oda/status.h>
+
+#include <memory>
 #include <string>
 #include <vector>
 #include <unordered_set>
-
-// Forward declaration
-namespace pd {
-class Patch;
-}
 
 namespace oda {
 
@@ -20,11 +17,11 @@ class DSPUnit;
 class DSPServer {
  public:
   Status start(const std::vector<std::string>& patch_paths);
+  std::shared_ptr<DSPUnit> loadUnit(const std::string &path);
   int sample_rate() const;
   int tick_size() const;
   double time_per_tick() const;
   void addPath(const std::string &path);
-  DSPUnit loadUnit(const std::string &path);
   void handleCommands();
   void process(int ticks, std::vector<float> *signal);
   void processTick();

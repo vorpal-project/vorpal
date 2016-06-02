@@ -5,15 +5,7 @@
 #include <oda/parameter.h>
 #include <oda/status.h>
 
-#include <memory>
-#include <tuple>
 #include <vector>
-#include <unordered_set>
-
-// Forward declarations
-namespace pd {
-class Patch;
-}
 
 namespace oda {
 
@@ -21,32 +13,25 @@ class DSPUnitImpl;
 
 class DSPUnit {
  public:
-  using Command = std::tuple<pd::Patch*, std::string, std::vector<Parameter>>;
-  DSPUnit();
-  Status status() const;
-  void processTick();
-  void pushCommand(const std::string &identifier,
-                   const std::vector<Parameter> &parameters);
-  template <typename... Args> void pushCommand(const std::string &identifier,
-                                               Args... args);
- private:
-  friend class DSPServer;
-  class Impl;
-  class NullImpl;
-  template <typename... Args> struct CommandPusher;
-  DSPUnit(Impl *impl);
-  std::shared_ptr<Impl> impl_;
-};
-
-class DSPUnit::Impl {
- public:
-  virtual ~Impl() {}
   virtual Status status() const = 0;
   virtual void processTick() = 0;
   virtual void pushCommand(const std::string &identifier,
                            const std::vector<Parameter> &parameters) = 0;
- protected:
-  Impl() {}
+  template <typename... Args> void pushCommand(const std::string &identifier,
+                                               Args... args);
+ private:
+  friend class DSPServer;
+  class Null;
+  template <typename... Args> struct CommandPusher;
+  DSPUnit() {}
+};
+
+class DSPUnit::Null final : public DSPUnit {
+ public:
+  Status status() const override;
+  void processTick() override {}
+  void pushCommand(const std::string&,
+                   const std::vector<Parameter>&) override {}
 };
 
 template <>

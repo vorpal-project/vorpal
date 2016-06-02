@@ -147,10 +147,10 @@ void Engine::tick(double dt) {
 
 Status Engine::eventInstance(const string &path_to_dspunit,
                              shared_ptr<SoundtrackEvent> *event_out) {
-  DSPUnit dspunit = DSPServer().loadUnit(path_to_dspunit);
-  if (!dspunit.status().ok())
+  shared_ptr<DSPUnit> dspunit = DSPServer().loadUnit(path_to_dspunit);
+  if (!dspunit->status().ok())
     return Status::FAILURE("Could not load DSP Unit: "
-                           + dspunit.status().description());
+                           + dspunit->status().description());
   shared_ptr<AudioUnit> audiounit = audioserver->loadUnit();
   if (!audiounit->status().ok())
     return Status::FAILURE("Could not load Audio Unit: "

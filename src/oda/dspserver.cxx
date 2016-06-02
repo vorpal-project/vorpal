@@ -14,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <tuple>
 
 namespace oda {
 
@@ -25,8 +26,10 @@ using pd::PdReceiver;
 using std::bind;
 using std::deque;
 using std::fstream;
+using std::make_shared;
 using std::mem_fn;
 using std::plus;
+using std::shared_ptr;
 using std::string;
 using std::transform;
 using std::unique_ptr;
@@ -38,6 +41,8 @@ class Receiver : public PdReceiver {
   void print(const string &message) override;
 };
 
+using Command = std::tuple<Patch*, string, vector<Parameter>>;
+
 const int             TICK_RATIO = 1;
 
 bool                  started = false;
@@ -47,8 +52,8 @@ float                 inbuf[6400], outbuf[6400];
 vector<string>        search_paths;
 
 // Patch management
-deque<DSPUnit::Command> commands__;
-deque<Patch*>           to_be_closed__;
+deque<Command>        commands__;
+deque<Patch*>         to_be_closed__;
 
 void Receiver::print(const string &message) {
   std::printf("%s\n", message.c_str());
@@ -75,7 +80,7 @@ bool checkPath (const string &path) {
 
 // nested class DSPServer::UnitImpl
 
-class DSPServer::UnitImpl final : public DSPUnit::Impl {
+class DSPServer::UnitImpl final : public DSPUnit {
  public:
   UnitImpl(Patch *patch);
   ~UnitImpl();
@@ -115,7 +120,7 @@ bool DSPServer::UnitImpl::popCommand(pd::Patch **patch, string *identifier,
                                      vector<Parameter> *parameters) {
   if (commands__.empty())
     return false;
-  DSPUnit::Command command = commands__.front();
+  Command command = commands__.front();
   *patch = std::get<0>(command);
   *identifier = std::get<1>(command);
   *parameters = std::get<2>(command);
@@ -149,6 +154,20 @@ Status DSPServer::start(const vector<string>& patch_paths) {
   return Status::FAILURE("DSP Server could not start");
 }
 
+shared_ptr<DSPUnit> DSPServer::loadUnit(const string &path) {
+  string filename = path + ".pd";
+  for (string search_path : search_paths) {
+    if (checkPath(search_path+"/"+filename)) {
+      Patch check = dsp.openPatch(filename, search_path);
+      if (check.isValid()) {
+        Patch *patch = new Patch(check);
+        return make_shared<UnitImpl>(patch);
+      }
+    }
+  }
+  return make_shared<DSPUnit::Null>();
+}
+
 int DSPServer::sample_rate() const {
   return 44100;
 }
@@ -164,20 +183,6 @@ double DSPServer::time_per_tick() const {
 void DSPServer::addPath(const string &path) {
   dsp.addToSearchPath(path);
   search_paths.push_back(path);
-}
-
-DSPUnit DSPServer::loadUnit(const string &path) {
-  string filename = path + ".pd";
-  for (string search_path : search_paths) {
-    if (checkPath(search_path+"/"+filename)) {
-      Patch check = dsp.openPatch(filename, search_path);
-      if (check.isValid()) {
-        Patch *patch = new Patch(check);
-        return DSPUnit(new UnitImpl(patch));
-      }
-    }
-  }
-  return DSPUnit();
 }
 
 void DSPServer::handleCommands() {
