@@ -168,7 +168,7 @@ shared_ptr<DSPUnit> DSPServer::loadUnit(const string &path) {
   return make_shared<DSPUnit::Null>();
 }
 
-int DSPServer::sample_rate() const {
+size_t DSPServer::sample_rate() const {
   return 44100;
 }
 

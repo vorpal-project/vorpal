@@ -36,6 +36,7 @@ class AudioServer final {
   void fillBuffer(ALuint buffer, const ALvoid *dataSamples, ALsizei bufferSize);
   void streamData (const std::vector<int16_t> *data);
   void streamData (const std::vector<int16_t> *data, size_t start, size_t len);
+  void streamData (size_t source_id, const std::vector<int16_t> &samples);
   void setSourcePosition(int source, float X, float Y, float Z);
   void playSoundOnSource(const std::vector<int16_t> *samples);
 

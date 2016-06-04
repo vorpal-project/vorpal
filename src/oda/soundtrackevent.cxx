@@ -17,6 +17,10 @@ void SoundtrackEvent::pushCommand(const string &identifier,
                                   const vector<Parameter> &parameters) {
   dspunit_->pushCommand(identifier, parameters);
 }
+
+void SoundtrackEvent::processAudio() {
+  
+}
                                 
 
 } // namespace oda

@@ -18,7 +18,7 @@ class DSPServer {
  public:
   Status start(const std::vector<std::string>& patch_paths);
   std::shared_ptr<DSPUnit> loadUnit(const std::string &path);
-  int sample_rate() const;
+  size_t sample_rate() const;
   int tick_size() const;
   double time_per_tick() const;
   void addPath(const std::string &path);

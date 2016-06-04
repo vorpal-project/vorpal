@@ -66,6 +66,11 @@ class Engine {
   /// Process dynamic audio ticks
   /**
    */
+  void tick();
+
+  /// Process dynamic audio ticks for the given time period
+  /**
+   */
   void tick(double dt);
 
   /// Creates an Event instance

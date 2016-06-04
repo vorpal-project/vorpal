@@ -4,6 +4,7 @@
 #include <oda/audiounit.h>
 #include <oda/engine.h>
 
+#include <algorithm>
 #include <iostream>
 
 namespace oda {
@@ -12,6 +13,7 @@ namespace {
 
 using std::make_shared;
 using std::shared_ptr;
+using std::transform;
 using std::vector;
 
 bool isSourcePlaying(int source) {
@@ -26,6 +28,7 @@ class AudioServer::UnitImpl final : public AudioUnit {
  public:
   ~UnitImpl() { server_->freeUnit(this); }
   Status status() const override { return Status::OK("Valid audio unit"); }
+  void stream(const vector<float> &signal) override;
  private:
   friend class AudioServer;
   UnitImpl(AudioServer* server, size_t unit_id)
@@ -33,6 +36,15 @@ class AudioServer::UnitImpl final : public AudioUnit {
   AudioServer *server_;
   size_t      unit_id_;
 };
+
+void AudioServer::UnitImpl::stream(const vector<float> &signal) {
+   vector<int16_t> samples(signal.size());
+   transform(signal.begin(), signal.end(), samples.begin(),
+            [] (float sample) -> int16_t {
+              return static_cast<int16_t>(sample*32767.f/2.f);
+            });
+   server_->streamData(unit_id_, samples);
+}
 
 // Constructor
 // Default options
@@ -107,6 +119,18 @@ void AudioServer::streamData(const vector<int16_t> *data, size_t start, size_t l
   alSourceQueueBuffers(sources_[0], 1, &buffer);
   if (!isSourcePlaying(sources_[0]))
    alSourcePlay(sources_[0]);
+}
+
+void AudioServer::streamData(size_t source_id, const vector<int16_t> &samples) {
+  if (free_buffers_.size() > 0) {
+    ALuint buffer = free_buffers_.front();
+    ALuint source = sources_[source_id];
+    free_buffers_.pop();
+    fillBuffer(buffer, samples.data(), samples.size()*sizeof(int16_t));
+    alSourceQueueBuffers(source, 1, &buffer);
+    if (!isSourcePlaying(source))
+      alSourcePlay(source);
+  }
 }
 
 // Play Source

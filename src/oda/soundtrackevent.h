@@ -17,6 +17,7 @@ class SoundtrackEvent {
                   const std::shared_ptr<AudioUnit> &audiounit);
   void pushCommand(const std::string &identifier,
                    const std::vector<Parameter> &parameters);
+  void processAudio();
  private:
   SoundtrackEvent() {}
   std::shared_ptr<DSPUnit>   dspunit_;

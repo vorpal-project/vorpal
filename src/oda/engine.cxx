@@ -34,8 +34,8 @@ using std::weak_ptr;
 ALCdevice                         *device = nullptr;
 ALCcontext                        *context = nullptr;
 unique_ptr<AudioServer>           audioserver;
-vector<weak_ptr<SoundtrackEvent>> events;
-double                            time_accumulated = 0.0;
+vector<weak_ptr<SoundtrackEvent>> events__;
+double                            lag__ = 0.0;
 bool                              playing_started = false;
 
 #ifdef ODA_LOG
@@ -85,7 +85,7 @@ Status Engine::start(const vector<string>& patch_paths) {
   // Create audio audioserver
   audioserver.reset(new AudioServer);
   playing_started = false;
-  time_accumulated = 0.0;
+  lag__ = 0.0;
 #ifdef ODA_LOG
   out.open("out");
 #endif
@@ -118,7 +118,7 @@ void Engine::finish() {
   device = nullptr;
 }
 
-void Engine::tick(double dt) {
+void Engine::tick() {
   DSPServer dsp;
   // How many dsp ticks are needed for N seconds
   audioserver->update();
@@ -145,6 +145,25 @@ void Engine::tick(double dt) {
   }
 }
 
+void Engine::tick(double dt) {
+  DSPServer dsp;
+  const double TICK = 1.0*TICK_BUFFER_SIZE/dsp.sample_rate();
+  lag__ += dt;
+  // How many dsp ticks are needed for N seconds
+  audioserver->update();
+  dsp.cleanUp();
+  dsp.handleCommands();
+  while (lag__ >= TICK && audioserver->availableBuffers()) {
+    dsp.processTick();
+    shared_ptr<SoundtrackEvent> event;
+    for (weak_ptr<SoundtrackEvent> &weak_event : events__)
+      if ((event = weak_event.lock())) {
+        event->processAudio();
+      }
+    lag__ -= TICK;
+  }
+}
+
 Status Engine::eventInstance(const string &path_to_dspunit,
                              shared_ptr<SoundtrackEvent> *event_out) {
   shared_ptr<DSPUnit> dspunit = DSPServer().loadUnit(path_to_dspunit);
@@ -156,7 +175,7 @@ Status Engine::eventInstance(const string &path_to_dspunit,
     return Status::FAILURE("Could not load Audio Unit: "
                            + audiounit->status().description());
   *event_out = make_shared<SoundtrackEvent>(dspunit, audiounit);
-  events.emplace_back(*event_out);
+  events__.emplace_back(*event_out);
   return Status::OK("Soundtrack event successfully created");
 }
 

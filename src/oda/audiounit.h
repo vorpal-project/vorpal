@@ -4,12 +4,15 @@
 
 #include <oda/status.h>
 
+#include <vector>
+
 namespace oda {
 
 class AudioUnit {
  public:
   virtual ~AudioUnit() {}
   virtual Status status() const = 0;
+  virtual void stream(const std::vector<float> &signal);
  private:
   friend class AudioServer;
   class Null;
@@ -19,6 +22,7 @@ class AudioUnit {
 class AudioUnit::Null final : public AudioUnit {
  public:
   Status status() const override;
+  void stream(const std::vector<float>&) override;
 };
 
 } // namespace oda
