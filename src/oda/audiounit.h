@@ -12,7 +12,7 @@ class AudioUnit {
  public:
   virtual ~AudioUnit() {}
   virtual Status status() const = 0;
-  virtual void stream(const std::vector<float> &signal);
+  virtual void stream(const std::vector<float> &signal) = 0;
  private:
   friend class AudioServer;
   class Null;

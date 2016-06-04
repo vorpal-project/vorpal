@@ -10,7 +10,6 @@ set (PROJECT_SRC
   audioserver.cxx
   audiounit.cxx
   dspserver.cxx
-  dspunit.cxx
   parameter.cxx
   soundtrackevent.cxx
 )

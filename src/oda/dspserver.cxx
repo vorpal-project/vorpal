@@ -1,5 +1,7 @@
 
 #include <oda/dspserver.h>
+
+#include <oda/audiounit.h>
 #include <oda/dspunit.h>
 #include <oda/engine.h>
 #include <oda/parameter.h>
@@ -85,14 +87,13 @@ class DSPServer::UnitImpl final : public DSPUnit {
   UnitImpl(Patch *patch);
   ~UnitImpl();
   Status status() const override { return Status::OK("Valid dsp unit"); }
-  void processTick() override;
+  void transferSignal(shared_ptr<AudioUnit> audio_unit) override;
   void pushCommand(const string &identifier,
                    const vector<Parameter> &parameters) override;
  private:
   friend class DSPServer;
   static bool popCommand(pd::Patch **patch, std::string *identifier,
                          std::vector<Parameter> *parameters);
-  static const std::unordered_set<pd::Patch*>& patches();
   static pd::Patch* to_be_closed();
   Patch                           *patch_;
   vector<float>                   buffer_;
@@ -109,6 +110,10 @@ DSPServer::UnitImpl::UnitImpl(Patch *patch)
 DSPServer::UnitImpl::~UnitImpl() {
   to_be_closed__.push_back(patch_);
   units__.erase(this);
+}
+
+void DSPServer::UnitImpl::transferSignal(shared_ptr<AudioUnit> audio_unit) {
+  audio_unit->stream(buffer_);
 }
 
 void DSPServer::UnitImpl::pushCommand(const string &identifier,
@@ -207,7 +212,8 @@ void DSPServer::process(int ticks, vector<float> *signal) {
     // Process global signal
     dsp.processFloat(TICK_RATIO, inbuf, outbuf);
     // Collect processed audio
-    for (Patch *patch : UnitImpl::patches()) {
+    for (UnitImpl *unit : UnitImpl::units__) {
+      Patch *patch = unit->patch_;
       const string array_name = "openda-bus-"+patch->dollarZeroStr();
       if (dsp.readArray(array_name, temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)

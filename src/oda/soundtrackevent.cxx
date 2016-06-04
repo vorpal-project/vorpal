@@ -19,7 +19,7 @@ void SoundtrackEvent::pushCommand(const string &identifier,
 }
 
 void SoundtrackEvent::processAudio() {
-  
+  dspunit_->transferSignal(audiounit_);
 }
                                 
 
