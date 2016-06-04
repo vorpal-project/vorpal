@@ -1,6 +1,9 @@
 
 #include <oda/dspserver.h>
-#include <oda/event.h>
+
+#include <oda/audiounit.h>
+#include <oda/dspunit.h>
+#include <oda/engine.h>
 #include <oda/parameter.h>
 
 #include <libpd/PdBase.hpp>
@@ -8,34 +11,39 @@
 #include <libpd/PdTypes.hpp>
 
 #include <algorithm>
+#include <deque>
 #include <functional>
 #include <fstream>
 #include <iostream>
 #include <memory>
-
-namespace {
-using std::bind;
-using std::fstream;
-using std::mem_fn;
-using std::plus;
-using std::string;
-using std::transform;
-using std::unique_ptr;
-using std::vector;
-using pd::PdBase;
-using pd::PdReceiver;
-using pd::Patch;
-} // unnamed namespace
+#include <tuple>
 
 namespace oda {
 
-// unnamed namespace
 namespace {
+
+using pd::Patch;
+using pd::PdBase;
+using pd::PdReceiver;
+using std::bind;
+using std::deque;
+using std::fstream;
+using std::make_shared;
+using std::mem_fn;
+using std::plus;
+using std::shared_ptr;
+using std::string;
+using std::transform;
+using std::unique_ptr;
+using std::unordered_set;
+using std::vector;
 
 class Receiver : public PdReceiver {
  public:
   void print(const string &message) override;
 };
+
+using Command = std::tuple<Patch*, string, vector<Parameter>>;
 
 const int             TICK_RATIO = 1;
 
@@ -44,6 +52,10 @@ PdBase                dsp;
 unique_ptr<Receiver>  receiver;
 float                 inbuf[6400], outbuf[6400];
 vector<string>        search_paths;
+
+// Patch management
+deque<Command>        commands__;
+deque<Patch*>         to_be_closed__;
 
 void Receiver::print(const string &message) {
   std::printf("%s\n", message.c_str());
@@ -68,6 +80,69 @@ bool checkPath (const string &path) {
 
 } // unnamed namespace
 
+// nested class DSPServer::UnitImpl
+
+class DSPServer::UnitImpl final : public DSPUnit {
+ public:
+  UnitImpl(Patch *patch);
+  ~UnitImpl();
+  Status status() const override { return Status::OK("Valid dsp unit"); }
+  void transferSignal(shared_ptr<AudioUnit> audio_unit) override;
+  void pushCommand(const string &identifier,
+                   const vector<Parameter> &parameters) override;
+ private:
+  friend class DSPServer;
+  static bool popCommand(pd::Patch **patch, std::string *identifier,
+                         std::vector<Parameter> *parameters);
+  static pd::Patch* to_be_closed();
+  Patch                           *patch_;
+  vector<float>                   buffer_;
+  static unordered_set<UnitImpl*> units__;
+};
+
+unordered_set<DSPServer::UnitImpl*> DSPServer::UnitImpl::units__;
+
+DSPServer::UnitImpl::UnitImpl(Patch *patch)
+  : patch_(patch), buffer_(Engine::TICK_BUFFER_SIZE, 0.0f) {
+  units__.insert(this);
+}
+
+DSPServer::UnitImpl::~UnitImpl() {
+  to_be_closed__.push_back(patch_);
+  units__.erase(this);
+}
+
+void DSPServer::UnitImpl::transferSignal(shared_ptr<AudioUnit> audio_unit) {
+  audio_unit->stream(buffer_);
+}
+
+void DSPServer::UnitImpl::pushCommand(const string &identifier,
+                                       const vector<Parameter> &parameters) {
+  commands__.emplace_back(patch_, identifier, parameters);
+}
+
+bool DSPServer::UnitImpl::popCommand(pd::Patch **patch, string *identifier,
+                                     vector<Parameter> *parameters) {
+  if (commands__.empty())
+    return false;
+  Command command = commands__.front();
+  *patch = std::get<0>(command);
+  *identifier = std::get<1>(command);
+  *parameters = std::get<2>(command);
+  commands__.pop_front();
+  return true;
+}
+
+Patch* DSPServer::UnitImpl::to_be_closed() {
+  if (to_be_closed__.empty())
+    return nullptr;
+  Patch *patch = to_be_closed__.front();
+  to_be_closed__.pop_front();
+  return patch;
+}
+
+// Enclosing class DSPServer
+
 Status DSPServer::start(const vector<string>& patch_paths) {
   if (started)
     return Status::FAILURE("DSP Server already started");
@@ -84,7 +159,21 @@ Status DSPServer::start(const vector<string>& patch_paths) {
   return Status::FAILURE("DSP Server could not start");
 }
 
-int DSPServer::sample_rate() const {
+shared_ptr<DSPUnit> DSPServer::loadUnit(const string &path) {
+  string filename = path + ".pd";
+  for (string search_path : search_paths) {
+    if (checkPath(search_path+"/"+filename)) {
+      Patch check = dsp.openPatch(filename, search_path);
+      if (check.isValid()) {
+        Patch *patch = new Patch(check);
+        return make_shared<UnitImpl>(patch);
+      }
+    }
+  }
+  return make_shared<DSPUnit::Null>();
+}
+
+size_t DSPServer::sample_rate() const {
   return 44100;
 }
 
@@ -101,27 +190,13 @@ void DSPServer::addPath(const string &path) {
   search_paths.push_back(path);
 }
 
-Event DSPServer::loadEvent(const string &path) {
-  string filename = path + ".pd";
-  for (string search_path : search_paths) {
-    if (checkPath(search_path+"/"+filename)) {
-      Patch check = dsp.openPatch(filename, search_path);
-      if (check.isValid()) {
-        Patch *patch = new Patch(check);
-        return Event(patch);
-      }
-    }
-  }
-  return Event();
-}
-
 void DSPServer::handleCommands() {
   using namespace std::placeholders;
   Patch             *patch;
   string            identifier;
   vector<Parameter> parameters;
   ParameterSwitch   switcher(&addNumber, &addSymbol);
-  while (Event::popCommand(&patch, &identifier, &parameters)) {
+  while (UnitImpl::popCommand(&patch, &identifier, &parameters)) {
     dsp.startMessage();
     for (Parameter param : parameters)
       switcher.handle(param);
@@ -137,7 +212,8 @@ void DSPServer::process(int ticks, vector<float> *signal) {
     // Process global signal
     dsp.processFloat(TICK_RATIO, inbuf, outbuf);
     // Collect processed audio
-    for (Patch *patch : Event::patches()) {
+    for (UnitImpl *unit : UnitImpl::units__) {
+      Patch *patch = unit->patch_;
       const string array_name = "openda-bus-"+patch->dollarZeroStr();
       if (dsp.readArray(array_name, temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)
@@ -146,9 +222,18 @@ void DSPServer::process(int ticks, vector<float> *signal) {
   }
 }
 
+void DSPServer::processTick() {
+  dsp.processFloat(TICK_RATIO, inbuf, outbuf);
+  for (UnitImpl *unit : UnitImpl::units__) {
+    const string array_name = "openda-bus-"+unit->patch_->dollarZeroStr();
+    if (!dsp.readArray(array_name, unit->buffer_, tick_size()))
+      ; // FIXME houston...
+  }
+}
+
 void DSPServer::cleanUp() {
   Patch *patch;
-  while (patch = Event::to_be_closed()) {
+  while ((patch = UnitImpl::to_be_closed())) {
     if (patch->isValid()) {
       dsp.closePatch(*patch);
     }

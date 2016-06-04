@@ -7,22 +7,25 @@ find_package (OpenAL REQUIRED)
 set (PROJECT_SRC
   oda.cxx
   engine.cxx
-  event.cxx
-  player.cxx
+  audioserver.cxx
+  audiounit.cxx
   dspserver.cxx
   parameter.cxx
+  soundtrackevent.cxx
 )
 
 # Define source code headers
 set (PROJECT_HEADERS
   oda.h
   engine.h
-  event.h
   status.h
-  player.h
+  audioserver.h
+  audiounit.h
   dspserver.h
+  dspunit.h
   parameter.h
   portable.h
+  soundtrackevent.h
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -49,7 +52,7 @@ target_link_libraries (
 #  - Output the lib file to <build directory>/lib
 set_target_properties (
   ${PROJECT_NAME} PROPERTIES
-  COMPILE_FLAGS "-std=c++11 -fPIC"
+  COMPILE_FLAGS "-Wall -pedantic -std=c++11 -fPIC"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )

@@ -4,13 +4,14 @@
 
 #include <oda/status.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
 namespace oda {
 
 // Forward declarations
-class Event;
+class SoundtrackEvent;
 
 /// Open Dynamic Audio engine class.
 /** 
@@ -65,6 +66,11 @@ class Engine {
   /// Process dynamic audio ticks
   /**
    */
+  void tick();
+
+  /// Process dynamic audio ticks for the given time period
+  /**
+   */
   void tick(double dt);
 
   /// Creates an Event instance
@@ -73,13 +79,8 @@ class Engine {
    * @param event_out Pointer to event output variable
    * @return Status Whether the event was successfully created or not
    */
-  Status eventInstance(const std::string &path_to_event, Event *event_out);
-
-  /// Tests if audio output is working.
-  /**
-   * Plays a 440 Hz sine wave for 4 seconds.
-   */
-  void testAudio();
+  Status eventInstance(const std::string &path_to_event,
+                       std::shared_ptr<SoundtrackEvent> *event_out);
 
   const static size_t TICK_BUFFER_SIZE;
 };

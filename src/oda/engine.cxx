@@ -1,9 +1,10 @@
 
 #include <oda/engine.h>
-#include <oda/player.h>
+#include <oda/audioserver.h>
 #include <oda/dspserver.h>
-#include <oda/event.h>
+#include <oda/dspunit.h>
 #include <oda/portable.h>
+#include <oda/soundtrackevent.h>
 
 #include ODA_OPENAL_DIR(al.h)
 #include ODA_OPENAL_DIR(alc.h)
@@ -11,7 +12,6 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <vector>
 
 namespace oda {
@@ -19,20 +19,24 @@ namespace oda {
 // unnamed namespace
 namespace {
 
+using std::make_shared;
 using std::ofstream;
 using std::ostream;
+using std::shared_ptr;
 using std::string;
 using std::transform;
 using std::unique_ptr;
 using std::vector;
+using std::weak_ptr;
 
 //#define ODA_LOG
 
-ALCdevice           *device = nullptr;
-ALCcontext          *context = nullptr;
-unique_ptr<Player>  player;
-double              time_accumulated = 0.0;
-bool                playing_started = false;
+ALCdevice                         *device = nullptr;
+ALCcontext                        *context = nullptr;
+unique_ptr<AudioServer>           audioserver;
+vector<weak_ptr<SoundtrackEvent>> events__;
+double                            lag__ = 0.0;
+bool                              playing_started = false;
 
 #ifdef ODA_LOG
 ofstream            out;
@@ -44,12 +48,9 @@ void printSample(ostream &out, float sample) {
 }
 #endif
 
-}
+} // unnamed namespace
 
-const size_t        Engine::TICK_BUFFER_SIZE = 64;
-
-// MACRO MAGIC:
-// http://journal.stuffwithstuff.com/2012/01/24/higher-order-macros-in-c/
+const size_t Engine::TICK_BUFFER_SIZE = 64;
 
 Engine::Engine() {}
 
@@ -81,10 +82,10 @@ Status Engine::start(const vector<string>& patch_paths) {
     device = nullptr;
     return Status::FAILURE("Engine internal: " + dsp_start.description());
   }
-  // Create audio player
-  player.reset(new Player);
+  // Create audio audioserver
+  audioserver.reset(new AudioServer);
   playing_started = false;
-  time_accumulated = 0.0;
+  lag__ = 0.0;
 #ifdef ODA_LOG
   out.open("out");
 #endif
@@ -105,9 +106,9 @@ void Engine::finish() {
   if (!context) return;
   // Finish DSP server
   DSPServer().finish();
-  // Destroy audio player
-  player->stopSource(0);
-  player.reset();
+  // Destroy audio audioserver
+  audioserver->stopSource(0);
+  audioserver.reset();
   // Unset and destroy context
   alcMakeContextCurrent(nullptr);
   alcDestroyContext(context);
@@ -117,40 +118,65 @@ void Engine::finish() {
   device = nullptr;
 }
 
-void Engine::tick(double dt) {
+void Engine::tick() {
   DSPServer dsp;
   // How many dsp ticks are needed for N seconds
-  player->update();
+  audioserver->update();
   dsp.cleanUp();
   dsp.handleCommands();
-  while (player->availableBuffers()) {
+  while (audioserver->availableBuffers()) {
     int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
     // Transfer signal from dsp server to audio server
     vector<float> signal;
     dsp.process(ticks, &signal);
     vector<int16_t> audio(dsp.tick_size()*ticks);
-    for (int i = 0; i < signal.size(); ++i)
+    for (size_t i = 0; i < signal.size(); ++i)
       audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
-    player->streamData(&audio);
+    audioserver->streamData(&audio);
     if (!playing_started) {
-      //player->playSource(0);
+      //audioserver->playSource(0);
       playing_started = true;
     }
 #ifdef ODA_LOG
     out << "Buffer update: " << ticks*dsp.tick_size() << std::endl;
-    for (unsigned i = 0; i < audio.size(); ++i)
+    for (size_t i = 0; i < audio.size(); ++i)
       printSample(out, audio[i]/32767.f);
 #endif
   }
 }
 
-Status Engine::eventInstance(const string &path_to_event, Event *event_out) {
-  *event_out = DSPServer().loadEvent(path_to_event);
-  return event_out->status();
+void Engine::tick(double dt) {
+  DSPServer dsp;
+  const double TICK = 1.0*TICK_BUFFER_SIZE/dsp.sample_rate();
+  lag__ += dt;
+  // How many dsp ticks are needed for N seconds
+  audioserver->update();
+  dsp.cleanUp();
+  dsp.handleCommands();
+  while (lag__ >= TICK && audioserver->availableBuffers()) {
+    dsp.processTick();
+    shared_ptr<SoundtrackEvent> event;
+    for (weak_ptr<SoundtrackEvent> &weak_event : events__)
+      if ((event = weak_event.lock())) {
+        event->processAudio();
+      }
+    lag__ -= TICK;
+  }
 }
 
-void Engine::testAudio() {
-  player->playSineWave(4, 440.0f);
+Status Engine::eventInstance(const string &path_to_dspunit,
+                             shared_ptr<SoundtrackEvent> *event_out) {
+  shared_ptr<DSPUnit> dspunit = DSPServer().loadUnit(path_to_dspunit);
+  if (!dspunit->status().ok())
+    return Status::FAILURE("Could not load DSP Unit: "
+                           + dspunit->status().description());
+  shared_ptr<AudioUnit> audiounit = audioserver->loadUnit();
+  if (!audiounit->status().ok())
+    return Status::FAILURE("Could not load Audio Unit: "
+                           + audiounit->status().description());
+  *event_out = make_shared<SoundtrackEvent>(dspunit, audiounit);
+  events__.emplace_back(*event_out);
+  return Status::OK("Soundtrack event successfully created");
 }
 
 } // namespace oda
