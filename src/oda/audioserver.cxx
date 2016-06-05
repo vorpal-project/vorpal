@@ -28,6 +28,7 @@ class AudioServer::UnitImpl final : public AudioUnit {
  public:
   ~UnitImpl() { server_->freeUnit(this); }
   Status status() const override { return Status::OK("Valid audio unit"); }
+  void setPosition(float x, float y, float z) override;
   void stream(const vector<float> &signal) override;
  private:
   friend class AudioServer;
@@ -36,6 +37,10 @@ class AudioServer::UnitImpl final : public AudioUnit {
   AudioServer *server_;
   size_t      unit_id_;
 };
+
+void AudioServer::UnitImpl::setPosition(float x, float y, float z) {
+  server_->setSourcePosition(unit_id_, x, y, z);
+}
 
 void AudioServer::UnitImpl::stream(const vector<float> &signal) {
    vector<int16_t> samples(signal.size());
@@ -83,8 +88,8 @@ void AudioServer::freeUnit(const UnitImpl *unit) {
 }
 
 // Set Source parameters
-void AudioServer::setSourcePosition(int source, float X, float Y, float Z) {
-  alSource3i(sources_[source], AL_POSITION, X, Y, Z);
+void AudioServer::setSourcePosition(size_t source, float x, float y, float z) {
+  alSource3f(sources_[source], AL_POSITION, x, y, z);
 }
 
 // Fill buffers_

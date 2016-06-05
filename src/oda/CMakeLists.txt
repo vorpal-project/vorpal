@@ -8,7 +8,6 @@ set (PROJECT_SRC
   oda.cxx
   engine.cxx
   audioserver.cxx
-  audiounit.cxx
   dspserver.cxx
   parameter.cxx
   soundtrackevent.cxx

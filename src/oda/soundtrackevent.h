@@ -16,6 +16,7 @@ class SoundtrackEvent {
   SoundtrackEvent(const std::shared_ptr<DSPUnit> &dspunit,
                   const std::shared_ptr<AudioUnit> &audiounit);
   void processAudio();
+  void setAudioSource(float x, float y, float z);
   void pushCommand(const std::string &identifier,
                    const std::vector<Parameter> &parameters);
   template <typename... Args> void pushCommand(const std::string &identifier,
