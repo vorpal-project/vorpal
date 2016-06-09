@@ -34,6 +34,7 @@ install (FILES
          ${CMAKE_SOURCE_DIR}/patches/openda_seq16.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_metro.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_sample.pd
+         ${CMAKE_SOURCE_DIR}/patches/openda_ogg.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_osc.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_tri.pd
          DESTINATION patches
