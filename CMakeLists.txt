@@ -29,6 +29,7 @@ add_subdirectory (src)
 install (FILES
          ${CMAKE_SOURCE_DIR}/patches/openda_core.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_panel.pd
+         ${CMAKE_SOURCE_DIR}/patches/openda_plot.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_bus.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_parameter.pd
          ${CMAKE_SOURCE_DIR}/patches/openda_seq16.pd
