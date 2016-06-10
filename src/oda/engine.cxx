@@ -29,13 +29,14 @@ using std::unique_ptr;
 using std::vector;
 using std::weak_ptr;
 
-//#define ODA_LOG
+#define ODA_LOG
 
 ALCdevice                         *device = nullptr;
 ALCcontext                        *context = nullptr;
 unique_ptr<AudioServer>           audioserver;
 vector<weak_ptr<SoundtrackEvent>> events__;
 double                            lag__ = 0.0;
+long long unsigned                tick_counter__ = 0;
 bool                              playing_started = false;
 
 #ifdef ODA_LOG
@@ -86,8 +87,11 @@ Status Engine::start(const vector<string>& patch_paths) {
   audioserver.reset(new AudioServer);
   playing_started = false;
   lag__ = 0.0;
+  tick_counter__ = 0u;
 #ifdef ODA_LOG
   out.open("out");
+#else
+  out.open("/dev/null");
 #endif
   // Tell which device was opened
   return Status::OK(alcGetString(device, ALC_DEVICE_SPECIFIER));
@@ -118,33 +122,6 @@ void Engine::finish() {
   device = nullptr;
 }
 
-void Engine::tick() {
-  DSPServer dsp;
-  // How many dsp ticks are needed for N seconds
-  audioserver->update();
-  dsp.cleanUp();
-  dsp.handleCommands();
-  while (audioserver->availableBuffers()) {
-    int ticks = TICK_BUFFER_SIZE/dsp.tick_size();
-    // Transfer signal from dsp server to audio server
-    vector<float> signal;
-    dsp.process(ticks, &signal);
-    vector<int16_t> audio(dsp.tick_size()*ticks);
-    for (size_t i = 0; i < signal.size(); ++i)
-      audio[i] = static_cast<int16_t>(signal[i]*32767.f/2.f);
-    audioserver->streamData(&audio);
-    if (!playing_started) {
-      //audioserver->playSource(0);
-      playing_started = true;
-    }
-#ifdef ODA_LOG
-    out << "Buffer update: " << ticks*dsp.tick_size() << std::endl;
-    for (size_t i = 0; i < audio.size(); ++i)
-      printSample(out, audio[i]/32767.f);
-#endif
-  }
-}
-
 void Engine::tick(double dt) {
   DSPServer dsp;
   const double TICK = 1.0*TICK_BUFFER_SIZE/dsp.sample_rate();
@@ -153,14 +130,22 @@ void Engine::tick(double dt) {
   audioserver->update();
   dsp.cleanUp();
   dsp.handleCommands();
-  while (lag__ >= TICK && audioserver->availableBuffers()) {
+  out << "[ODA] update by " << dt << " seconds" << std::endl;
+  while (lag__ >= TICK && audioserver->availableBuffers() >= events__.size()) {
+    out << "[ODA] tick " << tick_counter__ << "("
+        << audioserver->availableBuffers()<< " available buffers)" << std::endl;
     dsp.processTick();
     shared_ptr<SoundtrackEvent> event;
-    for (weak_ptr<SoundtrackEvent> &weak_event : events__)
-      if ((event = weak_event.lock())) {
+    size_t idx = 0;
+    for (weak_ptr<SoundtrackEvent> weak : events__) {
+      if ((event = weak.lock())) {
+        out << "[ODA] processing event " << idx << std::endl;
         event->processAudio();
-      }
+      } else out << "[ODA] dead event " << idx << std::endl;
+      ++idx;
+    }
     lag__ -= TICK;
+    ++tick_counter__;
   }
 }
 

@@ -100,30 +100,19 @@ void AudioServer::fillBuffer(ALuint buffer, const ALvoid *data_samples,
 }
 
 void AudioServer::update() {
-  int processed;
-  alGetSourcei(sources_[0], AL_BUFFERS_PROCESSED, &processed);
-  if (processed > 0) while (processed--) {
-    ALuint buffer;
-    alSourceUnqueueBuffers(sources_[0], 1, &buffer);
-    free_buffers_.push(buffer);
+  for (ALuint source : sources_) {
+    int processed;
+    alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
+    if (processed > 0) while (processed--) {
+      ALuint buffer;
+      alSourceUnqueueBuffers(source, 1, &buffer);
+      free_buffers_.push(buffer);
+    }
   }
 }
 
-bool AudioServer::availableBuffers() const {
-  return !free_buffers_.empty();
-}
-
-void AudioServer::streamData(const vector<int16_t> *data) {
-  streamData(data, 0u, data->size());
-}
-
-void AudioServer::streamData(const vector<int16_t> *data, size_t start, size_t len) {
-  ALuint buffer = free_buffers_.front();
-  free_buffers_.pop();
-  fillBuffer(buffer, data->data()+start, len*sizeof(int16_t));
-  alSourceQueueBuffers(sources_[0], 1, &buffer);
-  if (!isSourcePlaying(sources_[0]))
-   alSourcePlay(sources_[0]);
+size_t AudioServer::availableBuffers() const {
+  return free_buffers_.size();
 }
 
 void AudioServer::streamData(size_t source_id, const vector<int16_t> &samples) {
@@ -149,14 +138,6 @@ void AudioServer::stopSource(int source_number) {
 
 void AudioServer::playAllSources() {
   alSourcePlayv(NUM_SOURCES, sources_.data());
-}
-
-void AudioServer::playSoundOnSource(const vector<int16_t> *samples) {
-  const size_t size = Engine::TICK_BUFFER_SIZE;
-  for (int i = 0; i < NUM_BUFFERS; ++i) {
-    streamData(samples, i*size, size);
-  }
-  playSource(0);
 }
 
 }
