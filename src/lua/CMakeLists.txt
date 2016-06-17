@@ -5,7 +5,7 @@ find_package (Lua51 REQUIRED)
 
 include_directories (${LUA_INCLUDE_DIR})
 
-add_library(oda_lua SHARED oda_lua.cxx)
+add_library(oda_lua SHARED EXCLUDE_FROM_ALL oda_lua.cxx)
 
 target_link_libraries(
   oda_lua
