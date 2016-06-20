@@ -1,4 +1,4 @@
-#N canvas 870 248 847 668 16;
+#N canvas 870 254 847 668 16;
 #X obj 54 18 inlet command;
 #X obj 402 357 inlet set;
 #X obj 54 46 route on off;
@@ -16,7 +16,7 @@
 #X obj 54 452 list trim;
 #X obj 402 385 route atk del sus rel auto;
 #X obj 607 468 s \$0-auto;
-#X obj 607 433 tgl 24 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 607 433 tgl 24 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 54 75 t b b;
 #X obj 54 121 t b b b b;
@@ -35,27 +35,27 @@
 #X obj 54 567 outlet~ signal;
 #X obj 481 31 cnv 15 300 300 empty empty empty 33 15 0 14 -33289 -1
 0;
-#X obj 486 32 cnv 32 294 294 empty empty ENVELOPE 80 36 1 24 -54692
+#X obj 487 31 cnv 32 294 294 empty empty ENVELOPE 80 36 1 24 -54692
 -1 0;
 #X floatatom 512 295 5 0 0 0 - #0-atk -, f 5;
 #X floatatom 650 294 5 0 0 0 - #0-sus -, f 5;
 #X obj 521 125 vsl 32 155 1 10000 1 0 \$0-atk empty ATK 0 -12 1 16
--144077 -1 -1 11600 0;
+-144077 -1 -1 4100 1;
 #X text 487 127 10s;
 #X text 497 153 1s;
 #X text 497 262 0s;
 #X obj 659 125 vsl 32 155 0 1 0 0 \$0-sus empty SUS 0 -12 1 16 -144077
--1 -1 10900 0;
+-1 -1 11800 1;
 #X text 645 264 0;
 #X floatatom 582 295 5 0 0 0 - #0-del -, f 5;
 #X obj 591 125 vsl 32 155 1 10000 1 0 \$0-del empty DEL 0 -12 1 16
--144077 -1 -1 8100 0;
+-144077 -1 -1 7600 1;
 #X text 557 127 10s;
 #X text 567 153 1s;
 #X text 567 262 0s;
 #X floatatom 723 295 5 0 0 0 - #0-rel -, f 5;
 #X obj 731 125 vsl 32 155 1 10000 1 0 \$0-rel empty REL 0 -12 1 16
--144077 -1 -1 7800 0;
+-144077 -1 -1 7800 1;
 #X text 697 127 10s;
 #X text 707 153 1s;
 #X text 707 262 0s;
