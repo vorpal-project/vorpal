@@ -39,7 +39,6 @@ double                            lag__ = 0.0;
 long long unsigned                tick_counter__ = 0;
 bool                              playing_started = false;
 
-#ifdef ODA_LOG
 ofstream            out;
 void printSample(ostream &out, float sample) {
   int n = static_cast<int>(sample*40.f)+40;
@@ -47,7 +46,6 @@ void printSample(ostream &out, float sample) {
     out << "#";
   out << std::endl;
 }
-#endif
 
 } // unnamed namespace
 
@@ -133,7 +131,8 @@ void Engine::tick(double dt) {
   out << "[ODA] update by " << dt << " seconds" << std::endl;
   while (lag__ >= TICK && audioserver->availableBuffers() >= events__.size()) {
     out << "[ODA] tick " << tick_counter__ << "("
-        << audioserver->availableBuffers()<< " available buffers)" << std::endl;
+        << audioserver->availableBuffers() << " available buffers)"
+        << std::endl;
     dsp.processTick();
     shared_ptr<SoundtrackEvent> event;
     size_t idx = 0;

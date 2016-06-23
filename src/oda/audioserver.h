@@ -15,7 +15,7 @@
 #include <thread>
 #include <vector>
 
-#define NUM_BUFFERS 256
+#define NUM_BUFFERS 1024
 #define NUM_SOURCES 64
 
 namespace oda {
