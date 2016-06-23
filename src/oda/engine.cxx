@@ -29,7 +29,7 @@ using std::unique_ptr;
 using std::vector;
 using std::weak_ptr;
 
-#define ODA_LOG
+//#define ODA_LOG
 
 ALCdevice                         *device = nullptr;
 ALCcontext                        *context = nullptr;
@@ -165,4 +165,3 @@ Status Engine::eventInstance(const string &path_to_dspunit,
 }
 
 } // namespace oda
-
