@@ -1,11 +1,11 @@
-#N canvas 706 361 396 411 16;
+#N canvas 65 388 396 411 16;
 #X obj 33 26 inlet~;
 #X obj 32 188 *~;
 #X obj 154 38 line;
 #X obj 154 10 inlet;
 #X obj 49 81 cnv 15 200 54 empty empty empty 33 15 0 14 -33289 -1 0
 ;
-#X obj 55 81 cnv 32 194 48 empty empty Audio_Bus 30 15 1 14 -128992
+#X obj 55 81 cnv 32 194 48 empty empty Audio_Bus 30 13 1 16 -54692
 -1 0;
 #X obj 62 106 hsl 120 20 0.01 1 1 1 empty empty empty -2 -8 0 10 -162280
 -1 -1 6350 1;

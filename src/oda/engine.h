@@ -63,11 +63,6 @@ class Engine {
    */
   void finish();
 
-  /// Process dynamic audio ticks
-  /**
-   */
-  void tick();
-
   /// Process dynamic audio ticks for the given time period
   /**
    */

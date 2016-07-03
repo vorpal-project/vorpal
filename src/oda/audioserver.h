@@ -15,7 +15,7 @@
 #include <thread>
 #include <vector>
 
-#define NUM_BUFFERS 64
+#define NUM_BUFFERS 1024
 #define NUM_SOURCES 64
 
 namespace oda {
@@ -32,13 +32,9 @@ class AudioServer final {
   void stopSource(int source_number);
   void playAllSources();
   void update();
-  bool availableBuffers() const;
-  void fillBuffer(ALuint buffer, const ALvoid *dataSamples, ALsizei bufferSize);
-  void streamData (const std::vector<int16_t> *data);
-  void streamData (const std::vector<int16_t> *data, size_t start, size_t len);
+  size_t availableBuffers() const;
   void streamData (size_t source_id, const std::vector<int16_t> &samples);
   void setSourcePosition(size_t source, float x, float y, float z);
-  void playSoundOnSource(const std::vector<int16_t> *samples);
 
  protected:
   class UnitImpl;
@@ -46,6 +42,7 @@ class AudioServer final {
   void freeUnit(const UnitImpl *unit);
 
  private:
+  void fillBuffer(ALuint buffer, const ALvoid *dataSamples, ALsizei bufferSize);
   ALuint  buffers_[NUM_BUFFERS];
   std::queue<ALuint>  free_buffers_;
   std::vector<ALuint> sources_;
