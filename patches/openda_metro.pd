@@ -1,8 +1,6 @@
-#N canvas 529 318 525 579 16;
+#N canvas 529 339 525 579 16;
 #X obj 254 390 metro;
-#X obj 348 325 / 60000;
 #X obj 301 357 /;
-#X obj 301 325 f 1;
 #X obj 254 420 f 0;
 #X obj 254 455 t f f;
 #X obj 254 496 outlet beat;
@@ -12,13 +10,13 @@
 #X obj 37 129 cnv 32 174 58 empty empty empty 20 12 0 14 -128992 -66577
 0;
 #X obj 94 140 nbx 5 20 10 1024 0 0 empty \$0-bpm BPM -48 8 1 16 -162280
--1 -1 10 256;
+-1 -1 144 256;
 #X obj 94 162 nbx 5 20 1 64 0 0 empty \$0-time Time -48 8 1 16 -162280
--1 -1 1 256;
+-1 -1 16 256;
 #X obj 254 7 inlet;
 #X obj 302 420 mod 1;
 #X obj 301 294 t b f;
-#X obj 176 149 tgl 24 1 empty empty empty 17 7 0 10 -162280 -1 -1 0
+#X obj 176 149 tgl 24 1 empty empty empty 17 7 0 10 -162280 -1 -1 1
 1;
 #X obj 254 217 t f b;
 #X msg 301 247 0;
@@ -26,26 +24,28 @@
 #X obj 361 102 route bpm time;
 #X obj 361 181 s \$0-bpm;
 #X obj 429 149 s \$0-time;
-#X connect 0 0 4 0;
-#X connect 1 0 2 1;
-#X connect 2 0 0 1;
-#X connect 3 0 2 0;
-#X connect 4 0 5 0;
-#X connect 5 0 6 0;
-#X connect 5 1 7 0;
-#X connect 7 0 13 0;
-#X connect 10 0 14 0;
-#X connect 11 0 13 1;
-#X connect 12 0 18 0;
-#X connect 13 0 4 1;
-#X connect 14 0 3 0;
-#X connect 14 1 1 0;
-#X connect 15 0 16 0;
-#X connect 16 0 0 0;
+#X obj 301 325 f 1;
+#X obj 348 325 / 30000;
+#X connect 0 0 2 0;
+#X connect 1 0 0 1;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 3 1 5 0;
+#X connect 5 0 11 0;
+#X connect 8 0 12 0;
+#X connect 9 0 11 1;
+#X connect 10 0 16 0;
+#X connect 11 0 2 1;
+#X connect 12 0 20 0;
+#X connect 12 1 21 0;
+#X connect 13 0 14 0;
+#X connect 14 0 0 0;
+#X connect 14 1 15 0;
+#X connect 15 0 2 1;
+#X connect 16 0 13 0;
 #X connect 16 1 17 0;
-#X connect 17 0 4 1;
-#X connect 18 0 15 0;
-#X connect 18 1 19 0;
-#X connect 19 0 20 0;
-#X connect 19 1 21 0;
+#X connect 17 0 18 0;
+#X connect 17 1 19 0;
+#X connect 20 0 1 0;
+#X connect 21 0 1 1;
 #X coords 0 -1 1 1 182 66 2 30 128;

@@ -1,4 +1,4 @@
-#N canvas 200 131 1141 772 16;
+#N canvas 200 140 1141 772 16;
 #X obj 53 40 mod 16;
 #X obj 568 383 r \$0-synth;
 #X obj 33 301 cnv 32 598 48 empty empty empty 20 12 1 16 -33289 -66577
@@ -92,13 +92,13 @@ color 1 \; \$1-tgl-13 color 1 \; \$1-tgl-14 color 1 \; \$1-tgl-15 color
 #X obj 663 683 outlet;
 #X obj 472 266 s \$0-done;
 #X obj 422 64 inlet active;
-#X obj 86 125 delay 200;
 #X obj 491 134 list prepend \$0;
 #X msg 491 171 \; \$1-tgl-\$2 \$3;
 #X obj 422 97 route float list bang;
 #X obj 689 142 route clear;
 #X msg 689 186 0 0 \, 1 0 \, 2 0 \, 3 0 \, 4 0 \, 5 0 \, 6 0 \, 7 0
 \, 8 0 \, 9 0 \, 10 0 \, 11 0 \, 12 0 \, 13 0 \, 14 0 \, 15 0;
+#X obj 86 125 delay 100;
 #X connect 0 0 59 0;
 #X connect 1 0 64 0;
 #X connect 4 0 5 1;
@@ -156,19 +156,19 @@ color 1 \; \$1-tgl-13 color 1 \; \$1-tgl-14 color 1 \; \$1-tgl-15 color
 #X connect 56 0 57 0;
 #X connect 58 0 0 0;
 #X connect 59 0 52 0;
-#X connect 59 1 69 0;
+#X connect 59 1 74 0;
 #X connect 59 2 55 0;
 #X connect 61 0 53 0;
 #X connect 63 0 64 1;
 #X connect 64 0 60 0;
 #X connect 65 0 66 0;
-#X connect 68 0 72 0;
-#X connect 69 0 62 0;
-#X connect 70 0 71 0;
-#X connect 72 0 63 0;
-#X connect 72 1 70 0;
-#X connect 72 2 63 0;
-#X connect 72 3 73 0;
-#X connect 73 0 74 0;
-#X connect 74 0 72 0;
+#X connect 68 0 71 0;
+#X connect 69 0 70 0;
+#X connect 71 0 63 0;
+#X connect 71 1 69 0;
+#X connect 71 2 63 0;
+#X connect 71 3 72 0;
+#X connect 72 0 73 0;
+#X connect 73 0 71 0;
+#X connect 74 0 62 0;
 #X coords 0 -1 1 1 600 50 2 32 300;

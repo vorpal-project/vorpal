@@ -28,27 +28,27 @@
 #X obj 367 321 cnv 32 174 294 empty empty VC-FILTER 25 36 1 24 -54692
 -1 0;
 #X obj 474 410 vsl 32 160 0 10 0 0 \$0-q empty EMPH -8 -12 1 16 -144077
--1 -1 8200 1;
+-1 -1 2400 1;
 #X floatatom 402 585 4 0 0 0 - #0-offset -, f 4;
 #X floatatom 470 584 4 0 0 0 - #0-q -, f 4;
 #X obj 404 410 vsl 32 160 -4 4 0 0 \$0-offset empty CUT 0 -12 1 16
--144077 -1 -1 3600 1;
+-144077 -1 -1 5200 1;
 #X text 390 480 0;
 #X text 380 407 +4;
 #X text 380 552 -4;
 #X text 460 552 0;
 #X text 450 408 10;
 #X text 460 478 5;
-#X obj 182 472 inlet~ contour;
 #X obj 102 592 *~;
 #X obj 182 528 expr~ 1-$v1;
 #X obj 32 585 *~;
 #X obj 33 692 outlet~ bplp;
+#X obj 182 472 inlet~ env;
 #X connect 0 0 2 0;
-#X connect 0 0 39 0;
+#X connect 0 0 38 0;
 #X connect 1 0 4 0;
-#X connect 2 0 37 0;
-#X connect 2 1 37 0;
+#X connect 2 0 36 0;
+#X connect 2 1 36 0;
 #X connect 3 0 6 0;
 #X connect 4 0 5 0;
 #X connect 4 1 22 0;
@@ -69,9 +69,9 @@
 #X connect 19 0 20 0;
 #X connect 20 0 2 2;
 #X connect 21 0 19 0;
-#X connect 36 0 38 0;
-#X connect 36 0 37 1;
-#X connect 37 0 40 0;
-#X connect 38 0 39 1;
-#X connect 39 0 40 0;
+#X connect 36 0 39 0;
+#X connect 37 0 38 1;
+#X connect 38 0 39 0;
+#X connect 40 0 37 0;
+#X connect 40 0 36 1;
 #X coords 0 -1 1 1 182 302 2 360 320;
