@@ -46,7 +46,7 @@ void AudioServer::UnitImpl::stream(const vector<float> &signal) {
    vector<int16_t> samples(signal.size());
    transform(signal.begin(), signal.end(), samples.begin(),
             [] (float sample) -> int16_t {
-              return static_cast<int16_t>(sample*32767.f/2.f);
+              return static_cast<int16_t>(sample*32767.f);
             });
    server_->streamData(unit_id_, samples);
 }
