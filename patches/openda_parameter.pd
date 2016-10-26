@@ -1,10 +1,10 @@
-#N canvas 690 675 559 238 16;
+#N canvas 631 255 559 238 16;
 #X obj 27 24 r \$1-command;
 #X obj 27 64 route \$2;
 #X obj 27 101 outlet;
 #X obj 100 100 cnv 15 262 36 empty empty empty 20 12 0 14 -33289 -1
 0;
-#X obj 105 101 cnv 15 256 30 empty empty Parameter 12 16 1 14 -128992
+#X obj 105 101 cnv 15 256 30 empty empty Command 12 16 1 14 -128992
 -1 0;
 #X obj 205 104 cnv 15 128 24 empty empty \$2 8 12 1 14 -162280 -1 0
 ;
