@@ -132,8 +132,8 @@ int event_pushCommand(lua_State *L) {
     return luaL_argerror(L, 1, "userdata:SoundtrackEvent expected");
   if (!lua_isstring(L, 2))
     return luaL_argerror(L, 2, "string expected");
-  SoundtrackEvent   *event =
-    *static_cast<SoundtrackEvent**>(lua_touserdata(L, 1));
+  shared_ptr<SoundtrackEvent> *event =
+    *static_cast<shared_ptr<SoundtrackEvent>**>(lua_touserdata(L, 1));
   string            identifier = lua_tostring(L, 2);
   vector<Parameter> parameters;
   for (int i = 3; i <= lua_gettop(L); ++i) {
@@ -143,7 +143,7 @@ int event_pushCommand(lua_State *L) {
       parameters.emplace_back(lua_tostring(L, i));
     else luaL_argerror(L, i, "string or number expected");
   }
-  event->pushCommand(identifier, parameters);
+  (*event)->pushCommand(identifier, parameters);
   return 0;
 }
 
@@ -170,4 +170,3 @@ extern "C" int luaopen_oda (lua_State *L) {
   luaL_register(L, nullptr, oda::wrap::module);
   return 1;
 }
-
