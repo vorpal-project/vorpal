@@ -67,9 +67,12 @@ int registerPath(lua_State *L) {
 }
 
 int tick(lua_State *L) {
-  lua_settop(L, 0);
-  Engine().tick(0.1);
-  return 0;
+  lua_settop(L, 1);
+  if (lua_isnumber(L, 1)) {
+    Engine().tick(static_cast<double>(lua_tonumber(L, 1)));
+    return 0;
+  }
+  return luaL_argerror(L, 1, "number expected");;
 }
 
 int eventInstance(lua_State *L) {
@@ -147,9 +150,28 @@ int event_pushCommand(lua_State *L) {
   return 0;
 }
 
+int event_setAudioSource(lua_State *L) {
+  if (lua_gettop(L) < 3)
+    return luaL_error(L, "at least 3 arguments expected (got %d)",
+                      lua_gettop(L));
+  if (!lua_isuserdata(L, 1))
+    return luaL_argerror(L, 1, "userdata:SoundtrackEvent expected");
+  shared_ptr<SoundtrackEvent> *event =
+    *static_cast<shared_ptr<SoundtrackEvent>**>(lua_touserdata(L, 1));
+  float pos[3] = { 0.0f, 0.0f, 0.0f };
+  for (int i = 0; i < 3; ++i)
+    if (!lua_isnumber(L, 2 + i))
+      return luaL_argerror(L, 2 + i, "number expected");
+    else
+      pos[i] = static_cast<float>(lua_tonumber(L, 2 + i));
+  (*event)->setAudioSource(pos[0], pos[1], pos[2]);
+  return 0;
+}
+
 luaL_Reg event_meta[] = {
   { "__gc", &event_gc },
   { "pushCommand", &event_pushCommand },
+  { "setAudioSource", &event_setAudioSource },
   { nullptr, nullptr }
 };
 
