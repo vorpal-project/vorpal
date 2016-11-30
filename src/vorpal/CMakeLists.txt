@@ -28,7 +28,7 @@ set (PROJECT_HEADERS
 )
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  set (ODA_OSX 1)
+  set (VORPAL_OSX 1)
 endif ()
 
 configure_file (
