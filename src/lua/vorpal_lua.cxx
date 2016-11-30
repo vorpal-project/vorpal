@@ -1,5 +1,5 @@
 
-#include <oda/oda.h>
+#include <vorpal/vorpal.h>
 
 extern "C" {
 
@@ -23,7 +23,7 @@ using std::unordered_set;
 using std::vector;
 } // unnamed namespace
 
-namespace oda {
+namespace vorpal {
 namespace wrap {
 namespace {
 
@@ -92,7 +92,7 @@ int eventInstance(lua_State *L) {
       return 1;
     } else {
       delete event;
-      return luaL_error(L, "[oda binding] %s\n", status.description().c_str());
+      return luaL_error(L, "[vorpal binding] %s\n", status.description().c_str());
     }
   }
   return luaL_argerror(L, 1, "string expected");
@@ -181,14 +181,14 @@ constexpr size_t meta_size() {
 
 } // unnamed namespace
 } // namespace wrap
-} // namespace oda
+} // namespace vorpal
 
-extern "C" int luaopen_oda (lua_State *L) {
+extern "C" int luaopen_vorpal (lua_State *L) {
   luaL_newmetatable(L, "event");
-  luaL_register(L, nullptr, oda::wrap::event_meta);
+  luaL_register(L, nullptr, vorpal::wrap::event_meta);
   lua_pushvalue(L, -1);
   lua_setfield(L, -2, "__index");
-  lua_createtable(L, 0, oda::wrap::size());
-  luaL_register(L, nullptr, oda::wrap::module);
+  lua_createtable(L, 0, vorpal::wrap::size());
+  luaL_register(L, nullptr, vorpal::wrap::module);
   return 1;
 }
