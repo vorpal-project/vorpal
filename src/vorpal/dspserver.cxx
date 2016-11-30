@@ -1,10 +1,10 @@
 
-#include <oda/dspserver.h>
+#include <vorpal/dspserver.h>
 
-#include <oda/audiounit.h>
-#include <oda/dspunit.h>
-#include <oda/engine.h>
-#include <oda/parameter.h>
+#include <vorpal/audiounit.h>
+#include <vorpal/dspunit.h>
+#include <vorpal/engine.h>
+#include <vorpal/parameter.h>
 
 #include <libpd/PdBase.hpp>
 #include <libpd/PdReceiver.hpp>
@@ -18,7 +18,7 @@
 #include <memory>
 #include <tuple>
 
-namespace oda {
+namespace vorpal {
 
 namespace {
 
@@ -214,7 +214,7 @@ void DSPServer::process(int ticks, vector<float> *signal) {
     // Collect processed audio
     for (UnitImpl *unit : UnitImpl::units__) {
       Patch *patch = unit->patch_;
-      const string array_name = "openda-bus-"+patch->dollarZeroStr();
+      const string array_name = "vorpal-bus-"+patch->dollarZeroStr();
       if (dsp.readArray(array_name, temp, tick_size()))
         for (int k = 0; k < tick_size(); ++k)
           (*signal)[k + i*tick_size()] += temp[k];
@@ -225,7 +225,7 @@ void DSPServer::process(int ticks, vector<float> *signal) {
 void DSPServer::processTick() {
   dsp.processFloat(TICK_RATIO, inbuf, outbuf);
   for (UnitImpl *unit : UnitImpl::units__) {
-    const string array_name = "openda-bus-"+unit->patch_->dollarZeroStr();
+    const string array_name = "vorpal-bus-"+unit->patch_->dollarZeroStr();
     if (!dsp.readArray(array_name, unit->buffer_, tick_size()))
       ; // FIXME houston...
   }
@@ -245,5 +245,5 @@ void DSPServer::finish() {
   cleanUp();
 }
 
-} // namespace oda
+} // namespace vorpal
 

@@ -2,13 +2,13 @@
 #ifndef ODA_DSPUNIT_H_
 #define ODA_DSPUNIT_H_
 
-#include <oda/parameter.h>
-#include <oda/status.h>
+#include <vorpal/parameter.h>
+#include <vorpal/status.h>
 
 #include <memory>
 #include <vector>
 
-namespace oda {
+namespace vorpal {
 
 class AudioUnit;
 
@@ -32,7 +32,7 @@ class DSPUnit::Null final : public DSPUnit {
                    const std::vector<Parameter>&) override {}
 };
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // ODA_DSPUNIT_H_
 

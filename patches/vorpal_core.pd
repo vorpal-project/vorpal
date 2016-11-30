@@ -2,8 +2,8 @@
 #X obj 233 130 bang~;
 #X obj 56 157 outlet~;
 #X obj 56 125 receive~;
-#X obj 56 59 r openda-focus;
-#X msg 56 93 set openda-bus-\$1;
+#X obj 56 59 r vorpal-focus;
+#X msg 56 93 set vorpal-bus-\$1;
 #X obj 233 160 outlet;
 #X connect 0 0 5 0;
 #X connect 2 0 1 0;

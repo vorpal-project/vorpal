@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace oda {
+namespace vorpal {
 
 class Status {
  public:
@@ -45,7 +45,7 @@ inline std::string Status::description() const {
   return description_;
 }
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // LIBODA_ODA_STATUS_H_
 

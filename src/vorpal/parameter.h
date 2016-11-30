@@ -5,7 +5,7 @@
 #include <functional>
 #include <string>
 
-namespace oda {
+namespace vorpal {
 
 class Parameter {
  public:
@@ -38,7 +38,7 @@ class ParameterSwitch {
   SymbolHandler   symbol_handler_;
 };
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // ODA_PARAMETER_H_
 

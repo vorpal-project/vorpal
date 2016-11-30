@@ -1,4 +1,3 @@
 
-add_subdirectory (oda)
+add_subdirectory (vorpal)
 add_subdirectory (lua)
-

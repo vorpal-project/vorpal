@@ -3,7 +3,7 @@
 cmake_minimum_required (VERSION 2.8)
 
 # Define the project name and language
-set (PROJECT_NAME oda)
+set (PROJECT_NAME vorpal)
 project (${PROJECT_NAME} C CXX)
 
 # Add a CMake module path for custom modules
@@ -27,19 +27,18 @@ add_subdirectory (src)
 
 # Install ODA Panel patches
 install (FILES
-         ${CMAKE_SOURCE_DIR}/patches/openda_core.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_panel.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_plot.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_bus.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_parameter.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_seq16.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_metro.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_sample.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_env.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_filter.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_ogg.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_osc.pd
-         ${CMAKE_SOURCE_DIR}/patches/openda_tri.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_core.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_panel.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_plot.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_bus.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_parameter.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_seq16.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_metro.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_sample.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_env.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_filter.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_ogg.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_osc.pd
+         ${CMAKE_SOURCE_DIR}/patches/vorpal_tri.pd
          DESTINATION patches
          CONFIGURATIONS Debug Release)
-

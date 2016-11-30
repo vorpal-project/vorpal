@@ -2,14 +2,14 @@
 #ifndef LIBODA_SOUNDTRACKEVENT_H_
 #define LIBODA_SOUNDTRACKEVENT_H_
 
-#include <oda/audiounit.h>
-#include <oda/dspunit.h>
-#include <oda/parameter.h>
-#include <oda/status.h>
+#include <vorpal/audiounit.h>
+#include <vorpal/dspunit.h>
+#include <vorpal/parameter.h>
+#include <vorpal/status.h>
 
 #include <memory>
 
-namespace oda {
+namespace vorpal {
 
 class SoundtrackEvent {
  public:
@@ -52,7 +52,7 @@ inline void SoundtrackEvent::pushCommand(const std::string &identifier,
   pushCommand(identifier, parameters);
 }
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // LIBODA_SOUNDTRACKEVENT_H_
 

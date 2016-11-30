@@ -2,11 +2,11 @@
 #ifndef LIBODA_AUDIOUNIT_H_
 #define LIBODA_AUDIOUNIT_H_
 
-#include <oda/status.h>
+#include <vorpal/status.h>
 
 #include <vector>
 
-namespace oda {
+namespace vorpal {
 
 class AudioUnit {
  public:
@@ -27,7 +27,7 @@ class AudioUnit::Null final : public AudioUnit {
   void stream(const std::vector<float>&) override {}
 };
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // LIBODA_AUDIOUNIT_H_
 

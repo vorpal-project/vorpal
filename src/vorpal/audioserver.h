@@ -2,8 +2,8 @@
 #ifndef LIBODA_AUDIOSERVER_H_
 #define LIBODA_AUDIOSERVER_H_
 
-#include <oda/portable.h>
-#include <oda/status.h>
+#include <vorpal/portable.h>
+#include <vorpal/status.h>
 
 #include ODA_OPENAL_DIR(al.h)
 #include ODA_OPENAL_DIR(alc.h)
@@ -18,7 +18,7 @@
 #define NUM_BUFFERS 1024
 #define NUM_SOURCES 64
 
-namespace oda {
+namespace vorpal {
 
 class AudioUnit;
 
@@ -53,6 +53,6 @@ class AudioServer final {
   const ALenum format_;
 };
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // LIBODA_AUDIOSERVER_H_

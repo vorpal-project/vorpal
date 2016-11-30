@@ -1,11 +1,11 @@
 
-#include <oda/parameter.h>
+#include <vorpal/parameter.h>
 
 namespace {
 using std::string;
 } // unnamed namespace
 
-namespace oda {
+namespace vorpal {
 
 Parameter::Parameter(const Parameter &rhs)
     : type_(rhs.type_), symbol_() {
@@ -60,5 +60,5 @@ void ParameterSwitch::handle(const Parameter &command) {
   }
 }
 
-} // namespace oda
+} // namespace vorpal
 

@@ -1,13 +1,13 @@
 
-#include <oda/audioserver.h>
+#include <vorpal/audioserver.h>
 
-#include <oda/audiounit.h>
-#include <oda/engine.h>
+#include <vorpal/audiounit.h>
+#include <vorpal/engine.h>
 
 #include <algorithm>
 #include <iostream>
 
-namespace oda {
+namespace vorpal {
 
 namespace {
 
