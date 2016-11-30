@@ -22,7 +22,7 @@ set_target_properties (
   vorpal_lua PROPERTIES
   COMPILE_FLAGS "-W -Wall -fPIC -std=c++11"
   PREFIX ""
-  OUTPUT_NAME "oda"
+  OUTPUT_NAME ${PROJECT_NAME}
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
