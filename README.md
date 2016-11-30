@@ -1,8 +1,9 @@
 
-liboda
+VORPAL
 ======
 
-A library for playing dynamic audio in games.
+**V**orpal **O**pen **R**eal-time **P**rocedural **A**udio **L**ayer is game
+audio middleware focused on real-time procedural audio.
 
 Build
 -----
@@ -14,4 +15,3 @@ cd build
 cmake ..
 make
 ```
-
