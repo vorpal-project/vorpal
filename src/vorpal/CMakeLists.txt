@@ -5,7 +5,7 @@ find_package (OpenAL REQUIRED)
 
 # Define source code files
 set (PROJECT_SRC
-  oda.cxx
+  vorpal.cxx
   engine.cxx
   audioserver.cxx
   dspserver.cxx
@@ -15,7 +15,7 @@ set (PROJECT_SRC
 
 # Define source code headers
 set (PROJECT_HEADERS
-  oda.h
+  vorpal.h
   engine.h
   status.h
   audioserver.h
@@ -63,11 +63,10 @@ install (TARGETS ${PROJECT_NAME}
          DESTINATION lib
          CONFIGURATIONS Debug Release
          INCLUDES DESTINATION include)
-# Install ODA's headers
+# Install VORPAL's headers
 install (FILES ${PROJECT_HEADERS}
-         DESTINATION include/oda
+         DESTINATION include/vorpal
          CONFIGURATIONS Debug Release)
 # Export cmake target
 install (EXPORT ${PROJECT_EXPORT}
          DESTINATION cmake)
-

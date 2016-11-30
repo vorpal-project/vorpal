@@ -2,14 +2,14 @@
 #ifndef ODA_DSPSERVER_H_
 #define ODA_DSPSERVER_H_
 
-#include <oda/status.h>
+#include <vorpal/status.h>
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <unordered_set>
 
-namespace oda {
+namespace vorpal {
 
 // Forwatd declaration
 class DSPUnit;
@@ -32,7 +32,7 @@ class DSPServer {
   static std::unordered_set<UnitImpl*> units__;
 };
 
-} // namespace oda
+} // namespace vorpal
 
 #endif // ODA_DSPSERVER_H_
 

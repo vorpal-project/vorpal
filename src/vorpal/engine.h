@@ -2,13 +2,13 @@
 #ifndef LIBODA_ODA_ENGINE_H_
 #define LIBODA_ODA_ENGINE_H_
 
-#include <oda/status.h>
+#include <vorpal/status.h>
 
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace oda {
+namespace vorpal {
 
 // Forward declarations
 class SoundtrackEvent;
@@ -22,32 +22,32 @@ class SoundtrackEvent;
  * to release it. Example:
  *
  * ~~~.cxx
- * oda::Engine engine;
- * oda::Status status = engine.start();
+ * vorpal::Engine engine;
+ * vorpal::Status status = engine.start();
  * // check return value
  * // use the engine
  * engine.finish();
  * ~~~
- * @see oda::Engine::start()
- * @see oda::Engine::finish()
+ * @see vorpal::Engine::start()
+ * @see vorpal::Engine::finish()
  */
 class Engine {
  public:
   Engine();
   ~Engine() {}
 
-  /// Starts the main ODA engine
+  /// Starts the main VORPAL engine
   /**
    * @return A Status object that tells how the initialization went.
-   * @see oda::Status
-   * @see oda::Engine::finish()
+   * @see vorpal::Status
+   * @see vorpal::Engine::finish()
    */
   Status start(const std::vector<std::string>& patch_paths = {});
 
   /// Tells whether the engine has already started
   /**
    * @return True if the engine has already started, false otherwise
-   * @see oda::start()
+   * @see vorpal::start()
    */
   bool started() const;
 
@@ -57,9 +57,9 @@ class Engine {
    */
   void registerPath(const std::string &path);
 
-  /// Finishes the main ODA engine
+  /// Finishes the main VORPAL engine
   /**
-   * @see oda::Engine::start()
+   * @see vorpal::Engine::start()
    */
   void finish();
 
@@ -80,7 +80,7 @@ class Engine {
   const static size_t TICK_BUFFER_SIZE;
 };
  
-} // namespace oda
+} // namespace vorpal
 
 #endif // LIBODA_ODA_ENGINE_H_
 

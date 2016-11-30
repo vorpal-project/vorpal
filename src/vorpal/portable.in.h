@@ -1,9 +1,8 @@
 
-#cmakedefine ODA_OSX
+#cmakedefine VORPAL_OSX
 
-#ifdef ODA_OSX
-# define ODA_OPENAL_DIR(header) <OpenAL/header>
+#ifdef VORPAL_OSX
+# define VORPAL_OPENAL_DIR(header) <OpenAL/header>
 #else
-# define ODA_OPENAL_DIR(header) <AL/header>
+# define VORPAL_OPENAL_DIR(header) <AL/header>
 #endif
-

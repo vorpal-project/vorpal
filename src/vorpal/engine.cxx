@@ -1,10 +1,10 @@
 
-#include <oda/engine.h>
-#include <oda/audioserver.h>
-#include <oda/dspserver.h>
-#include <oda/dspunit.h>
-#include <oda/portable.h>
-#include <oda/soundtrackevent.h>
+#include <vorpal/engine.h>
+#include <vorpal/audioserver.h>
+#include <vorpal/dspserver.h>
+#include <vorpal/dspunit.h>
+#include <vorpal/portable.h>
+#include <vorpal/soundtrackevent.h>
 
 #include ODA_OPENAL_DIR(al.h)
 #include ODA_OPENAL_DIR(alc.h)
@@ -14,7 +14,7 @@
 #include <iostream>
 #include <vector>
 
-namespace oda {
+namespace vorpal {
 
 // unnamed namespace
 namespace {
@@ -128,9 +128,9 @@ void Engine::tick(double dt) {
   audioserver->update();
   dsp.cleanUp();
   dsp.handleCommands();
-  out << "[ODA] update by " << dt << " seconds" << std::endl;
+  out << "[VORPAL] update by " << dt << " seconds" << std::endl;
   while (lag__ >= TICK && audioserver->availableBuffers() >= events__.size()) {
-    out << "[ODA] tick " << tick_counter__ << "("
+    out << "[VORPAL] tick " << tick_counter__ << "("
         << audioserver->availableBuffers() << " available buffers)"
         << std::endl;
     dsp.processTick();
@@ -138,9 +138,9 @@ void Engine::tick(double dt) {
     size_t idx = 0;
     for (weak_ptr<SoundtrackEvent> weak : events__) {
       if ((event = weak.lock())) {
-        out << "[ODA] processing event " << idx << std::endl;
+        out << "[VORPAL] processing event " << idx << std::endl;
         event->processAudio();
-      } else out << "[ODA] dead event " << idx << std::endl;
+      } else out << "[VORPAL] dead event " << idx << std::endl;
       ++idx;
     }
     lag__ -= TICK;
@@ -163,4 +163,4 @@ Status Engine::eventInstance(const string &path_to_dspunit,
   return Status::OK("Soundtrack event successfully created");
 }
 
-} // namespace oda
+} // namespace vorpal

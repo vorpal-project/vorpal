@@ -1,7 +1,7 @@
 
-#include <oda/soundtrackevent.h>
+#include <vorpal/soundtrackevent.h>
 
-namespace oda {
+namespace vorpal {
 
 namespace {
 using std::shared_ptr;
@@ -26,5 +26,5 @@ void SoundtrackEvent::pushCommand(const string &identifier,
   dspunit_->pushCommand(identifier, parameters);
 }
 
-} // namespace oda
+} // namespace vorpal
 
